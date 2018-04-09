@@ -1,16 +1,21 @@
 <launch>
   <arg name="debug" default="0"/>
 
-  <arg name="x" default="0"/>
+  <arg name="x" default="30"/>
   <arg name="y" default="0"/>
-  <arg name="z" default="-20"/>
+  <arg name="z" default="-90"/>
   <arg name="roll" default="0.0"/>
   <arg name="pitch" default="0.0"/>
   <arg name="yaw" default="0.0"/>
 
   <arg name="mode" default="default"/>
-  <arg name="namespace" default="lolo_auv"/>
-  <!-- <arg name="world_frame" default="world"/> This should actually be "/world". See https://github.com/ros-simulation/gazebo_ros_pkgs/pull/324 -->
+  <arg name="namespace" default="lolo_auv_3"/>
+  <arg name="navigation_on" default="true"/>
+
+  <arg name="world_frame" default="world"/>
+
+  <!-- TF broadcaster world to AUV map -->
+  <node pkg="tf" type="static_transform_publisher" name="$(arg namespace)_world_map_bc" args="$(arg x) $(arg y) $(arg z) $(arg roll) $(arg pitch) $(arg yaw) world $(arg namespace)_map 50" />
 
   <group ns="$(arg namespace)">
     <param name="robot_description"
@@ -28,20 +33,28 @@
     </node>
   </group>
 
-  <!-- publish state and tf for in relation to the world frame -->
-  <!--
-  <group ns="$(arg namespace)">
-    <node name="ground_truth_to_tf" pkg="message_to_tf" type="message_to_tf" output="screen">
-      <param name="odometry_topic" value="/$(arg namespace)/pose_gt" />
-      <param name="frame_id" value="/$(arg world_frame)" />
-      <param name="tf_prefix" value="/$(arg namespace)" />
-      <param name="child_frame_id" value="base_link" />
-    </node>
-  </group>
-  -->
+  <!-- Control components -->
 
-  <include file="$(find smarc_sensor_plugins_ros)/launch/waterfall.launch">
-    <arg name="namespace" value="$(arg namespace)"/>
+  <!-- Navigation components -->
+    <include if="$(arg navigation_on)" file="$(find auv_ekf_slam)/launch/ekf_slam.launch">
+      <arg name="namespace" value="$(arg namespace)"/>
   </include>
+
+  <!-- Utils -->
+  <!-- Publishes: - tf world to map based on initial pose of the AUV 
+          - Ground truth pose in map frame
+          - if navigation_on = false, it also publishes the map to world tf -->
+  <node pkg="smarc_gt_bc" name="$(arg namespace)_gt_bc_node" type="ground_truth_bc_node" output="screen">
+    <param name="bc_base_map_tf" value="$(arg navigation_on)"/>
+    <param name="gt_topic" value="/$(arg namespace)/pose_gt"/>
+    <param name="parent_frame" value="world"/>
+    <param name="map_frame" value="$(arg namespace)_map"/>
+    <param name="base_frame" value="$(arg namespace)/base_link"/>
+    <param name="gt_map_topic" value="$(arg namespace)/gt_in_map"/>
+  </node>
+
+  <!-- <include file="$(find smarc_sensor_plugins_ros)/launch/waterfall.launch">
+    <arg name="namespace" value="$(arg namespace)"/>
+  </include> -->
 
 </launch>
