@@ -12,9 +12,6 @@
   <arg name="namespace" default="lolo_auv"/>
   <arg name="navigation_on" default="false"/>
 
-  <!-- TF broadcaster world to AUV map -->
-  <node pkg="tf" type="static_transform_publisher" name="$(arg namespace)_world_map_bc" args="$(arg x) $(arg y) $(arg z) $(arg roll) $(arg pitch) $(arg yaw) world $(arg namespace)_map 50" />
-
   <group ns="$(arg namespace)">
     <param name="robot_description"
            command="$(find xacro)/xacro.py '$(find smarc_private_auvs)/models/lolo_auv/robots/lolo_auv_$(arg mode).urdf.xacro' debug:=$(arg debug) namespace:=$(arg namespace)" />
@@ -31,18 +28,11 @@
     </node>
   </group>
 
-  <!-- Control components -->
-  <node pkg="smarc_keyboard_teleop" type="lolo_auv_teleop.py" name="$(arg namespace)_teleop" output="screen">
-    <param name="auv_instance" value="/$(arg namespace)"/>
-  </node>
+  <!-- TF broadcaster world to AUV map -->
+  <node pkg="tf" type="static_transform_publisher" name="$(arg namespace)_world_map_bc" args="$(arg x) $(arg y) $(arg z) $(arg roll) $(arg pitch) $(arg yaw) world $(arg namespace)_map 50" />
 
   <!-- Navigation components -->
   <include if="$(arg navigation_on)" file="$(find auv_ekf_slam)/launch/ekf_slam.launch">
-      <arg name="namespace" value="$(arg namespace)"/>
-  </include>
-
-  <!-- Perception components  -->
-  <include file="$(find auv_sensors)/launch/auv_sensors.launch">
       <arg name="namespace" value="$(arg namespace)"/>
   </include>
 
