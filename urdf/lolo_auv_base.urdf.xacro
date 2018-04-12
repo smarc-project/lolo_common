@@ -336,7 +336,7 @@
     </xacro:dvl_plugin_macro>
 
     <!-- Side scan sonar left -->
-    <xacro:multibeam_intensity_sonar
+    <xacro:side_scan_sonar
       namespace="${namespace}"
       suffix="left"
       parent_link="${namespace}/base_link"
@@ -353,10 +353,10 @@
       <origin xyz="0.41225 0.1498 -0.04615" rpy="${0.5*pi} ${-5*d2r+pi/3.0} ${0.5*pi}" />
       <visual>
       </visual>
-    </xacro:multibeam_intensity_sonar>
+    </xacro:side_scan_sonar>
 
     <!-- Side scan sonar right -->
-    <xacro:multibeam_intensity_sonar
+    <xacro:side_scan_sonar
       namespace="${namespace}"
       suffix="right"
       parent_link="${namespace}/base_link"
@@ -373,10 +373,30 @@
       <origin xyz="0.41225 -0.1498 -0.04615" rpy="${0.5*pi} ${-5*d2r+pi/3.0} ${-0.5*pi}" />
       <visual>
       </visual>
+    </xacro:side_scan_sonar>
+
+    <!-- Multibeam sonar -->
+    <xacro:multibeam_intensity_sonar
+      namespace="${namespace}"
+      suffix="down"
+      parent_link="${namespace}/base_link"
+      topic="mbes_laser"
+      mass="0.015"
+      update_rate="5"
+      samples="135"
+      fov="${3.0*pi/4.0}"
+      range_min="1.0"
+      range_max="200.0"
+      range_stddev="0.027"
+      mesh="">
+      <inertia ixx="0.00001" ixy="0.0" ixz="0.0" iyy="0.00001" iyz="0.0" izz="0.00001" />
+      <origin xyz="0.0 0.0 -0.3" rpy="0.0 ${pi/2.0} 0.0" />
+      <visual>
+      </visual>
     </xacro:multibeam_intensity_sonar>
 
-	<!-- Forward looking sonar -->
-	<xacro:forward_looking_sonar
+  	<!-- Forward looking sonar -->
+  	<xacro:forward_looking_sonar
       namespace="${namespace}"
       suffix="down"
       parent_link="${namespace}/base_link"
