@@ -335,48 +335,8 @@
       <origin xyz="0.4785 0.0 -0.0825" rpy="0 ${0.5*pi} 0" />
     </xacro:dvl_plugin_macro>
 
-    <!-- Side scan sonar left -->
-    <xacro:multibeam_intensity_sonar
-      namespace="${namespace}"
-      suffix="left"
-      parent_link="${namespace}/base_link"
-      topic="sss_left"
-      mass="0.015"
-      update_rate="5"
-      samples="100"
-      fov="${pi/3.0}"
-      range_min="1.0"
-      range_max="200.0"
-      range_stddev="0.027"
-      mesh="">
-      <inertia ixx="0.00001" ixy="0.0" ixz="0.0" iyy="0.00001" iyz="0.0" izz="0.00001" />
-      <origin xyz="0.41225 0.1498 -0.04615" rpy="${0.5*pi} ${-5*d2r+pi/3.0} ${0.5*pi}" />
-      <visual>
-      </visual>
-    </xacro:multibeam_intensity_sonar>
-
-    <!-- Side scan sonar right -->
-    <xacro:multibeam_intensity_sonar
-      namespace="${namespace}"
-      suffix="right"
-      parent_link="${namespace}/base_link"
-      topic="sss_right"
-      mass="0.015"
-      update_rate="5"
-      samples="100"
-      fov="${pi/3.0}"
-      range_min="1.0"
-      range_max="200.0"
-      range_stddev="0.027"
-      mesh="">
-      <inertia ixx="0.00001" ixy="0.0" ixz="0.0" iyy="0.00001" iyz="0.0" izz="0.00001" />
-      <origin xyz="0.41225 -0.1498 -0.04615" rpy="${0.5*pi} ${-5*d2r+pi/3.0} ${-0.5*pi}" />
-      <visual>
-      </visual>
-    </xacro:multibeam_intensity_sonar>
-
 	<!-- Forward looking sonar -->
-	<xacro:forward_looking_sonar
+<!-- 	<xacro:forward_looking_sonar
       namespace="${namespace}"
       suffix="down"
       parent_link="${namespace}/base_link"
@@ -391,16 +351,7 @@
       <origin xyz="0.83 0 -0.22" rpy="0 ${0.2*pi} 0" />
       <visual>
       </visual>
-    </xacro:forward_looking_sonar>
-    <!-- RPT
-    <xacro:default_rpt namespace="${namespace}" parent_link="${namespace}/base_link">
-      <origin xyz="0 0 0" rpy="0 0 0"/>
-    </xacro:default_rpt>  -->
-
-    <!-- Pressure
-    <xacro:default_pressure namespace="${namespace}" parent_link="${namespace}/base_link">
-      <origin xyz="0 0 0" rpy="0 0 0"/>
-    </xacro:default_pressure>  -->
+    </xacro:forward_looking_sonar> -->
 
     <!-- IMU  -->
     <xacro:default_imu namespace="${namespace}" parent_link="${namespace}/base_link">
