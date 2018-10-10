@@ -49,9 +49,9 @@
     <param name="gt_map_topic" value="$(arg namespace)/gt_in_map"/>
   </node>
 
-  <include file="$(find smarc_sensor_plugins_ros)/launch/waterfall.launch">
+<!--   <include file="$(find smarc_sensor_plugins_ros)/launch/waterfall.launch">
       <arg name="namespace" value="$(arg namespace)"/>
-  </include>
+  </include> -->
 
 
 </launch>
