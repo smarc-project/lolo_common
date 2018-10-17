@@ -336,7 +336,7 @@
     </xacro:dvl_plugin_macro>
 
 	<!-- Forward looking sonar -->
-<!-- 	<xacro:forward_looking_sonar
+    <!-- <xacro:forward_looking_sonar
       namespace="${namespace}"
       suffix="down"
       parent_link="${namespace}/base_link"
@@ -345,8 +345,8 @@
       update_rate="10"
       samples="100"
 	  fov="1.54719755"
-	  width="1040"
-	  height="480">
+	  width="260"
+	  height="120">
       <inertia ixx="0.00001" ixy="0.0" ixz="0.0" iyy="0.00001" iyz="0.0" izz="0.00001" />
       <origin xyz="0.83 0 -0.22" rpy="0 ${0.2*pi} 0" />
       <visual>
