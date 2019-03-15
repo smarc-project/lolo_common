@@ -20,6 +20,8 @@
 #include "geometry_msgs/PoseWithCovarianceStamped.h"
 #include "geometry_msgs/TwistWithCovarianceStamped.h"
 
+#include <tf2/LinearMath/Quaternion.h>
+
 #define IPADDRESS "192.168.1.177" // IP address of LOLO
 #define PORT 8888
 
@@ -200,7 +202,13 @@ void callback_captain() {
       pos_msg.pose.pose.position.x = lat;
       pos_msg.pose.pose.position.y = lon;
       pos_msg.pose.pose.position.z = depth;
-      //pos_msg.pose.pose.orientation.x,y,z,w = ?
+
+      tf2::Quaternion q; q.setRPY(roll, pitch, yaw); q.normalize();
+      pos_msg.pose.pose.orientation.x = q[0];
+      pos_msg.pose.pose.orientation.y = q[1];
+      pos_msg.pose.pose.orientation.z = q[2];
+      pos_msg.pose.pose.orientation.w = q[3];
+
       rosInterface.status_position_pub.publish(pos_msg);
 
       geometry_msgs::TwistWithCovarianceStamped twist_msg;
@@ -405,7 +413,13 @@ void callback_captain() {
       sensor_msgs::Imu msg;
       msg.header.stamp = ros::Time(sec,usec*1000);
       msg.header.seq = sequence;
-      //msg.orientation = ?
+
+      tf2::Quaternion q; q.setRPY(roll, pitch, yaw); q.normalize();
+      msg.orientation.x = q[0];
+      msg.orientation.y = q[1];
+      msg.orientation.z = q[2];
+      msg.orientation.w = q[3];
+
       msg.angular_velocity.x = rotX;
       msg.angular_velocity.y = rotY;
       msg.angular_velocity.z = rotZ;
@@ -467,7 +481,7 @@ int main(int argc, char *argv[]) {
     printf("main::Connected\n");
   else {
     printf("main::Not connceted\n");
-    //return 0; 
+    //return 0;
   }
 
   printf("main::ros init\n");
