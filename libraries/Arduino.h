@@ -42,6 +42,10 @@ public:
   void concat(char c) {
     _str += c;
   };
+
+  const char* c_str() {
+    return _str.c_str();
+  };
 };
 
 
