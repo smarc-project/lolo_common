@@ -29,7 +29,7 @@
   </group>
 
   <!-- TF broadcaster world to AUV map -->
-  <node pkg="tf" type="static_transform_publisher" name="$(arg namespace)_world_map_bc" args="$(arg x) $(arg y) $(arg z) $(arg roll) $(arg pitch) $(arg yaw) world $(arg namespace)_map 50" />
+  <node pkg="tf" type="static_transform_publisher" name="$(arg namespace)_world_map_bc" args="$(arg x) $(arg y) $(arg z) $(arg yaw) $(arg pitch) $(arg roll) world $(arg namespace)_map 50" />
 
   <!-- Navigation components -->
   <include if="$(arg navigation_on)" file="$(find auv_ekf_slam)/launch/ekf_slam.launch">
@@ -49,9 +49,9 @@
     <param name="gt_map_topic" value="$(arg namespace)/gt_in_map"/>
   </node>
 
-  <include file="$(find smarc_sensor_plugins_ros)/launch/waterfall.launch">
+<!--   <include file="$(find smarc_sensor_plugins_ros)/launch/waterfall.launch">
       <arg name="namespace" value="$(arg namespace)"/>
-  </include>
+  </include> -->
 
 
 </launch>
