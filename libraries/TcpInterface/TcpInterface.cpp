@@ -1,45 +1,48 @@
 #include <TcpInterface.h>
 
-#define IP "192.168.1.177" // "192.168.1.64"
-#define P 8888
+#include <iostream>
+#include <boost/asio.hpp>
+#include <stdio.h>
+#include <boost/thread.hpp>
+#include <boost/array.hpp>
+
+boost::asio::ip::tcp::socket* tcpSocket;
+boost::thread* readThread;
+boost::array<char, 128> rbuf; //receive buffer
 
 // Constructor
 TcpInterFace::TcpInterFace() {
   //Do something?
 };
 
-bool TcpInterFace::connected() {
-  return socket->is_open();
-}
-
-void TcpInterFace::setup(std::string ip, int port) {
-  //Connect to captain
-  endpoint = new boost::asio::ip::tcp::endpoint(boost::asio::ip::address::from_string(IP), P);
-  socket = new boost::asio::ip::tcp::socket(ios);
-	//socket->connect(*endpoint);
+void TcpInterFace::setup(boost::asio::ip::tcp::socket* socket) {
+  tcpSocket = socket;
+  //TODO start thread for reading
+  readThread = new boost::thread(boost::bind(&TcpInterFace::readData, this));
 };
 
-void TcpInterFace::loop(){
-  if(connection_status == TcpConnection::NOT_CONNECTED) {
-    connection_status = TcpConnection::CONNECTING;
-    printf("Connecting\n");
-    socket->async_connect(*endpoint, boost::bind(&TcpInterFace::connect_handler, this, boost::asio::placeholders::error));
-    //ios.run(); //blocking :/
-  }
+void TcpInterFace::loop(){ /*DO something?*/ };
 
-  //do connect stuff
-  if(connection_status == TcpConnection::CONNECTING) {
-    ios.run_one();
-  }
-
-  //connected
-  if(connection_status == TcpConnection::CONNECTED) {
-    boost::system::error_code error2;
-    int n = boost::asio::read(
-    *socket, boost::asio::buffer(rbuf),
-    boost::asio::transfer_at_least(1), error2);
-    if (error2) {
+void TcpInterFace::readData() {
+  printf("Reading started\n");
+  bool ok = true;
+  while(tcpSocket->is_open() && ok) {
+    boost::system::error_code error;
+    int n = boost::asio::read(*tcpSocket, boost::asio::buffer(rbuf), boost::asio::transfer_at_least(1), error);
+    //printf("n %d\n",n);
+    if (error) {
       printf("Read error\n");
+      if (error == boost::asio::error::eof) {
+        ok = false;
+        printf("Connection closed cleanly by peer\n");
+        tcpSocket->close();
+      }
+      else {
+        ok = false;
+        printf("Some other error\n");
+        tcpSocket->close();
+      }
+      //else throw boost::system::system_error(error); // Some other error.
     }
     else {
       for(int i=0;i<n;i++) {
@@ -48,26 +51,22 @@ void TcpInterFace::loop(){
       }
     }
   }
-};
-
-bool TcpInterFace::send_data(char* buf, uint8_t len) {
-  //send data
-  boost::system::error_code error;
-  socket->write_some(boost::asio::buffer(buf, len), error);
+  printf("Connection lost\n");
 }
 
-
-//--------Handlers--------//
-void TcpInterFace::connect_handler(const boost::system::error_code& error)
-{
-  if (!error)
-  {
-    // Connect succeeded.
-    connection_status = TcpConnection::CONNECTED;
-    printf("Handler::Connected\n");
+bool TcpInterFace::send_data(char* buf, uint8_t len) {
+  //printf("Sending data\n");
+  boost::system::error_code error;
+  int sent = tcpSocket->write_some(boost::asio::buffer(buf, len), error);
+  if(error) {
+    if (error == boost::asio::error::eof) {
+      printf("Connection closed cleanly by peer\n");
+      throw boost::system::system_error(error); // Some other error.
+      return false;
+    }
+    else {
+      throw boost::system::system_error(error); // Some other error.
+    }
   }
-  else {
-    connection_status = TcpConnection::FAILED;
-    printf("Handler::Failed to connect\n");
-  }
+  return true;
 }

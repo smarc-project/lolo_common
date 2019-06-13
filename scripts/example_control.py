@@ -3,13 +3,16 @@
 import rospy
 from smarc_msgs.msg import RudderAngle
 from smarc_msgs.msg import ThrusterRPM
+from smarc_msgs.msg import Heartbeat
 from std_msgs.msg import Header
 import numpy as np
 
 
 def main():
     print("Starting")
-    rospy.init_node('loloTest', anonymous=True)
+    rospy.init_node('loloTest', anonymous=False)
+
+    heartbeat_publisher = rospy.Publisher("/test/Heartbeat", Heartbeat, queue_size=1)
 
     thrusterPort = rospy.Publisher('/lolo_auv_1/thrusters/0/input', ThrusterRPM, queue_size=10)
     thrusterStrb = rospy.Publisher('/lolo_auv_1/thrusters/1/input', ThrusterRPM, queue_size=10)
@@ -25,9 +28,12 @@ def main():
     thrusterPort_request = 0.
     thrusterStrb_request = 0.
 
-    rate = rospy.Rate(10) # 10hz
+    rate = rospy.Rate(50) # 1hz
     t = 0.
     while not rospy.is_shutdown():
+
+        heartbeat_publisher.publish(Header())
+
 
         t+=0.01;
 

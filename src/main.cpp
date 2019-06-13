@@ -45,12 +45,6 @@ struct ROSinterface {
   //TODO
   // USBL/RF/etc
 
-  // course
-  // pitch
-  // depth
-  // altitude
-  // waypoint
-
   //information / other things
   ros::Subscriber heartbeat_sub;        //heartbeat message
   ros::Subscriber done_sub;             //scientist mission completed
@@ -591,8 +585,16 @@ void callback_captain() {
   }
 }
 
-
+/*
 int main(int argc, char *argv[]) {
+
+  printf("main::ros init\n");
+
+  ros::init(argc,argv, "CaptainInterface");
+
+  ros::NodeHandle n;
+  //Init subscribers and publishers
+  rosInterface.init(&n);
 
   printf("Set callback\n");
   captain.setCallback(callback_captain);
@@ -607,6 +609,40 @@ int main(int argc, char *argv[]) {
     //return 0;
   }
 
+
+
+  printf("Loop starting\n");
+  ros::Rate loop_rate(1000);
+  while(ros::ok()) {
+    captain.loop(); //should be improved.
+    ros::spinOnce();
+  }
+}
+*/
+#include <iostream>
+#include <boost/asio.hpp>
+
+using namespace boost::asio;
+using ip::tcp;
+using std::string;
+using std::cout;
+using std::endl;
+
+/*
+string read_(tcp::socket & socket) {
+       boost::asio::streambuf buf;
+       boost::asio::read_until( socket, buf, "\n" );
+       string data = boost::asio::buffer_cast<const char*>(buf.data());
+       return data;
+}
+void send_(tcp::socket & socket, const string& message) {
+       const string msg = message + "\n";
+       boost::asio::write( socket, boost::asio::buffer(message) );
+}
+*/
+
+int main(int argc, char *argv[]) {
+
   printf("main::ros init\n");
 
   ros::init(argc,argv, "CaptainInterface");
@@ -615,10 +651,42 @@ int main(int argc, char *argv[]) {
   //Init subscribers and publishers
   rosInterface.init(&n);
 
-  printf("Loop starting\n");
+  printf("Set callback\n");
+  captain.setCallback(callback_captain);
+
+  printf("setup\n");
+
+  boost::asio::io_service io_service;
+  //listen for new connection
+  tcp::acceptor acceptor_(io_service, tcp::endpoint(tcp::v4(), 8888 ));
+  //socket creation
+  tcp::socket socket_(io_service);
+
   ros::Rate loop_rate(1000);
   while(ros::ok()) {
-    captain.loop(); //should be improved.
-    ros::spinOnce();
+    //waiting for connection
+    printf("Waiting for connection\n");
+    acceptor_.accept(socket_);
+    captain.setup(&socket_);
+    while(ros::ok() && socket_.is_open()) {
+      captain.loop(); //should be improved.
+      ros::spinOnce();
+    }
+    socket_.close();
   }
+
+  /*
+  while (1) {
+    //waiting for connection
+    acceptor_.accept(socket_);
+    //read operation
+    string message = read_(socket_);
+    cout << message << endl;
+    //write operation
+    send_(socket_, "Hello From Server!");
+    cout << "Servent sent Hello message to Client!" << endl;
+    socket_.close();
+  }
+  */
+ return 0;
 }
