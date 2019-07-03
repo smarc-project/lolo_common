@@ -507,9 +507,13 @@ void callback_captain() {
       uint64_t usec = timestamp % 1000000;
       uint32_t sequence     = captain.parse_long();
 
-      float pitch           = captain.parse_float();
-      float roll            = captain.parse_float();
-      float yaw             = captain.parse_float();
+      //float pitch           = captain.parse_float();
+      //float roll            = captain.parse_float();
+      //float yaw             = captain.parse_float();
+      float Q0              = captain.parse_float();
+      float Q1              = captain.parse_float();
+      float Q2              = captain.parse_float();
+      float Q3              = captain.parse_float();
 
       float accX            = captain.parse_float();
       float accY            = captain.parse_float();
@@ -523,11 +527,11 @@ void callback_captain() {
       msg.header.stamp = ros::Time(sec,usec*1000);
       msg.header.seq = sequence;
 
-      tf2::Quaternion q; q.setRPY(roll, pitch, yaw); q.normalize();
-      msg.orientation.x = q[0];
-      msg.orientation.y = q[1];
-      msg.orientation.z = q[2];
-      msg.orientation.w = q[3];
+      //tf2::Quaternion q; q.setRPY(roll, pitch, yaw); q.normalize();
+      msg.orientation.x = Q0;
+      msg.orientation.y = Q1;
+      msg.orientation.z = Q2;
+      msg.orientation.w = Q3;
 
       msg.angular_velocity.x = rotX;
       msg.angular_velocity.y = rotY;
