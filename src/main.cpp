@@ -25,9 +25,7 @@
 
 #include "captain_interface/scientistmsg.h"
 
-#include <tf2/LinearMath/Quaternion.h>
-
-#define IPADDRESS "192.168.1.177" // IP address of LOLO
+//#include <tf2/LinearMath/Quaternion.h>
 #define PORT 8888
 
 
@@ -216,59 +214,59 @@ struct ROSinterface {
     //==================================//
 
     //information / other things
-    heartbeat_sub  = n->subscribe<smarc_msgs::Heartbeat>("/test/Heartbeat", 1, &ROSinterface::callback_heartbeat, this);
+    heartbeat_sub  = n->subscribe<smarc_msgs::Heartbeat>("/lolo_auv/Heartbeat", 1, &ROSinterface::callback_heartbeat, this);
     //done_sub  = n->subscribe<s
     //abort_sub  = n->subscribe<
 
     //Control commands: High level
-    waypoint_sub  = n->subscribe<geometry_msgs::Point>("/test/setwaypoint", 1, &ROSinterface::callback_waypoint, this);
-    speed_sub     = n->subscribe<std_msgs::Float32>("/test/setspeed",1,&ROSinterface::callback_speed,this);
-    depth_sub     = n->subscribe<std_msgs::Float32>("/test/setdepth",1,&ROSinterface::callback_depth,this);
-    altitude_sub  = n->subscribe<std_msgs::Float32>("/test/setaltitude",1,&ROSinterface::callback_altitude,this);
+    waypoint_sub  = n->subscribe<geometry_msgs::Point>("/lolo_auv/setwaypoint", 1, &ROSinterface::callback_waypoint, this);
+    speed_sub     = n->subscribe<std_msgs::Float32>("/lolo_auv/setspeed",1,&ROSinterface::callback_speed,this);
+    depth_sub     = n->subscribe<std_msgs::Float32>("/lolo_auv/setdepth",1,&ROSinterface::callback_depth,this);
+    altitude_sub  = n->subscribe<std_msgs::Float32>("/lolo_auv/setaltitude",1,&ROSinterface::callback_altitude,this);
 
     //Control commands medium level
-    yaw_sub       = n->subscribe<std_msgs::Float32>("/test/setyaw",1,&ROSinterface::callback_yaw,this);
-    yawrate_sub   = n->subscribe<std_msgs::Float32>("/test/setyawrate",1,&ROSinterface::callback_yawrate,this);
-    pitch_sub     = n->subscribe<std_msgs::Float32>("/test/setpitch",1,&ROSinterface::callback_pitch,this);
-    rpm_sub       = n->subscribe<smarc_msgs::ThrusterRPM>("/test/setrpm", 1, &ROSinterface::callback_rpm, this);
+    yaw_sub       = n->subscribe<std_msgs::Float32>("/lolo_auv/setyaw",1,&ROSinterface::callback_yaw,this);
+    yawrate_sub   = n->subscribe<std_msgs::Float32>("/lolo_auv/setyawrate",1,&ROSinterface::callback_yawrate,this);
+    pitch_sub     = n->subscribe<std_msgs::Float32>("/lolo_auv/setpitch",1,&ROSinterface::callback_pitch,this);
+    rpm_sub       = n->subscribe<smarc_msgs::ThrusterRPM>("/lolo_auv/setrpm", 1, &ROSinterface::callback_rpm, this);
 
     //Control commands low level
     //Thruster
-    thrusterPort_sub = n->subscribe<smarc_msgs::ThrusterRPM>("/lolo_auv_1/thrusters/0/input", 1, &ROSinterface::callback_thrusterPort, this);
-    thrusterStrb_sub = n->subscribe<smarc_msgs::ThrusterRPM>("/lolo_auv_1/thrusters/1/input", 1, &ROSinterface::callback_thrusterStrb, this);
+    thrusterPort_sub = n->subscribe<smarc_msgs::ThrusterRPM>("/lolo_auv/thrusters/port/input", 1, &ROSinterface::callback_thrusterPort, this);
+    thrusterStrb_sub = n->subscribe<smarc_msgs::ThrusterRPM>("/lolo_auv/thrusters/strb/input", 1, &ROSinterface::callback_thrusterStrb, this);
 
     //control surfaces
-    rudderPort_sub  = n->subscribe<smarc_msgs::RudderAngle>("/lolo_auv_1/fins/0/input", 1, &ROSinterface::callback_rudderPort, this);
-    rudderStrb_sub  = n->subscribe<smarc_msgs::RudderAngle>("/lolo_auv_1/fins/1/input", 1, &ROSinterface::callback_rudderStrb, this);
-    elevator_sub    = n->subscribe<smarc_msgs::RudderAngle>("/lolo_auv_1/back_fins/0/input", 1, &ROSinterface::callback_elevator, this);
+    rudderPort_sub  = n->subscribe<smarc_msgs::RudderAngle>("/lolo_auv/control_surfaces/rudder_port/input", 1, &ROSinterface::callback_rudderPort, this);
+    rudderStrb_sub  = n->subscribe<smarc_msgs::RudderAngle>("/lolo_auv/control_surfaces/rudder_strb/input", 1, &ROSinterface::callback_rudderStrb, this);
+    elevator_sub    = n->subscribe<smarc_msgs::RudderAngle>("/lolo_auv/control_surfaces/elevator/input", 1, &ROSinterface::callback_elevator, this);
 
     //==================================//
     //=========== Publishers ===========//
     //==================================//
     //thrusters
-    thrusterPort_pub     = n->advertise<smarc_msgs::ThrusterRPMStatus>("/lolo_auv_1/thrusters/0/output", 10);
-    thrusterStrb_pub     = n->advertise<smarc_msgs::ThrusterRPMStatus>("/lolo_auv_1/thrusters/1/output", 10);
+    thrusterPort_pub     = n->advertise<smarc_msgs::ThrusterRPMStatus>("/lolo_auv/thrusters/port/output", 10);
+    thrusterStrb_pub     = n->advertise<smarc_msgs::ThrusterRPMStatus>("/lolo_auv/thrusters/strb/output", 10);
 
     //constrol surfaces
-    rudderPort_pub    = n->advertise<smarc_msgs::RudderAngle>("/lolo_auv_1/fins/0/output", 10);
-    rudderStrb_pub    = n->advertise<smarc_msgs::RudderAngle>("/lolo_auv_1/fins/1/output", 10);
-    elevator_pub      = n->advertise<smarc_msgs::RudderAngle>("/lolo_auv_1/back_fins/0/output", 10);
+    rudderPort_pub    = n->advertise<smarc_msgs::RudderAngle>("/lolo_auv/control_surfaces/rudder_port/output", 10);
+    rudderStrb_pub    = n->advertise<smarc_msgs::RudderAngle>("/lolo_auv/control_surfaces/rudder_strb/output", 10);
+    elevator_pub      = n->advertise<smarc_msgs::RudderAngle>("/lolo_auv/control_surfaces/elevator/output", 10);
 
     //sensors
-    imu_pub           = n->advertise<sensor_msgs::Imu>("/test/imu", 10);
-    magnetometer_pub  = n->advertise<sensor_msgs::MagneticField>("/test/mag", 10);
-    dvl_pub           = n->advertise<smarc_msgs::DVL>("/test/dvl", 10);
-    gps_pub           = n->advertise<sensor_msgs::NavSatFix>("/test/gps", 10);
-    pressure_pub      = n->advertise<sensor_msgs::FluidPressure>("/test/pressure", 10);
+    imu_pub           = n->advertise<sensor_msgs::Imu>("/lolo_auv/sensors/imu", 10);
+    magnetometer_pub  = n->advertise<sensor_msgs::MagneticField>("/lolo_auv/sensors/mag", 10);
+    dvl_pub           = n->advertise<smarc_msgs::DVL>("/lolo_auv/sensors/dvl", 10);
+    gps_pub           = n->advertise<sensor_msgs::NavSatFix>("/lolo_auv/sensors/gps", 10);
+    pressure_pub      = n->advertise<sensor_msgs::FluidPressure>("/lolo_auv/sensors/pressure", 10);
 
     //control / status
-    status_altitude_pub = n->advertise<smarc_msgs::AltitudeStamped>("/test/status/altitude", 10);
-    status_position_pub = n->advertise<geometry_msgs::PoseWithCovarianceStamped>("/test/status/position",10);
-    status_twist_pub    = n->advertise<geometry_msgs::TwistWithCovarianceStamped>("test/status/twist",10);
-    control_status_pub  = n->advertise<smarc_msgs::CaptainStatus>("/test/control_status", 10);
+    status_altitude_pub = n->advertise<smarc_msgs::AltitudeStamped>("/lolo_auv/status/altitude", 10);
+    status_position_pub = n->advertise<geometry_msgs::PoseWithCovarianceStamped>("/lolo_auv/status/position",10);
+    status_twist_pub    = n->advertise<geometry_msgs::TwistWithCovarianceStamped>("lolo_auv/status/twist",10);
+    control_status_pub  = n->advertise<smarc_msgs::CaptainStatus>("/lolo_auv/control_status", 10);
 
     //General purpose text message
-    text_pub   = n->advertise<std_msgs::String>("/test/text", 10);
+    text_pub   = n->advertise<std_msgs::String>("/lolo_auv/text", 10);
   }
 };
 
@@ -301,6 +299,10 @@ void callback_captain() {
       float pitch       = captain.parse_float();
       float roll        = captain.parse_float();
       float yaw         = captain.parse_float();
+      float q1          = captain.parse_float();
+      float q2          = captain.parse_float();
+      float q3          = captain.parse_float();
+      float q4          = captain.parse_float();
 
       //publish position
       geometry_msgs::PoseWithCovarianceStamped pos_msg;
@@ -310,11 +312,11 @@ void callback_captain() {
       pos_msg.pose.pose.position.y = lon;
       pos_msg.pose.pose.position.z = depth;
 
-      tf2::Quaternion q; q.setRPY(roll, pitch, yaw); q.normalize();
-      pos_msg.pose.pose.orientation.x = q[0];
-      pos_msg.pose.pose.orientation.y = q[1];
-      pos_msg.pose.pose.orientation.z = q[2];
-      pos_msg.pose.pose.orientation.w = q[3];
+      //tf2::Quaternion q; q.setRPY(roll, pitch, yaw); q.normalize();
+      pos_msg.pose.pose.orientation.x = q1;
+      pos_msg.pose.pose.orientation.y = q2;
+      pos_msg.pose.pose.orientation.z = q3;
+      pos_msg.pose.pose.orientation.w = q4;
 
       rosInterface.status_position_pub.publish(pos_msg);
 

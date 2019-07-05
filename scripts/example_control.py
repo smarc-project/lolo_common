@@ -12,13 +12,13 @@ def main():
     print("Starting")
     rospy.init_node('loloTest', anonymous=False)
 
-    heartbeat_publisher = rospy.Publisher("/test/Heartbeat", Heartbeat, queue_size=1)
+    heartbeat_publisher = rospy.Publisher("/lolo_auv/Heartbeat", Heartbeat, queue_size=1)
 
-    thrusterPort = rospy.Publisher('/lolo_auv_1/thrusters/0/input', ThrusterRPM, queue_size=10)
-    thrusterStrb = rospy.Publisher('/lolo_auv_1/thrusters/1/input', ThrusterRPM, queue_size=10)
-    rudderPort   = rospy.Publisher('/lolo_auv_1/fins/0/input', RudderAngle, queue_size=10)
-    rudderStrb   = rospy.Publisher('/lolo_auv_1/fins/1/input', RudderAngle, queue_size=10)
-    elevator     = rospy.Publisher('/lolo_auv_1/back_fins/0/input', RudderAngle, queue_size=10)
+    thrusterPort = rospy.Publisher('/lolo_auv/thrusters/port/input', ThrusterRPM, queue_size=10)
+    thrusterStrb = rospy.Publisher('/lolo_auv/thrusters/strb/input', ThrusterRPM, queue_size=10)
+    rudderPort   = rospy.Publisher('/lolo_auv/control_surfaces/rudder_port/input', RudderAngle, queue_size=10)
+    rudderStrb   = rospy.Publisher('/lolo_auv/control_surfaces/rudder_strb/input', RudderAngle, queue_size=10)
+    elevator     = rospy.Publisher('/lolo_auv/control_surfaces/elevator/input', RudderAngle, queue_size=10)
 
     print("publishers initialized")
 
@@ -28,7 +28,7 @@ def main():
     thrusterPort_request = 0.
     thrusterStrb_request = 0.
 
-    rate = rospy.Rate(50) # 1hz
+    rate = rospy.Rate(50) # 50hz
     t = 0.
     while not rospy.is_shutdown():
 
@@ -40,8 +40,8 @@ def main():
         rudderPort_request = np.radians(30) * np.sin(t);
         rudderStrb_request = np.radians(30) * np.sin(t);
         elevator_request   = np.radians(30) * np.sin(t);
-        thrusterPort_request = 100.0 * np.sin(t);
-        thrusterStrb_request = 100.0 * np.sin(t);
+        thrusterPort_request = 500.0 * np.sin(t);
+        thrusterStrb_request = 500.0 * np.sin(t);
 
         header = Header()
         thrusterPort.publish(header, thrusterPort_request)
