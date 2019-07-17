@@ -70,6 +70,9 @@ struct ROSinterface {
   ros::Subscriber rudderStrb_sub;
   ros::Subscriber elevator_sub;
 
+  //Lolo onboard console
+  ros::Subscriber menu_sub;
+
   //======================================================//
   //=================== ROS pubishers ====================//
   //======================================================//
@@ -98,6 +101,9 @@ struct ROSinterface {
 
   //General purpose text output
   ros::Publisher text_pub;
+
+  //Lolo onboard console
+  ros::Publisher menu_pub;
 
   //======================================================//
   //=================== ROS callbacks ====================//
@@ -206,6 +212,18 @@ struct ROSinterface {
     captain.send_package();
   };
 
+  void callback_menu(const std_msgs::String::ConstPtr &_msg) {
+    captain.new_package(SC_MENUSTREAM);
+    string s = _msg->data;
+    uint8_t bytes = min(200, (int) s.size());
+    //printf("Tod send: %s  length: %d\n", s.c_str(), bytes);
+    captain.add_byte(bytes);
+    for(int i=0;i<bytes;i++) {
+      captain.add_byte(s[i]);
+    }
+    captain.send_package();
+  };
+
 
   void init(ros::NodeHandle* nh) {
     n = nh;
@@ -240,6 +258,9 @@ struct ROSinterface {
     rudderStrb_sub  = n->subscribe<smarc_msgs::RudderAngle>("/lolo_auv/control_surfaces/rudder_strb/input", 1, &ROSinterface::callback_rudderStrb, this);
     elevator_sub    = n->subscribe<smarc_msgs::RudderAngle>("/lolo_auv/control_surfaces/elevator/input", 1, &ROSinterface::callback_elevator, this);
 
+    //menu
+    menu_sub        = n->subscribe<std_msgs::String>("/lolo_auv/console_in", 1, &ROSinterface::callback_menu, this);
+
     //==================================//
     //=========== Publishers ===========//
     //==================================//
@@ -267,6 +288,9 @@ struct ROSinterface {
 
     //General purpose text message
     text_pub   = n->advertise<std_msgs::String>("/lolo_auv/text", 10);
+
+    //Lolo console menu
+    menu_pub  = n->advertise<std_msgs::String>("/lolo_auv/console_out", 10);
   }
 };
 
@@ -588,43 +612,18 @@ void callback_captain() {
       rosInterface.text_pub.publish(msg);
     }
     break;
+
+    case CS_MENUSTREAM: { //Menu stream data
+      int length = captain.parse_byte();
+      String text = captain.parse_string(length);
+      printf("%s\n",text.c_str());
+      std_msgs::String msg;
+      msg.data = text.c_str();
+      rosInterface.menu_pub.publish(msg);
+    }
   }
 }
 
-/*
-int main(int argc, char *argv[]) {
-
-  printf("main::ros init\n");
-
-  ros::init(argc,argv, "CaptainInterface");
-
-  ros::NodeHandle n;
-  //Init subscribers and publishers
-  rosInterface.init(&n);
-
-  printf("Set callback\n");
-  captain.setCallback(callback_captain);
-
-  printf("setup\n");
-  captain.setup(IPADDRESS, PORT); //Dont start until captain is connected and running.
-
-  if(captain.connected())
-    printf("main::Connected\n");
-  else {
-    printf("main::Not connceted\n");
-    //return 0;
-  }
-
-
-
-  printf("Loop starting\n");
-  ros::Rate loop_rate(1000);
-  while(ros::ok()) {
-    captain.loop(); //should be improved.
-    ros::spinOnce();
-  }
-}
-*/
 #include <iostream>
 #include <boost/asio.hpp>
 

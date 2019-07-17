@@ -19,6 +19,7 @@
 #define CS_MAG              19
 #define CS_PRESSURE         20
 #define CS_TEXT             40
+#define CS_MENUSTREAM       50
 
 //SCIENTIST -> CAPTAIN
 #define SC_HEARTBEAT             150
@@ -37,5 +38,6 @@
 #define SC_SET_TARGET_DEPTH      170
 #define SC_SET_TARGET_ALTITUDE   171
 #define SC_SET_TARGET_WAYPOINT   172
+#define SC_MENUSTREAM            200
 
 #endif
