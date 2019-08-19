@@ -335,13 +335,10 @@ void callback_captain() {
       pos_msg.pose.pose.position.x = lat;
       pos_msg.pose.pose.position.y = lon;
       pos_msg.pose.pose.position.z = depth;
-
-      //tf2::Quaternion q; q.setRPY(roll, pitch, yaw); q.normalize();
       pos_msg.pose.pose.orientation.x = q1;
       pos_msg.pose.pose.orientation.y = q2;
       pos_msg.pose.pose.orientation.z = q3;
       pos_msg.pose.pose.orientation.w = q4;
-
       rosInterface.status_position_pub.publish(pos_msg);
 
       geometry_msgs::TwistWithCovarianceStamped twist_msg;
@@ -437,6 +434,7 @@ void callback_captain() {
       uint64_t sec = timestamp / 1000000;
       uint64_t usec = timestamp % 1000000;
 
+      float rpm_setpoint    = captain.parse_float();
       float rpm             = captain.parse_float();
       float current         = captain.parse_float();
       float torque          = captain.parse_float();
@@ -459,6 +457,7 @@ void callback_captain() {
       uint64_t sec = timestamp / 1000000;
       uint64_t usec = timestamp % 1000000;
 
+      float rpm_setpoint    = captain.parse_float();
       float rpm             = captain.parse_float();
       float current         = captain.parse_float();
       float torque          = captain.parse_float();
@@ -497,6 +496,14 @@ void callback_captain() {
       float range4         = captain.parse_float();
       float range = 0.25*(range1+range2+range3+range4);
 
+      //Covariance
+      float c00            = captain.parse_float();
+      float c10            = captain.parse_float();
+      float c11            = captain.parse_float();
+      float c20            = captain.parse_float();
+      float c21            = captain.parse_float();
+      float c22            = captain.parse_float();
+
       smarc_msgs::DVL msg;
       msg.header.stamp = ros::Time(sec,usec*1000);
       msg.header.seq = sequence;
@@ -504,6 +511,15 @@ void callback_captain() {
       msg.velocity.y = sogY;
       msg.velocity.z = sogZ;
       msg.velocity_reference = smarc_msgs::DVL::VELOCITY_REFERENCE_BOTTOM;
+      msg.velocity_covariance[0] = c00;
+      msg.velocity_covariance[1] = c10;
+      msg.velocity_covariance[2] = c20;
+      msg.velocity_covariance[3] = c10;
+      msg.velocity_covariance[4] = c11;
+      msg.velocity_covariance[5] = c10;
+      msg.velocity_covariance[6] = c20;
+      msg.velocity_covariance[7] = c21;
+      msg.velocity_covariance[8] = c22;
       msg.range = range;
       rosInterface.dvl_pub.publish(msg);
     }
@@ -549,6 +565,22 @@ void callback_captain() {
       float rotY            = captain.parse_float();
       float rotZ            = captain.parse_float();
 
+      //Accelerometer Covariance
+      float a_c00            = captain.parse_float();
+      float a_c10            = captain.parse_float();
+      float a_c11            = captain.parse_float();
+      float a_c20            = captain.parse_float();
+      float a_c21            = captain.parse_float();
+      float a_c22            = captain.parse_float();
+
+      //Gyro Covariance
+      float g_c00            = captain.parse_float();
+      float g_c10            = captain.parse_float();
+      float g_c11            = captain.parse_float();
+      float g_c20            = captain.parse_float();
+      float g_c21            = captain.parse_float();
+      float g_c22            = captain.parse_float();
+
       sensor_msgs::Imu msg;
       msg.header.stamp = ros::Time(sec,usec*1000);
       msg.header.seq = sequence;
@@ -563,10 +595,29 @@ void callback_captain() {
       msg.angular_velocity.y = rotY;
       msg.angular_velocity.z = rotZ;
 
+      msg.angular_velocity_covariance[0] = g_c00;
+      msg.angular_velocity_covariance[1] = g_c10;
+      msg.angular_velocity_covariance[2] = g_c20;
+      msg.angular_velocity_covariance[3] = g_c10;
+      msg.angular_velocity_covariance[4] = g_c11;
+      msg.angular_velocity_covariance[5] = g_c10;
+      msg.angular_velocity_covariance[6] = g_c20;
+      msg.angular_velocity_covariance[7] = g_c21;
+      msg.angular_velocity_covariance[8] = g_c22;
+
       msg.linear_acceleration.x = accX;
       msg.linear_acceleration.y = accY;
       msg.linear_acceleration.z = accZ;
 
+      msg.linear_acceleration_covariance[0] = a_c10;
+      msg.linear_acceleration_covariance[1] = a_c00;
+      msg.linear_acceleration_covariance[2] = a_c20;
+      msg.linear_acceleration_covariance[3] = a_c10;
+      msg.linear_acceleration_covariance[4] = a_c11;
+      msg.linear_acceleration_covariance[5] = a_c10;
+      msg.linear_acceleration_covariance[6] = a_c20;
+      msg.linear_acceleration_covariance[7] = a_c21;
+      msg.linear_acceleration_covariance[8] = a_c22;
       rosInterface.imu_pub.publish(msg);
     }
     break;
@@ -579,13 +630,31 @@ void callback_captain() {
       float magY            = captain.parse_float();
       float magZ            = captain.parse_float();
 
+      //Magnetometer Covariance
+      float m_c00            = captain.parse_float();
+      float m_c10            = captain.parse_float();
+      float m_c11            = captain.parse_float();
+      float m_c20            = captain.parse_float();
+      float m_c21            = captain.parse_float();
+      float m_c22            = captain.parse_float();
+
+
+
       sensor_msgs::MagneticField msg;
       msg.header.stamp = ros::Time(sec,usec*1000);
       msg.header.seq = sequence;
       msg.magnetic_field.x = magX;
       msg.magnetic_field.y = magY;
       msg.magnetic_field.z = magZ;
-      //msg.magnetic_field_covariance = 0;
+      msg.magnetic_field_covariance[0] = m_c00;
+      msg.magnetic_field_covariance[1] = m_c10;
+      msg.magnetic_field_covariance[2] = m_c20;
+      msg.magnetic_field_covariance[3] = m_c10;
+      msg.magnetic_field_covariance[4] = m_c11;
+      msg.magnetic_field_covariance[5] = m_c10;
+      msg.magnetic_field_covariance[6] = m_c20;
+      msg.magnetic_field_covariance[7] = m_c21;
+      msg.magnetic_field_covariance[8] = m_c22;
       rosInterface.magnetometer_pub.publish(msg);
     }
     break;
@@ -595,12 +664,13 @@ void callback_captain() {
       uint64_t usec = timestamp % 1000000;
       uint32_t sequence     = captain.parse_long();
       float pressure        = captain.parse_float();
+      float variance        = captain.parse_float();
 
       sensor_msgs::FluidPressure msg;
       msg.header.stamp = ros::Time(sec,usec*1000);
       msg.header.seq = sequence;
       msg.fluid_pressure = pressure;
-      msg.variance = 0;
+      msg.variance = variance;
       rosInterface.pressure_pub.publish(msg);
     }
     break;
