@@ -359,9 +359,9 @@
     </xacro:default_imu> -->
 
         <!-- Multibeam sonar -->
-<!--     <xacro:multibeam_intensity_sonar
+    <xacro:multibeam_intensity_sonar
       namespace="${namespace}"
-      suffix="down"
+      suffix=""
       parent_link="${namespace}/base_link"
       topic="mbes_laser"
       mass="0.015"
@@ -376,7 +376,7 @@
       <origin xyz="0.0 0.0 -0.3" rpy="0.0 ${pi/2.0} 0.0" />
       <visual>
       </visual>
-    </xacro:multibeam_intensity_sonar> -->
+    </xacro:multibeam_intensity_sonar>
 
 
 	<!-- Mount a camera -->
