@@ -379,7 +379,15 @@ void callback_captain() {
       smarc_msgs::CaptainStatus msg;
       msg.header.stamp = ros::Time(sec,usec*1000);
       msg.header.seq = sequence;
-      msg.active_control_input = source;
+      msg.active_control_input  = source;
+      msg.targetWaypoint_lat    = targetWaypoint_lat;
+      msg.targetWaypoint_lon    = targetWaypoint_lon;
+      msg.targetYaw             = targetYaw;
+      msg.targetPitch           = targetPitch;
+      msg.targetSpeed           = targetSpeed;
+      msg.targetRPM             = targetRPM;
+      msg.targetDepth           = targetDepth;
+      msg.targetAltitude        = targetAltitude;
       rosInterface.control_status_pub.publish(msg);
     }
     break;
@@ -585,7 +593,6 @@ void callback_captain() {
       msg.header.stamp = ros::Time(sec,usec*1000);
       msg.header.seq = sequence;
 
-      //tf2::Quaternion q; q.setRPY(roll, pitch, yaw); q.normalize();
       msg.orientation.x = Q0;
       msg.orientation.y = Q1;
       msg.orientation.z = Q2;
