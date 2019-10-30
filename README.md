@@ -1,3 +1,7 @@
+# smarc_auvs
+
+Public vehicle definitions for the SMARC auvs, for example for simulation
+
 Lolo control input
 ==================
 
@@ -27,3 +31,5 @@ These commands give you the actual values achieved.
 * `/lolo_auv/back_fins/0/output` - horizontal fin back
 * `/lolo_auv/thrusters/0/thrust` - right thruster
 * `/lolo_auv/thrusters/1/thrust` - left thruster
+
+
