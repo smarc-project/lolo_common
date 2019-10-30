@@ -1,0 +1,58 @@
+<launch>
+  <arg name="debug" default="0"/>
+
+  <arg name="x" default="30"/>
+  <arg name="y" default="0"/>
+  <arg name="z" default="-90"/>
+  <arg name="roll" default="0.0"/>
+  <arg name="pitch" default="0.0"/>
+  <arg name="yaw" default="0.0"/>
+
+  <arg name="mode" default="default"/>
+  <arg name="namespace" default="lolo_auv"/>
+  <arg name="navigation_on" default="false"/>
+
+  <group ns="$(arg namespace)">
+    <param name="robot_description"
+           command="$(find xacro)/xacro.py '$(find lolo_auv_sim)/robots/lolo_auv_$(arg mode).urdf.xacro' debug:=$(arg debug) namespace:=$(arg namespace)" />
+
+    <!-- Run a python script to the send a service call to gazebo_ros to spawn a URDF robot -->
+    <node name="urdf_spawner" pkg="gazebo_ros" type="spawn_model" respawn="false" output="screen"
+          args="-urdf -x $(arg x) -y $(arg y) -z $(arg z) -R $(arg roll) -P $(arg pitch) -Y $(arg yaw) -model $(arg namespace) -param /$(arg namespace)/robot_description"/>
+
+    <!-- A joint state publisher plugin already is started with the model, no need to use the default joint state publisher -->
+
+    <!-- Publish robot model for ROS -->
+    <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" respawn="true" output="screen">
+      <param name="robot_description" value="/$(arg namespace)/robot_description" />
+    </node>
+  </group>
+
+  <!-- TF broadcaster world to AUV map -->
+  <!-- <node pkg="tf" type="static_transform_publisher" name="$(arg namespace)_world_map_bc" args="$(arg x) $(arg y) $(arg z) $(arg yaw) $(arg pitch) $(arg roll) world $(arg namespace)_map 50" /> -->
+  <node pkg="tf" type="static_transform_publisher" name="$(arg namespace)_world_map_bc" args="$(arg x) $(arg y) $(arg z) $(arg roll) $(arg pitch) $(arg yaw) world $(arg namespace)_map 50" />
+
+  <!-- Navigation components -->
+  <include if="$(arg navigation_on)" file="$(find auv_ekf_slam)/launch/ekf_slam.launch">
+      <arg name="namespace" value="$(arg namespace)"/>
+  </include>
+
+  <!-- Utils -->
+  <!-- Publishes: - tf world to map based on initial pose of the AUV 
+          - Ground truth pose in map frame
+          - if navigation_on = false, it also publishes the base to map tf -->
+  <node pkg="smarc_gt_bc" name="$(arg namespace)_gt_bc_node" type="ground_truth_bc_node" output="screen">
+    <param name="bc_base_map_tf" value="$(arg navigation_on)"/>
+    <param name="gt_topic" value="/$(arg namespace)/pose_gt"/>
+    <param name="parent_frame" value="world"/>
+    <param name="map_frame" value="$(arg namespace)_map"/>
+    <param name="base_frame" value="$(arg namespace)/base_link"/>
+    <param name="gt_map_topic" value="$(arg namespace)/gt_in_map"/>
+  </node>
+
+<!--   <include file="$(find smarc_sensor_plugins_ros)/launch/waterfall.launch">
+      <arg name="namespace" value="$(arg namespace)"/>
+  </include> -->
+
+
+</launch>
