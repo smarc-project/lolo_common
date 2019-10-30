@@ -35,6 +35,8 @@
   <xacro:property name="prop_mesh_file" value="file://$(find lolo_auv_sim)/mesh/propeller.dae"/>
   <xacro:property name="fin_mesh_file" value="file://$(find lolo_auv_sim)/mesh/fin.dae"/>
   <xacro:property name="back_fin_mesh_file" value="file://$(find lolo_auv_sim)/mesh/back_fin.dae"/>
+  
+  <xacro:property name="decals_mesh_file" value="file://$(find lolo_auv_sim)/mesh/decals.dae"/>
 
   <!-- Fin snippet -->
   <xacro:macro name="fin_macro" params="namespace fin_id *origin">
@@ -141,6 +143,21 @@
                  iyy="3.45" iyz="0"
                  izz="3.45" />
       </inertial>
+    </link>
+    
+    <!-- Create a floating decal -->
+    <joint name="base_link_to_decals" type="fixed">
+        <parent link="${namespace}/base_link"/>
+        <child link="${namespace}/decals"/>
+    </joint>
+    
+    <link name="${namespace}/decals">
+      <visual>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <mesh filename="${decals_mesh_file}" scale="1 1 1" />
+        </geometry>
+      </visual>
     </link>
 
     <!-- Set up hydrodynamic plugin -->
