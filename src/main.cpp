@@ -332,6 +332,7 @@ void callback_captain() {
       geometry_msgs::PoseWithCovarianceStamped pos_msg;
       pos_msg.header.stamp = ros::Time(sec,usec*1000);
       pos_msg.header.seq = sequence;
+      pos_msg.header.frame_id = "world";
       pos_msg.pose.pose.position.x = lat;
       pos_msg.pose.pose.position.y = lon;
       pos_msg.pose.pose.position.z = depth;
@@ -344,6 +345,7 @@ void callback_captain() {
       geometry_msgs::TwistWithCovarianceStamped twist_msg;
       twist_msg.header.stamp = ros::Time(sec,usec*1000);
       twist_msg.header.seq = sequence;
+      twist_msg.header.frame_id = "world";
       twist_msg.twist.twist.linear.x = sogX;
       twist_msg.twist.twist.linear.y = sogY;
       twist_msg.twist.twist.linear.z = sogZ;
@@ -356,6 +358,7 @@ void callback_captain() {
       smarc_msgs::AltitudeStamped alt_msg;
       alt_msg.header.stamp = ros::Time(sec,usec*1000);
       alt_msg.header.seq = sequence;
+      alt_msg.header.frame_id = "world";
       alt_msg.altitude = altitude;
       rosInterface.status_altitude_pub.publish(alt_msg);
     }
@@ -379,6 +382,7 @@ void callback_captain() {
       smarc_msgs::CaptainStatus msg;
       msg.header.stamp = ros::Time(sec,usec*1000);
       msg.header.seq = sequence;
+      msg.header.frame_id = "world";
       msg.active_control_input  = source;
       msg.targetWaypoint_lat    = targetWaypoint_lat;
       msg.targetWaypoint_lon    = targetWaypoint_lon;
@@ -402,6 +406,7 @@ void callback_captain() {
       uint64_t usec = timestamp % 1000000;
       msg.header.stamp = ros::Time(sec,usec*1000);
       msg.header.seq = sequence;
+      msg.header.frame_id = "world";
       msg.angle = current_angle;
       rosInterface.rudderPort_pub.publish(msg);
     }
@@ -417,6 +422,7 @@ void callback_captain() {
       uint64_t usec = timestamp % 1000000;
       msg.header.stamp = ros::Time(sec,usec*1000);
       msg.header.seq = sequence;
+      msg.header.frame_id = "world";
       msg.angle = current_angle;
       rosInterface.rudderStrb_pub.publish(msg);
     }
@@ -432,6 +438,7 @@ void callback_captain() {
       uint64_t usec = timestamp % 1000000;
       msg.header.stamp = ros::Time(sec,usec*1000);
       msg.header.seq = sequence;
+      msg.header.frame_id = "world";
       msg.angle = current_angle;
       rosInterface.elevator_pub.publish(msg);
     }
@@ -452,6 +459,7 @@ void callback_captain() {
       smarc_msgs::ThrusterRPMStatus msg;
       msg.thrusterRPM.header.stamp = ros::Time(sec,usec*1000);
       msg.thrusterRPM.header.seq = sequence;
+      msg.thrusterRPM.header.frame_id = "world";
       msg.thrusterRPM.RPM = rpm;
       msg.current = current;
       msg.torque = torque;
@@ -475,6 +483,7 @@ void callback_captain() {
       smarc_msgs::ThrusterRPMStatus msg;
       msg.thrusterRPM.header.stamp = ros::Time(sec,usec*1000);
       msg.thrusterRPM.header.seq = sequence;
+      msg.thrusterRPM.header.frame_id = "world";
       msg.thrusterRPM.RPM = rpm;
       msg.current = current;
       msg.torque = torque;
@@ -515,6 +524,7 @@ void callback_captain() {
       smarc_msgs::DVL msg;
       msg.header.stamp = ros::Time(sec,usec*1000);
       msg.header.seq = sequence;
+      msg.header.frame_id = "world";
       msg.velocity.x = sogX;
       msg.velocity.y = sogY;
       msg.velocity.z = sogZ;
@@ -546,6 +556,7 @@ void callback_captain() {
       sensor_msgs::NavSatFix msg;
       msg.header.stamp = ros::Time(sec,usec*1000);
       msg.header.seq = sequence;
+      msg.header.frame_id = "world";
       msg.latitude = lat;
       msg.longitude = lon;
       rosInterface.gps_pub.publish(msg);
@@ -592,6 +603,7 @@ void callback_captain() {
       sensor_msgs::Imu msg;
       msg.header.stamp = ros::Time(sec,usec*1000);
       msg.header.seq = sequence;
+      msg.header.frame_id = "world";
 
       msg.orientation.x = Q0;
       msg.orientation.y = Q1;
@@ -650,6 +662,7 @@ void callback_captain() {
       sensor_msgs::MagneticField msg;
       msg.header.stamp = ros::Time(sec,usec*1000);
       msg.header.seq = sequence;
+      msg.header.frame_id = "world";
       msg.magnetic_field.x = magX;
       msg.magnetic_field.y = magY;
       msg.magnetic_field.z = magZ;
@@ -676,6 +689,7 @@ void callback_captain() {
       sensor_msgs::FluidPressure msg;
       msg.header.stamp = ros::Time(sec,usec*1000);
       msg.header.seq = sequence;
+      msg.header.frame_id = "world";
       msg.fluid_pressure = pressure;
       msg.variance = variance;
       rosInterface.pressure_pub.publish(msg);
