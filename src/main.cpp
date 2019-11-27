@@ -84,6 +84,8 @@ struct ROSinterface {
   ros::Publisher rudderPort_pub;
   ros::Publisher rudderStrb_pub;
   ros::Publisher elevator_pub;
+  ros::Publisher elevon_port_pub;
+  ros::Publisher elevon_strb_pub;
 
   //sensors
   ros::Publisher imu_pub;
@@ -272,6 +274,8 @@ struct ROSinterface {
     rudderPort_pub    = n->advertise<smarc_msgs::RudderAngle>("/lolo_auv/control_surfaces/rudder_port/output", 10);
     rudderStrb_pub    = n->advertise<smarc_msgs::RudderAngle>("/lolo_auv/control_surfaces/rudder_strb/output", 10);
     elevator_pub      = n->advertise<smarc_msgs::RudderAngle>("/lolo_auv/control_surfaces/elevator/output", 10);
+    elevon_port_pub   = n->advertise<smarc_msgs::RudderAngle>("/lolo_auv/control_surfaces/elevon_port/output", 10);
+    elevon_strb_pub   = n->advertise<smarc_msgs::RudderAngle>("/lolo_auv/control_surfaces/elevon_strb/output", 10);
 
     //sensors
     imu_pub           = n->advertise<sensor_msgs::Imu>("/lolo_auv/sensors/imu", 10);
@@ -441,6 +445,38 @@ void callback_captain() {
       msg.header.frame_id = "world";
       msg.angle = current_angle;
       rosInterface.elevator_pub.publish(msg);
+    }
+    break;
+    case CS_ELEVON_PORT: { //Port elevon
+      uint64_t timestamp    = captain.parse_llong();
+      uint32_t sequence     = captain.parse_long();
+      float target_angle    = captain.parse_float();
+      float current_angle   = captain.parse_float();
+
+      smarc_msgs::RudderAngle msg;
+      uint64_t sec = timestamp / 1000000;
+      uint64_t usec = timestamp % 1000000;
+      msg.header.stamp = ros::Time(sec,usec*1000);
+      msg.header.seq = sequence;
+      msg.header.frame_id = "world";
+      msg.angle = current_angle;
+      rosInterface.elevon_port_pub.publish(msg);
+    }
+    break;
+    case CS_ELEVON_STRB: { //Strb elevon
+      uint64_t timestamp    = captain.parse_llong();
+      uint32_t sequence     = captain.parse_long();
+      float target_angle    = captain.parse_float();
+      float current_angle   = captain.parse_float();
+
+      smarc_msgs::RudderAngle msg;
+      uint64_t sec = timestamp / 1000000;
+      uint64_t usec = timestamp % 1000000;
+      msg.header.stamp = ros::Time(sec,usec*1000);
+      msg.header.seq = sequence;
+      msg.header.frame_id = "world";
+      msg.angle = current_angle;
+      rosInterface.elevon_strb_pub.publish(msg);
     }
     break;
     case CS_THRUSTER_PORT: { //port thruster

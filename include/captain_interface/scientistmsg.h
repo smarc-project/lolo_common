@@ -18,6 +18,8 @@
 #define CS_IMU              18
 #define CS_MAG              19
 #define CS_PRESSURE         20
+#define CS_ELEVON_STRB      21
+#define CS_ELEVON_PORT      22
 #define CS_TEXT             40
 #define CS_MENUSTREAM       50
 
