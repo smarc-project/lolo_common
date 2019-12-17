@@ -234,67 +234,67 @@ struct ROSinterface {
     //==================================//
 
     //information / other things
-    heartbeat_sub  = n->subscribe<smarc_msgs::Heartbeat>("/lolo_auv/Heartbeat", 1, &ROSinterface::callback_heartbeat, this);
+    heartbeat_sub  = n->subscribe<smarc_msgs::Heartbeat>("/lolo/Heartbeat", 1, &ROSinterface::callback_heartbeat, this);
     //done_sub  = n->subscribe<s
     //abort_sub  = n->subscribe<
 
     //Control commands: High level
-    waypoint_sub  = n->subscribe<geometry_msgs::Point>("/lolo_auv/setwaypoint", 1, &ROSinterface::callback_waypoint, this);
-    speed_sub     = n->subscribe<std_msgs::Float32>("/lolo_auv/setspeed",1,&ROSinterface::callback_speed,this);
-    depth_sub     = n->subscribe<std_msgs::Float32>("/lolo_auv/setdepth",1,&ROSinterface::callback_depth,this);
-    altitude_sub  = n->subscribe<std_msgs::Float32>("/lolo_auv/setaltitude",1,&ROSinterface::callback_altitude,this);
+    waypoint_sub  = n->subscribe<geometry_msgs::Point>("/lolo/ctrl/waypoint_cmd"  ,1, &ROSinterface::callback_waypoint, this);
+    speed_sub     = n->subscribe<std_msgs::Float32>("/lolo/ctrl/speed_cmd"        ,1,&ROSinterface::callback_speed,this);
+    depth_sub     = n->subscribe<std_msgs::Float32>("/lolo/ctrl/depth_cmd"        ,1,&ROSinterface::callback_depth,this);
+    altitude_sub  = n->subscribe<std_msgs::Float32>("/lolo/ctrl/altitude_cmd"     ,1,&ROSinterface::callback_altitude,this);
 
     //Control commands medium level
-    yaw_sub       = n->subscribe<std_msgs::Float32>("/lolo_auv/setyaw",1,&ROSinterface::callback_yaw,this);
-    yawrate_sub   = n->subscribe<std_msgs::Float32>("/lolo_auv/setyawrate",1,&ROSinterface::callback_yawrate,this);
-    pitch_sub     = n->subscribe<std_msgs::Float32>("/lolo_auv/setpitch",1,&ROSinterface::callback_pitch,this);
-    rpm_sub       = n->subscribe<smarc_msgs::ThrusterRPM>("/lolo_auv/setrpm", 1, &ROSinterface::callback_rpm, this);
+    yaw_sub       = n->subscribe<std_msgs::Float32>("/lolo/ctrl/yaw_cmd"          ,1,&ROSinterface::callback_yaw,this);
+    yawrate_sub   = n->subscribe<std_msgs::Float32>("/lolo/ctrl/yawrate_cmd"      ,1,&ROSinterface::callback_yawrate,this);
+    pitch_sub     = n->subscribe<std_msgs::Float32>("/lolo/ctrl/pitch_cmd"        ,1,&ROSinterface::callback_pitch,this);
+    rpm_sub       = n->subscribe<smarc_msgs::ThrusterRPM>("/lolo/ctrl/rpm_cmd"    ,1, &ROSinterface::callback_rpm, this);
 
     //Control commands low level
     //Thruster
-    thrusterPort_sub = n->subscribe<smarc_msgs::ThrusterRPM>("/lolo_auv/thrusters/port/input", 1, &ROSinterface::callback_thrusterPort, this);
-    thrusterStrb_sub = n->subscribe<smarc_msgs::ThrusterRPM>("/lolo_auv/thrusters/strb/input", 1, &ROSinterface::callback_thrusterStrb, this);
+    thrusterPort_sub = n->subscribe<smarc_msgs::ThrusterRPM>("/lolo/ctrl/thruster_port_cmd", 1, &ROSinterface::callback_thrusterPort, this);
+    thrusterStrb_sub = n->subscribe<smarc_msgs::ThrusterRPM>("/lolo/ctrl/thruster_strb_cmd", 1, &ROSinterface::callback_thrusterStrb, this);
 
     //control surfaces
-    rudderPort_sub  = n->subscribe<smarc_msgs::RudderAngle>("/lolo_auv/control_surfaces/rudder_port/input", 1, &ROSinterface::callback_rudderPort, this);
-    rudderStrb_sub  = n->subscribe<smarc_msgs::RudderAngle>("/lolo_auv/control_surfaces/rudder_strb/input", 1, &ROSinterface::callback_rudderStrb, this);
-    elevator_sub    = n->subscribe<smarc_msgs::RudderAngle>("/lolo_auv/control_surfaces/elevator/input", 1, &ROSinterface::callback_elevator, this);
+    rudderPort_sub  = n->subscribe<smarc_msgs::RudderAngle>("/lolo/ctrl/rudder_port_cmd", 1, &ROSinterface::callback_rudderPort, this);
+    rudderStrb_sub  = n->subscribe<smarc_msgs::RudderAngle>("/lolo/ctrl/rudder_strb_cmd", 1, &ROSinterface::callback_rudderStrb, this);
+    elevator_sub    = n->subscribe<smarc_msgs::RudderAngle>("/lolo/ctrl/elevator_cmd"", 1, &ROSinterface::callback_elevator, this);
 
     //menu
-    menu_sub        = n->subscribe<std_msgs::String>("/lolo_auv/console_in", 1, &ROSinterface::callback_menu, this);
+    menu_sub        = n->subscribe<std_msgs::String>("/lolo/console_in", 1, &ROSinterface::callback_menu, this);
 
     //==================================//
     //=========== Publishers ===========//
     //==================================//
     //thrusters
-    thrusterPort_pub     = n->advertise<smarc_msgs::ThrusterRPMStatus>("/lolo_auv/thrusters/port/output", 10);
-    thrusterStrb_pub     = n->advertise<smarc_msgs::ThrusterRPMStatus>("/lolo_auv/thrusters/strb/output", 10);
+    thrusterPort_pub     = n->advertise<smarc_msgs::ThrusterRPMStatus>("/lolo/ctrl/thruster_port_feedback", 10);
+    thrusterStrb_pub     = n->advertise<smarc_msgs::ThrusterRPMStatus>("/lolo/ctrl/thruster_port_feedback", 10);
 
     //constrol surfaces
-    rudderPort_pub    = n->advertise<smarc_msgs::RudderAngle>("/lolo_auv/control_surfaces/rudder_port/output", 10);
-    rudderStrb_pub    = n->advertise<smarc_msgs::RudderAngle>("/lolo_auv/control_surfaces/rudder_strb/output", 10);
-    elevator_pub      = n->advertise<smarc_msgs::RudderAngle>("/lolo_auv/control_surfaces/elevator/output", 10);
-    elevon_port_pub   = n->advertise<smarc_msgs::RudderAngle>("/lolo_auv/control_surfaces/elevon_port/output", 10);
-    elevon_strb_pub   = n->advertise<smarc_msgs::RudderAngle>("/lolo_auv/control_surfaces/elevon_strb/output", 10);
+    rudderPort_pub    = n->advertise<smarc_msgs::RudderAngle>("/lolo/ctrl/rudder_port_feedback", 10);
+    rudderStrb_pub    = n->advertise<smarc_msgs::RudderAngle>("/lolo/ctrl/rudder_strb_feedback", 10);
+    elevator_pub      = n->advertise<smarc_msgs::RudderAngle>("/lolo/ctrl/elevator_feedback", 10);
+    elevon_port_pub   = n->advertise<smarc_msgs::RudderAngle>("/lolo/ctrl/elevon_port_feedback", 10);
+    elevon_strb_pub   = n->advertise<smarc_msgs::RudderAngle>("/lolo/ctrl/elevon_strb_feedback", 10);
 
     //sensors
-    imu_pub           = n->advertise<sensor_msgs::Imu>("/lolo_auv/sensors/imu", 10);
-    magnetometer_pub  = n->advertise<sensor_msgs::MagneticField>("/lolo_auv/sensors/mag", 10);
-    dvl_pub           = n->advertise<smarc_msgs::DVL>("/lolo_auv/sensors/dvl", 10);
-    gps_pub           = n->advertise<sensor_msgs::NavSatFix>("/lolo_auv/sensors/gps", 10);
-    pressure_pub      = n->advertise<sensor_msgs::FluidPressure>("/lolo_auv/sensors/pressure", 10);
+    imu_pub           = n->advertise<sensor_msgs::Imu>("/lolo/sensors/imu", 10);
+    magnetometer_pub  = n->advertise<sensor_msgs::MagneticField>("/lolo/sensors/mag", 10);
+    dvl_pub           = n->advertise<smarc_msgs::DVL>("/lolo/sensors/dvl", 10);
+    gps_pub           = n->advertise<sensor_msgs::NavSatFix>("/lolo/sensors/gps", 10);
+    pressure_pub      = n->advertise<sensor_msgs::FluidPressure>("/lolo/sensors/pressure", 10);
 
     //control / status
-    status_altitude_pub = n->advertise<smarc_msgs::AltitudeStamped>("/lolo_auv/status/altitude", 10);
-    status_position_pub = n->advertise<geometry_msgs::PoseWithCovarianceStamped>("/lolo_auv/status/position",10);
-    status_twist_pub    = n->advertise<geometry_msgs::TwistWithCovarianceStamped>("lolo_auv/status/twist",10);
-    control_status_pub  = n->advertise<smarc_msgs::CaptainStatus>("/lolo_auv/control_status", 10);
+    status_altitude_pub = n->advertise<smarc_msgs::AltitudeStamped>("/lolo/state/altitude", 10);
+    status_position_pub = n->advertise<geometry_msgs::PoseWithCovarianceStamped>("/lolo/state/position",10);
+    status_twist_pub    = n->advertise<geometry_msgs::TwistWithCovarianceStamped>("lolo/state/twist",10);
+    control_status_pub  = n->advertise<smarc_msgs::CaptainStatus>("/lolo/control_status", 10);
 
     //General purpose text message
-    text_pub   = n->advertise<std_msgs::String>("/lolo_auv/text", 10);
+    text_pub   = n->advertise<std_msgs::String>("/lolo/text", 10);
 
     //Lolo console menu
-    menu_pub  = n->advertise<std_msgs::String>("/lolo_auv/console_out", 10);
+    menu_pub  = n->advertise<std_msgs::String>("/lolo/console_out", 10);
   }
 };
 
