@@ -15,6 +15,7 @@ find_package(catkin REQUIRED COMPONENTS
   rospy
   std_msgs
   smarc_msgs
+  imc_ros_bridge
   genmsg
 )
 

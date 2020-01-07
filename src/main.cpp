@@ -22,6 +22,7 @@
 #include "geometry_msgs/Point.h"
 #include "std_msgs/Float32.h"
 #include <std_msgs/Empty.h>
+#include "imc_ros_bridge/VehicleState.h"
 
 #include "captain_interface/scientistmsg.h"
 #include "captain_interface/UTM.h"
@@ -104,6 +105,7 @@ struct ROSinterface {
   ros::Publisher status_twist_pub;
 
   ros::Publisher control_status_pub;
+  ros::Publisher vehiclestate_pub;
 
   //General purpose text output
   ros::Publisher text_pub;
@@ -320,7 +322,7 @@ struct ROSinterface {
     status_position_pub_UTM = n->advertise<geometry_msgs::PoseWithCovarianceStamped>("/lolo/state/position_UTM",10);
     status_twist_pub    = n->advertise<geometry_msgs::TwistWithCovarianceStamped>("lolo/state/twist",10);
     control_status_pub  = n->advertise<smarc_msgs::CaptainStatus>("/lolo/control_status", 10);
-
+    vehiclestate_pub    = n->advertise<imc_ros_bridge::VehicleState>("/lolo/lolo/vehicle_state", 10);
     //General purpose text message
     text_pub   = n->advertise<std_msgs::String>("/lolo/text", 10);
 
@@ -446,6 +448,20 @@ void callback_captain() {
       msg.targetDepth           = targetDepth;
       msg.targetAltitude        = targetAltitude;
       rosInterface.control_status_pub.publish(msg);
+
+      imc_ros_bridge::VehicleState vehiclestate_msg;
+      vehiclestate_msg.op_mode = vehiclestate_msg.SERVICE;
+      if(source == 4) vehiclestate_msg.op_mode = vehiclestate_msg.ERROR;
+      vehiclestate_msg.error_count = 0;
+      //vehiclestate_msg.error_ents = ;
+      //vehiclestate_msg.maneuver_type =
+      //vehiclestate_msg.maneuver_stime =
+      //vehiclestate_msg.maneuver_eta =
+      vehiclestate_msg.control_loops = 0; //TODO find out how this is used
+      //vehiclestate_msg.flags =
+      //vehiclestate_msg.last_error =
+      //vehiclestate_msg.last_error_time =
+      rosInterface.vehiclestate_pub.publish(vehiclestate_msg);
     }
     break;
     case CS_RUDDER_PORT: { //port rudder
