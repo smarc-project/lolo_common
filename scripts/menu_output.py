@@ -14,7 +14,7 @@ def callback(data):
 def main():
     rospy.init_node('menuListener', anonymous=True)
 
-    rospy.Subscriber('/lolo_auv/console_out', String, callback)
+    rospy.Subscriber('/lolo/console_out', String, callback)
 
     # spin() simply keeps python from exiting until this node is stopped
     rospy.spin()

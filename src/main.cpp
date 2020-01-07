@@ -17,19 +17,21 @@
 #include "smarc_msgs/RudderAngle.h"
 #include "smarc_msgs/ThrusterRPM.h"
 #include "smarc_msgs/ThrusterRPMStatus.h"
-#include "smarc_msgs/Heartbeat.h"
 #include "geometry_msgs/PoseWithCovarianceStamped.h"
 #include "geometry_msgs/TwistWithCovarianceStamped.h"
 #include "geometry_msgs/Point.h"
 #include "std_msgs/Float32.h"
+#include <std_msgs/Empty.h>
 
 #include "captain_interface/scientistmsg.h"
+#include "captain_interface/UTM.h"
 
 //#include <tf2/LinearMath/Quaternion.h>
 #define PORT 8888
 
 
 TcpInterFace captain;
+UTM utmConverter;
 
 struct ROSinterface {
 
@@ -50,6 +52,7 @@ struct ROSinterface {
 
   //Control commands: High level
   ros::Subscriber waypoint_sub;         //target yaw
+  ros::Subscriber waypoint_sub_UTM;         //target yaw
   ros::Subscriber speed_sub;            //target speed
   ros::Subscriber depth_sub;            //target depth
   ros::Subscriber altitude_sub;         //target altitude
@@ -97,6 +100,7 @@ struct ROSinterface {
   //control / status
   ros::Publisher status_altitude_pub;
   ros::Publisher status_position_pub;
+  ros::Publisher status_position_pub_UTM;
   ros::Publisher status_twist_pub;
 
   ros::Publisher control_status_pub;
@@ -111,22 +115,47 @@ struct ROSinterface {
   //=================== ROS callbacks ====================//
   //======================================================//
 
-  void callback_heartbeat(const smarc_msgs::Heartbeat::ConstPtr &_msg) {
+  void callback_heartbeat(const std_msgs::Empty::ConstPtr &_msg) {
     captain.new_package(SC_HEARTBEAT); // Heartbeat message
     captain.send_package();
   };
 
-  //void callback_done(const smarc_msgs::done::ConstPtr &_msg) {};
+  /*
+  void callback_abort(const std_msgs::Empty::ConstPtr &_msg) {
+    //TODO decide what happens.
+    // * go to surface and stop
+    // * disarm
+    // * Emergency mode
+  };
+  */
 
-  //void callback_abort(const smarc_msgs::abort::ConstPtr &_msg) {};
+  /*
+  void callback_done(const std_msgs::Empty::ConstPtr &_msg) {
+    //Scientist is done and wants captain to take back control of the vehicle
+  };
+  */
 
   void callback_waypoint(const geometry_msgs::Point::ConstPtr &_msg) {
-    float lat = _msg->x;
-    float lon = _msg->y;
+    float lon = _msg->x;
+    float lat = _msg->y;
+    //float depth = _msg->z; //depth or altitude?
     captain.new_package(SC_SET_TARGET_WAYPOINT); // set target waypoint
     captain.add_float(lat);
     captain.add_float(lon);
     captain.send_package();
+  };
+
+  void callback_UTMwaypoint(const geometry_msgs::Point::ConstPtr &_msg) {
+    //TODO Convert
+    std::cout << "TODO Find a message with zone and band instead of point. This does not work" << std::endl;
+    /*
+    float lon = _msg->x;
+    float lat = _msg->y;
+    captain.new_package(SC_SET_TARGET_WAYPOINT); // set target waypoint
+    captain.add_float(lat);
+    captain.add_float(lon);
+    captain.send_package();
+    */
   };
 
   void callback_speed(const std_msgs::Float32::ConstPtr &_msg) {
@@ -171,46 +200,46 @@ struct ROSinterface {
     captain.send_package();
   };
 
-  void callback_rpm(const smarc_msgs::ThrusterRPM::ConstPtr &_msg) {
-    float targetRPM = _msg->RPM;
+  void callback_rpm(const std_msgs::Float32::ConstPtr &_msg) {
+    float targetRPM = _msg->data;
     captain.new_package(SC_SET_TARGET_RPM); // targetRPM
     captain.add_float(targetRPM);
     captain.send_package();
   };
 
 
-  void callback_rudderPort(const smarc_msgs::RudderAngle::ConstPtr &_msg) {
+  void callback_rudderPort(const std_msgs::Float32::ConstPtr &_msg) {
     //printf("Port rudder: %f\n", _msg->angle);
     captain.new_package(SC_SET_RUDDER_PORT); // Control message
-    captain.add_float(_msg->angle);
+    captain.add_float(_msg->data);
     captain.send_package();
   };
 
-  void callback_rudderStrb(const smarc_msgs::RudderAngle::ConstPtr &_msg) {
+  void callback_rudderStrb(const std_msgs::Float32::ConstPtr &_msg) {
     //printf("Strb rudder: %f\n", _msg->angle);
     captain.new_package(SC_SET_RUDDER_STRB);
-    captain.add_float(_msg->angle);
+    captain.add_float(_msg->data);
     captain.send_package();
   };
 
-  void callback_elevator(const smarc_msgs::RudderAngle::ConstPtr &_msg) {
+  void callback_elevator(const std_msgs::Float32::ConstPtr &_msg) {
     //printf("elevator: %f\n", _msg->angle);
     captain.new_package(SC_SET_ELEVATOR);
-    captain.add_float(_msg->angle);
+    captain.add_float(_msg->data);
     captain.send_package();
   };
 
-  void callback_thrusterPort(const smarc_msgs::ThrusterRPM::ConstPtr &_msg) {
+  void callback_thrusterPort(const std_msgs::Float32::ConstPtr &_msg) {
     //printf("Port Thruster angle received %f\n", _msg->angle);
     captain.new_package(SC_SET_THRUSTER_PORT);
-    captain.add_float(_msg->RPM);
+    captain.add_float(_msg->data);
     captain.send_package();
   };
 
-  void callback_thrusterStrb(const smarc_msgs::ThrusterRPM::ConstPtr &_msg) {
+  void callback_thrusterStrb(const std_msgs::Float32::ConstPtr &_msg) {
     //printf("Strb Thruster: %f\n", _msg->angle);
     captain.new_package(SC_SET_THRUSTER_STRB);
-    captain.add_float(_msg->RPM);
+    captain.add_float(_msg->data);
     captain.send_package();
   };
 
@@ -234,31 +263,32 @@ struct ROSinterface {
     //==================================//
 
     //information / other things
-    heartbeat_sub  = n->subscribe<smarc_msgs::Heartbeat>("/lolo/Heartbeat", 1, &ROSinterface::callback_heartbeat, this);
+    heartbeat_sub  = n->subscribe<std_msgs::Empty>("/lolo/Heartbeat", 1, &ROSinterface::callback_heartbeat, this);
     //done_sub  = n->subscribe<s
     //abort_sub  = n->subscribe<
 
     //Control commands: High level
     waypoint_sub  = n->subscribe<geometry_msgs::Point>("/lolo/ctrl/waypoint_cmd"  ,1, &ROSinterface::callback_waypoint, this);
-    speed_sub     = n->subscribe<std_msgs::Float32>("/lolo/ctrl/speed_cmd"        ,1,&ROSinterface::callback_speed,this);
-    depth_sub     = n->subscribe<std_msgs::Float32>("/lolo/ctrl/depth_cmd"        ,1,&ROSinterface::callback_depth,this);
-    altitude_sub  = n->subscribe<std_msgs::Float32>("/lolo/ctrl/altitude_cmd"     ,1,&ROSinterface::callback_altitude,this);
+    waypoint_sub_UTM  = n->subscribe<geometry_msgs::Point>("/lolo/ctrl/UTMwaypoint_cmd"  ,1, &ROSinterface::callback_UTMwaypoint, this);
+    speed_sub     = n->subscribe<std_msgs::Float32>("/lolo/ctrl/speed_cmd"        ,1, &ROSinterface::callback_speed,this);
+    depth_sub     = n->subscribe<std_msgs::Float32>("/lolo/ctrl/depth_cmd"        ,1, &ROSinterface::callback_depth,this);
+    altitude_sub  = n->subscribe<std_msgs::Float32>("/lolo/ctrl/altitude_cmd"     ,1, &ROSinterface::callback_altitude,this);
 
     //Control commands medium level
-    yaw_sub       = n->subscribe<std_msgs::Float32>("/lolo/ctrl/yaw_cmd"          ,1,&ROSinterface::callback_yaw,this);
-    yawrate_sub   = n->subscribe<std_msgs::Float32>("/lolo/ctrl/yawrate_cmd"      ,1,&ROSinterface::callback_yawrate,this);
-    pitch_sub     = n->subscribe<std_msgs::Float32>("/lolo/ctrl/pitch_cmd"        ,1,&ROSinterface::callback_pitch,this);
-    rpm_sub       = n->subscribe<smarc_msgs::ThrusterRPM>("/lolo/ctrl/rpm_cmd"    ,1, &ROSinterface::callback_rpm, this);
+    yaw_sub       = n->subscribe<std_msgs::Float32>("/lolo/ctrl/yaw_cmd"          ,1, &ROSinterface::callback_yaw,this);
+    yawrate_sub   = n->subscribe<std_msgs::Float32>("/lolo/ctrl/yawrate_cmd"      ,1, &ROSinterface::callback_yawrate,this);
+    pitch_sub     = n->subscribe<std_msgs::Float32>("/lolo/ctrl/pitch_cmd"        ,1, &ROSinterface::callback_pitch,this);
+    rpm_sub       = n->subscribe<std_msgs::Float32>("/lolo/ctrl/rpm_cmd"    ,1, &ROSinterface::callback_rpm, this);
 
     //Control commands low level
     //Thruster
-    thrusterPort_sub = n->subscribe<smarc_msgs::ThrusterRPM>("/lolo/ctrl/thruster_port_cmd", 1, &ROSinterface::callback_thrusterPort, this);
-    thrusterStrb_sub = n->subscribe<smarc_msgs::ThrusterRPM>("/lolo/ctrl/thruster_strb_cmd", 1, &ROSinterface::callback_thrusterStrb, this);
+    thrusterPort_sub = n->subscribe<std_msgs::Float32>("/lolo/ctrl/thruster_port_cmd", 1, &ROSinterface::callback_thrusterPort, this);
+    thrusterStrb_sub = n->subscribe<std_msgs::Float32>("/lolo/ctrl/thruster_strb_cmd", 1, &ROSinterface::callback_thrusterStrb, this);
 
     //control surfaces
-    rudderPort_sub  = n->subscribe<smarc_msgs::RudderAngle>("/lolo/ctrl/rudder_port_cmd", 1, &ROSinterface::callback_rudderPort, this);
-    rudderStrb_sub  = n->subscribe<smarc_msgs::RudderAngle>("/lolo/ctrl/rudder_strb_cmd", 1, &ROSinterface::callback_rudderStrb, this);
-    elevator_sub    = n->subscribe<smarc_msgs::RudderAngle>("/lolo/ctrl/elevator_cmd"", 1, &ROSinterface::callback_elevator, this);
+    rudderPort_sub  = n->subscribe<std_msgs::Float32>("/lolo/ctrl/rudder_port_cmd", 1, &ROSinterface::callback_rudderPort, this);
+    rudderStrb_sub  = n->subscribe<std_msgs::Float32>("/lolo/ctrl/rudder_strb_cmd", 1, &ROSinterface::callback_rudderStrb, this);
+    elevator_sub    = n->subscribe<std_msgs::Float32>("/lolo/ctrl/elevator_cmd", 1, &ROSinterface::callback_elevator, this);
 
     //menu
     menu_sub        = n->subscribe<std_msgs::String>("/lolo/console_in", 1, &ROSinterface::callback_menu, this);
@@ -268,7 +298,7 @@ struct ROSinterface {
     //==================================//
     //thrusters
     thrusterPort_pub     = n->advertise<smarc_msgs::ThrusterRPMStatus>("/lolo/ctrl/thruster_port_feedback", 10);
-    thrusterStrb_pub     = n->advertise<smarc_msgs::ThrusterRPMStatus>("/lolo/ctrl/thruster_port_feedback", 10);
+    thrusterStrb_pub     = n->advertise<smarc_msgs::ThrusterRPMStatus>("/lolo/ctrl/thruster_strb_feedback", 10);
 
     //constrol surfaces
     rudderPort_pub    = n->advertise<smarc_msgs::RudderAngle>("/lolo/ctrl/rudder_port_feedback", 10);
@@ -287,6 +317,7 @@ struct ROSinterface {
     //control / status
     status_altitude_pub = n->advertise<smarc_msgs::AltitudeStamped>("/lolo/state/altitude", 10);
     status_position_pub = n->advertise<geometry_msgs::PoseWithCovarianceStamped>("/lolo/state/position",10);
+    status_position_pub_UTM = n->advertise<geometry_msgs::PoseWithCovarianceStamped>("/lolo/state/position_UTM",10);
     status_twist_pub    = n->advertise<geometry_msgs::TwistWithCovarianceStamped>("lolo/state/twist",10);
     control_status_pub  = n->advertise<smarc_msgs::CaptainStatus>("/lolo/control_status", 10);
 
@@ -332,19 +363,37 @@ void callback_captain() {
       float q3          = captain.parse_float();
       float q4          = captain.parse_float();
 
-      //publish position
+      //publish position (lon,lat,depth)
       geometry_msgs::PoseWithCovarianceStamped pos_msg;
       pos_msg.header.stamp = ros::Time(sec,usec*1000);
       pos_msg.header.seq = sequence;
       pos_msg.header.frame_id = "world";
-      pos_msg.pose.pose.position.x = lat;
-      pos_msg.pose.pose.position.y = lon;
+      pos_msg.pose.pose.position.x = lon;
+      pos_msg.pose.pose.position.y = lat;
       pos_msg.pose.pose.position.z = depth;
-      pos_msg.pose.pose.orientation.x = q1;
-      pos_msg.pose.pose.orientation.y = q2;
-      pos_msg.pose.pose.orientation.z = q3;
-      pos_msg.pose.pose.orientation.w = q4;
+      pos_msg.pose.pose.orientation.w = q1;
+      pos_msg.pose.pose.orientation.x = q2;
+      pos_msg.pose.pose.orientation.y = q3;
+      pos_msg.pose.pose.orientation.z = q4;
       rosInterface.status_position_pub.publish(pos_msg);
+
+      //publish position (UTM)
+      utmConverter.GeoToUTM(lat,lon);
+      float X = utmConverter.x;
+      float Y = utmConverter.y;
+
+      geometry_msgs::PoseWithCovarianceStamped pos_msg_UTM;
+      pos_msg.header.stamp = ros::Time(sec,usec*1000);
+      pos_msg.header.seq = sequence;
+      pos_msg.header.frame_id = "world_utm";
+      pos_msg.pose.pose.position.x = X;
+      pos_msg.pose.pose.position.y = Y;
+      pos_msg.pose.pose.position.z = depth;
+      pos_msg.pose.pose.orientation.w = q1;
+      pos_msg.pose.pose.orientation.x = q2;
+      pos_msg.pose.pose.orientation.y = q3;
+      pos_msg.pose.pose.orientation.z = q4;
+      rosInterface.status_position_pub_UTM.publish(pos_msg);
 
       geometry_msgs::TwistWithCovarianceStamped twist_msg;
       twist_msg.header.stamp = ros::Time(sec,usec*1000);
@@ -375,7 +424,7 @@ void callback_captain() {
 
       float source  = captain.parse_byte();
       float targetWaypoint_lat = captain.parse_float();
-      float targetWaypoint_lon =  captain.parse_float();
+      float targetWaypoint_lon = captain.parse_float();
       float targetYaw      = captain.parse_float();
       float targetPitch    = captain.parse_float();
       float targetSpeed    = captain.parse_float();
@@ -595,6 +644,8 @@ void callback_captain() {
       msg.header.frame_id = "world";
       msg.latitude = lat;
       msg.longitude = lon;
+      msg.status.status = 0;
+      msg.status.service = 1;
       rosInterface.gps_pub.publish(msg);
     }
     break;
@@ -607,10 +658,10 @@ void callback_captain() {
       //float pitch           = captain.parse_float();
       //float roll            = captain.parse_float();
       //float yaw             = captain.parse_float();
-      float Q0              = captain.parse_float();
       float Q1              = captain.parse_float();
       float Q2              = captain.parse_float();
       float Q3              = captain.parse_float();
+      float Q4              = captain.parse_float();
 
       float accX            = captain.parse_float();
       float accY            = captain.parse_float();
@@ -641,10 +692,10 @@ void callback_captain() {
       msg.header.seq = sequence;
       msg.header.frame_id = "world";
 
-      msg.orientation.x = Q0;
-      msg.orientation.y = Q1;
-      msg.orientation.z = Q2;
-      msg.orientation.w = Q3;
+      msg.orientation.w = Q1;
+      msg.orientation.x = Q2;
+      msg.orientation.y = Q3;
+      msg.orientation.z = Q4;
 
       msg.angular_velocity.x = rotX;
       msg.angular_velocity.y = rotY;
