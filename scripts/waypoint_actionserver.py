@@ -74,7 +74,7 @@ class WaypointServer(object):
             counter += 1
             r.sleep()
 
-        # TODO publish vel=0 to stop
+        # publish vel=0 to stop
         targetSpeed = 0
         #self.wp_publisher
         self.speed_publisher.publish(targetSpeed)
@@ -120,8 +120,8 @@ class WaypointServer(object):
         rospy.Subscriber("/move_base_simple/goal", PoseStamped, self.callback)
         rospy.Subscriber("/lolo/lolo/estimated_state", Pose, self.pose_callback)
 
-        self.wp_publisher = rospy.Publisher("/lolo/ctrl/waypoint_cmd", Point, queue_size=1)
-        self.speed_publisher = rospy.Publisher("/lolo/ctrl/speed_cmd", Float32, queue_size=1)
+        self.wp_publisher = rospy.Publisher("/lolo/core/waypoint_cmd", Point, queue_size=1)
+        self.speed_publisher = rospy.Publisher("/lolo/core/speed_cmd", Float32, queue_size=1)
 
         rospy.Timer(rospy.Duration(0.5), self.timer_callback)
 
