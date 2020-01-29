@@ -4,7 +4,7 @@ from __future__ import division, print_function
 
 import scipy.special
 from std_msgs.msg import Float32, Header
-from geometry_msgs.msg import PoseStamped, PointStamped, Pose, Point
+from geometry_msgs.msg import PoseWithCovarianceStamped, PoseStamped, PointStamped, Pose, Point
 from move_base_msgs.msg import MoveBaseFeedback, MoveBaseResult, MoveBaseAction
 import math
 import actionlib
@@ -14,7 +14,7 @@ from smarc_msgs.msg import Float32Stamped
 class WaypointServer(object):
 
     #current position of lolo
-    _current_pose = Pose();
+    _current_pose = Pose()
     goal_tolerance = 10
 
     # create messages that are used to publish feedback/result
@@ -36,7 +36,7 @@ class WaypointServer(object):
 
     def pose_callback(self, msg):
         #print("Lolo position received")
-        self._current_pose = msg
+        self._current_pose = msg.pose
 
     def callback(self, pose_msg):
         if len(pose_msg.header.frame_id) == 0:
@@ -119,7 +119,7 @@ class WaypointServer(object):
         self.nav_goal = None
 
         rospy.Subscriber("/move_base_simple/goal", PoseStamped, self.callback)
-        rospy.Subscriber("/lolo/lolo/estimated_state", Pose, self.pose_callback)
+        rospy.Subscriber("/lolo/lolo//lolo/core/state/position", PoseWithCovarianceStamped, self.pose_callback)
 
         self.wp_publisher = rospy.Publisher("/lolo/core/waypoint_cmd", Point, queue_size=1)
         self.speed_publisher = rospy.Publisher("/lolo/core/speed_cmd", Float32Stamped, queue_size=1)

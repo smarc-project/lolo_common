@@ -77,7 +77,7 @@ void RosInterFace::init(ros::NodeHandle* nh, CaptainInterFace* cap) {
   pressure_pub      = n->advertise<sensor_msgs::FluidPressure>("/lolo/core/pressure", 10);
 
   //control / status
-  status_altitude_pub     = n->advertise<smarc_msgs::AltitudeStamped>("/lolo/core/state/altitude", 10);
+  status_altitude_pub     = n->advertise<smarc_msgs::Float32Stamped>("/lolo/core/state/altitude", 10);
   status_position_pub     = n->advertise<geometry_msgs::PoseWithCovarianceStamped>("/lolo/core/state/position",10);
   status_position_pub_UTM = n->advertise<smarc_msgs::UTMposeStamped>("/lolo/core/state/position_UTM",10);
   status_twist_pub        = n->advertise<geometry_msgs::TwistWithCovarianceStamped>("lolo/core/state/twist",10);

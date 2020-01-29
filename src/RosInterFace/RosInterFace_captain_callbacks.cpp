@@ -52,11 +52,11 @@ uint64_t timestamp    = captain->parse_llong();
   status_twist_pub.publish(twist_msg);
 
   //publish altitude
-  smarc_msgs::AltitudeStamped alt_msg;
+  smarc_msgs::Float32Stamped alt_msg;
   alt_msg.header.stamp = ros::Time(sec,usec*1000);
   alt_msg.header.seq = sequence;
   alt_msg.header.frame_id = "local_dvl";
-  alt_msg.altitude = altitude;
+  alt_msg.data = altitude;
   status_altitude_pub.publish(alt_msg);
 }
 
