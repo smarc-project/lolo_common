@@ -72,7 +72,7 @@ class translator:
         self.lolo.altitude = msg.data
 
     def callback_state_pos(self,msg):
-        print("new state")
+        #print("new state")
         self.lolo.lat = msg.pose.pose.position.x
         self.lolo.lon = msg.pose.pose.position.y
         self.lolo.depth = msg.pose.pose.position.z
@@ -89,18 +89,18 @@ class translator:
         newMsg.lon =     self.lolo.lon                      # Longitude (WGS-84).
         newMsg.height =  0                                  # Height (WGS-84).
         
-        newMsg.phi =     self.lolo.roll                     #(roll)  #Rotation over x axis.
-        newMsg.theta =   self.lolo.pitch                    #(pitch) #Rotation over y axis.
-        newMsg.psi =     self.lolo.yaw                      #(yaw) #Rotation over z axis.
+        newMsg.phi =     self.lolo.roll                     # (roll)  #Rotation over x axis.
+        newMsg.theta =   self.lolo.pitch                    # (pitch) #Rotation over y axis.
+        newMsg.psi =     self.lolo.yaw                      # (yaw)   #Rotation over z axis.
         
         newMsg.u   =     self.lolo.vx                       # vxmsg.Body-Fixed xx Velocity.
         newMsg.v   =     self.lolo.vy                       # Body-Fixed yy Velocity.
         newMsg.w   =     self.lolo.vz                       # Body-Fixed zz Velocity.
 
         lolo_vel = np.sqrt(self.lolo.vx**2 + self.lolo.vy**2)
-        newMsg.vx  =    np.cos(self.lolo.yaw)*lolo_vel      # Ground Velocity X (North).
-        newMsg.vy  =    np.sin(self.lolo.yaw)*lolo_vel      # Ground Velocity Y (East).
-        newMsg.vz  =    self.lolo.vz                        # Ground Velocity Z (Down).
+        newMsg.vx  =     np.cos(self.lolo.yaw)*lolo_vel     # Ground Velocity X (North).
+        newMsg.vy  =     np.sin(self.lolo.yaw)*lolo_vel     # Ground Velocity Y (East).
+        newMsg.vz  =     self.lolo.vz                       # Ground Velocity Z (Down).
         newMsg.p   =     self.lolo.rotX                     # Angular Velocity in x.
         newMsg.q   =     self.lolo.rotY                     # Angular Velocity in y.
         newMsg.r   =     self.lolo.rotZ                     # Angular Velocity in z.
@@ -110,12 +110,12 @@ class translator:
         self.state_publisher.publish(newMsg)
 
     def callback_gps(self, msg):
-        print("new GPS")
+        #print("new GPS")
         self.gps_publisher_fix.publish(msg)
         self.gps_publisher_nav.publish(msg)
 
     def callback_captainstatus(self,msg):
-      print("new captain status")
+      #print("new captain status")
       vehiclestate_msg = VehicleState()
       vehiclestate_msg.op_mode = vehiclestate_msg.SERVICE;
       if(msg.active_control_input == 4): vehiclestate_msg.op_mode = vehiclestate_msg.ERROR;

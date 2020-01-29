@@ -36,7 +36,7 @@ class WaypointServer(object):
 
     def pose_callback(self, msg):
         #print("Lolo position received")
-        self._current_pose = msg.pose
+        self._current_pose = msg.pose.pose
 
     def callback(self, pose_msg):
         if len(pose_msg.header.frame_id) == 0:
@@ -119,7 +119,7 @@ class WaypointServer(object):
         self.nav_goal = None
 
         rospy.Subscriber("/move_base_simple/goal", PoseStamped, self.callback)
-        rospy.Subscriber("/lolo/lolo//lolo/core/state/position", PoseWithCovarianceStamped, self.pose_callback)
+        rospy.Subscriber("/lolo/core/state/position", PoseWithCovarianceStamped, self.pose_callback)
 
         self.wp_publisher = rospy.Publisher("/lolo/core/waypoint_cmd", Point, queue_size=1)
         self.speed_publisher = rospy.Publisher("/lolo/core/speed_cmd", Float32Stamped, queue_size=1)

@@ -20,7 +20,6 @@ class TF_Broadcaster:
         self.state_subscriber = rospy.Subscriber("/lolo/core/state/position", PoseWithCovarianceStamped, self.callback_state)
 
     def callback_state(self,msg):
-        print("new state")
 
         #Send transform World
         self.br_world.sendTransform((0,0,0), (0,0,0,1), rospy.Time.now(), "world_wgs84", "world")
