@@ -1,4 +1,4 @@
-#include <CaptainInterFace.h>
+#include <captain_interface/CaptainInterFace/CaptainInterFace.h>
 
 //#include <Arduino.h>
 
@@ -99,6 +99,13 @@ void CaptainInterFace::add_float(float val){
   add_byte(myUnionFloat.bytes[3]);
 }
 //----------------------------------------------------------------
+void CaptainInterFace::add_double(double val){
+  // Concatinates a double to package (8 bytes)
+  uint8_t* data = (uint8_t*) &val;
+  for(uint8_t i=0;i<8;i++)
+    add_byte(data[i]);
+}
+//----------------------------------------------------------------
 void CaptainInterFace::add_long(uint32_t val){
    // Concatinates a Long int to package (4 bytes)
   myUnionLong.mylong    = val;
@@ -125,15 +132,15 @@ void CaptainInterFace::add_int(int val){
 //----------------------------------------------------------------
 //-----------------------get data from package--------------------
 //----------------------------------------------------------------
-byte CaptainInterFace::parse_byte() {
-  byte b = receive_buffer.get(unpack_index);
+uint8_t CaptainInterFace::parse_byte() {
+  uint8_t b = receive_buffer.get(unpack_index);
   if(unpack_index > 0) unpack_index--;
   return b;
 }
 //----------------------------------------------------------------
-String  CaptainInterFace::parse_string(int Nchars){
-  String s = "";
-  for(int i=0;i<Nchars;i++) s.concat((char) parse_byte());
+std::string CaptainInterFace::parse_string(int Nchars){
+  std::string s = "";
+  for(int i=0;i<Nchars;i++) s += ((char) parse_byte());
   return s;
 };          //
 //----------------------------------------------------------------
@@ -144,6 +151,15 @@ float CaptainInterFace::parse_float(){
   myUnionFloat.bytes[2] = parse_byte();
   myUnionFloat.bytes[3] = parse_byte();
   return myUnionFloat.myFloat;
+};
+//----------------------------------------------------------------
+double CaptainInterFace::parse_double(){
+  // Converts 8 bytes to a double
+  double value = 0;
+  uint8_t* data = (uint8_t*) &value;
+  for(int i=0;i<8;i++)
+    data[i] = parse_byte();
+  return value;
 };
 //----------------------------------------------------------------
 uint32_t  CaptainInterFace::parse_long(){

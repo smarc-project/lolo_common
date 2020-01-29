@@ -5,8 +5,7 @@
 #ifndef TcpInterFace_h
 #define TcpInterFace_h
 
-#include "CaptainInterFace.h"
-#include "Arduino.h"
+#include "../CaptainInterFace/CaptainInterFace.h"
 #include <iostream>
 #include <boost/asio.hpp>
 

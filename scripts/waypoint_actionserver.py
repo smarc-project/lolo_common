@@ -3,12 +3,13 @@
 from __future__ import division, print_function
 
 import scipy.special
-from std_msgs.msg import Float32
+from std_msgs.msg import Float32, Header
 from geometry_msgs.msg import PoseStamped, PointStamped, Pose, Point
 from move_base_msgs.msg import MoveBaseFeedback, MoveBaseResult, MoveBaseAction
 import math
 import actionlib
 import rospy
+from smarc_msgs.msg import Float32Stamped
 
 class WaypointServer(object):
 
@@ -65,7 +66,7 @@ class WaypointServer(object):
                 wp.x = self.nav_goal.position.x
                 wp.y = self.nav_goal.position.y
                 self.wp_publisher.publish(wp)
-                self.speed_publisher.publish(targetSpeed)
+                self.speed_publisher.publish(Header(),targetSpeed)
 
                 self._feedback.base_position = PoseStamped()
                 self._feedback.base_position.pose = self._current_pose
@@ -77,7 +78,7 @@ class WaypointServer(object):
         # publish vel=0 to stop
         targetSpeed = 0
         #self.wp_publisher
-        self.speed_publisher.publish(targetSpeed)
+        self.speed_publisher.publish(Header(),targetSpeed)
 
 
         if success:
@@ -94,10 +95,10 @@ class WaypointServer(object):
         print("Nav goal is not None!")
 
         #Check distance to goal
-        lolo_lon = self._current_pose.position.x
-        lolo_lat = self._current_pose.position.y
-        goal_lon = self.nav_goal.position.x
-        goal_lat = self.nav_goal.position.y
+        lolo_lat = self._current_pose.position.x
+        lolo_lon = self._current_pose.position.y
+        goal_lat = self.nav_goal.position.x
+        goal_lon = self.nav_goal.position.y
 
         #print("Checking if nav goal is reached!")
         dist = self.calculatedistance(lolo_lat, lolo_lon, goal_lat, goal_lon)
@@ -121,7 +122,7 @@ class WaypointServer(object):
         rospy.Subscriber("/lolo/lolo/estimated_state", Pose, self.pose_callback)
 
         self.wp_publisher = rospy.Publisher("/lolo/core/waypoint_cmd", Point, queue_size=1)
-        self.speed_publisher = rospy.Publisher("/lolo/core/speed_cmd", Float32, queue_size=1)
+        self.speed_publisher = rospy.Publisher("/lolo/core/speed_cmd", Float32Stamped, queue_size=1)
 
         rospy.Timer(rospy.Duration(0.5), self.timer_callback)
 

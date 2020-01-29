@@ -1,4 +1,3 @@
-
 #ifndef CIRCLEBUFFER_H
 #define CIRCLEBUFFER_H
 

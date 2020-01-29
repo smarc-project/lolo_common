@@ -4,9 +4,9 @@
 
 #ifndef CaptainInterFace_h
 #define CaptainInterFace_h
-
-#include "Arduino.h"
-#include "CircleBuffer.h"
+#include <stdint.h>
+#include "../CircleBuffer.h"
+#include <string>
 
 typedef union { char bytes[4]; long  mylong;  } conversionLong;    // Used for conversion
 typedef union { char bytes[2]; int   myInt;   } conversionInt;     // Used for conversion
@@ -54,16 +54,18 @@ public:
   uint8_t       messageID() {return msgID;};
 
   void          add_byte(uint8_t b);               //
-  void          add_string(String s);              //
+  void          add_string(std::string s);              //
   void          add_float(float val);              //
+  void          add_double(double val);            //
   void          add_long(uint32_t val);            //
   void          add_llong(uint64_t val);           //
   void          add_int(int val);                  //
 
   void          clear_package();                   // clear incoming package
-  byte          parse_byte();                      //
-  String        parse_string(int Nchars);          //
+  uint8_t       parse_byte();                      //
+  std::string   parse_string(int Nchars);          //
   float         parse_float();                     //
+  double        parse_double();                    //
   uint32_t      parse_long();                      //
   uint64_t      parse_llong();                     //
   int           parse_int();                       //

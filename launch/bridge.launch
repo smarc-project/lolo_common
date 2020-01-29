@@ -2,12 +2,12 @@
 <!-- Configurable arguments -->
     <arg name="robot_name" default="lolo"/>
     <arg name="client_addr" default="192.168.1.160"/>
-    <arg name="server_addr" default="192.168.1.85"/>
+    <arg name="server_addr" default="192.168.1.160"/>
     <arg name="server_port" default="6002"/>
     <arg name="system_name" default="$(arg robot_name)"/>
     <arg name="imc_id" default="5"/>
 
-    <node name="translator" type="neptus_translation_test.py" pkg="captain_interface"> </node>
+    <!-- <node name="translator" type="neptus_translation_test.py" pkg="captain_interface"> </node> -->
 
     <group ns="$(arg robot_name)">
 
