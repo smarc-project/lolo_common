@@ -7,29 +7,29 @@
 #include "captain_interface/scientistmsg.h"
 
 //Ros messages
-#include "std_msgs/String.h"
-#include "sensor_msgs/FluidPressure.h"
-#include "sensor_msgs/MagneticField.h"
-#include "sensor_msgs/Imu.h"
-#include "sensor_msgs/NavSatFix.h"
+#include <std_msgs/String.h>
+#include <std_msgs/Float32.h>
+#include <std_msgs/Empty.h>
+#include <geometry_msgs/PoseWithCovarianceStamped.h>
+#include <geometry_msgs/TwistWithCovarianceStamped.h>
+#include <geometry_msgs/Point.h>
+#include <sensor_msgs/FluidPressure.h>
+#include <sensor_msgs/MagneticField.h>
+#include <sensor_msgs/Imu.h>
+#include <sensor_msgs/NavSatFix.h>
 #include "smarc_msgs/DVL.h"
-#include "smarc_msgs/AltitudeStamped.h"
 #include "smarc_msgs/CaptainStatus.h"
 #include "smarc_msgs/UTMpoint.h"
 #include "smarc_msgs/UTMpose.h"
 #include "smarc_msgs/UTMposeStamped.h"
-#include "geometry_msgs/PoseWithCovarianceStamped.h"
-#include "geometry_msgs/TwistWithCovarianceStamped.h"
-#include "geometry_msgs/Point.h"
-#include "std_msgs/Float32.h"
 #include "smarc_msgs/Float32Stamped.h"
-#include <std_msgs/Empty.h>
 
 struct RosInterFace {
 
   //================== ROS Nodehandle ====================//
   ros::NodeHandle* n;
   CaptainInterFace* captain;
+  //UTM utmConverter;
 
   void init(ros::NodeHandle* nh, CaptainInterFace* cap);
 

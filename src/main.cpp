@@ -6,11 +6,14 @@
 #include "captain_interface/RosInterFace/RosInterFace.h"
 #include "captain_interface/TcpInterFace/TcpInterFace.h"
 #include <stdint.h>
+#include "captain_interface/UTM.h"
 
 #define PORT 8888
 
 TcpInterFace captain;
 RosInterFace rosInterface;
+UTM utmConverter_toutm;
+UTM utmConverter_fromutm;
 
 //TODO use boost::bind to skip this step
 void callback_captain() { rosInterface.captain_callback(); };
@@ -31,19 +34,16 @@ int main(int argc, char *argv[]) {
 
   ros::init(argc,argv, "CaptainInterface");
 
-  ros::NodeHandle n;
   //Init subscribers and publishers
+  ros::NodeHandle n;
   rosInterface.init(&n, &captain);
 
-  printf("Set callback\n");
+  //Set callback
   captain.setCallback(callback_captain);
 
-  printf("setup\n");
-  
-  boost::asio::io_service io_service;
   //listen for new connection
+  boost::asio::io_service io_service;
   tcp::acceptor acceptor_(io_service, tcp::endpoint(tcp::v4(), PORT ));
-  //socket creation
   tcp::socket socket_(io_service);
 
   ros::Rate loop_rate(100);

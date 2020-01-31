@@ -1,5 +1,6 @@
 #include "captain_interface/RosInterFace/RosInterFace.h"
-
+#include "captain_interface/UTM.h"
+extern UTM utmConverter_fromutm;
 
 void RosInterFace::ros_callback_heartbeat(const std_msgs::Empty::ConstPtr &_msg) {
   captain->new_package(SC_HEARTBEAT); // Heartbeat message
@@ -29,13 +30,12 @@ void RosInterFace::ros_callback_waypoint(const geometry_msgs::Point::ConstPtr &_
 };
 
 void RosInterFace::ros_callback_UTMwaypoint(const smarc_msgs::UTMpoint::ConstPtr &_msg) {
-  //TODO Convert
-  std::cout << "TODO Find a message with zone and band instead of point. This does not work" << std::endl;
-
-  //captain->new_package(SC_SET_TARGET_WAYPOINT); // set target waypoint
-  //captain->add_float(lat);
-  //captain->add_float(lon);
-  //captain->send_package();
+  //Convert
+  utmConverter_fromutm.UTM2Geo(_msg->northing, _msg->easting, _msg->zone, _msg->band);
+  captain->new_package(SC_SET_TARGET_WAYPOINT); // set target waypoint
+  captain->add_float(utmConverter_fromutm.Lat);
+  captain->add_float(utmConverter_fromutm.Lon);
+  captain->send_package();
 };
 
 void RosInterFace::ros_callback_speed(const smarc_msgs::Float32Stamped::ConstPtr &_msg) {
