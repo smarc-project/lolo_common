@@ -30,11 +30,12 @@ void RosInterFace::ros_callback_waypoint(const geometry_msgs::Point::ConstPtr &_
 };
 
 void RosInterFace::ros_callback_UTMwaypoint(const smarc_msgs::UTMpoint::ConstPtr &_msg) {
+  
   //Convert
-  utmConverter_fromutm.UTM2Geo(_msg->northing, _msg->easting, _msg->zone, _msg->band);
+  utmConverter_fromutm.UTM2Geo(_msg->easting, _msg->northing, _msg->zone, _msg->band);
   captain->new_package(SC_SET_TARGET_WAYPOINT); // set target waypoint
-  captain->add_float(utmConverter_fromutm.Lat);
-  captain->add_float(utmConverter_fromutm.Lon);
+  captain->add_double(utmConverter_fromutm.Lat);
+  captain->add_double(utmConverter_fromutm.Lon);
   captain->send_package();
 };
 

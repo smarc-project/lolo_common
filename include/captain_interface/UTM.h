@@ -95,7 +95,10 @@ void GeoToUTM(double lat_, double lon_){
 //-----------------------------------------------------------------------
 // Convert UTM to latitude and longitude
 void UTM2Geo(double x_, double y_, int zone_n_,char zone_l_){
-
+  
+  zone_n = zone_n_;
+  zone_l = zone_l_;
+  
   int S;
   double lat_, v, a, a1, a2, j2, j4, j6, alfa, beta, gama, Bm;
   double b, Epsi, Eps, nab, senoheps, Delt, TaO;

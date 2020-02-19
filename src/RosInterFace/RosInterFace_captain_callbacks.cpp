@@ -40,18 +40,19 @@ uint64_t timestamp    = captain->parse_llong();
   pos_msg.pose.pose.orientation.z = q4;
   status_position_pub.publish(pos_msg);
 
-  //publish position (northing,easting,dpth)
+  //publish position (easting,northing,depth)
   utmConverter_toutm.GeoToUTM(lat,lon);
   smarc_msgs::UTMposeStamped utm_pos_msg;
   utm_pos_msg.header.stamp = ros::Time(sec,usec*1000);
   utm_pos_msg.header.seq = sequence;
-  utm_pos_msg.header.frame_id = "world_ned_UTM";
-  utm_pos_msg.pose.position.northing = utmConverter_toutm.x;
-  utm_pos_msg.pose.position.easting = utmConverter_toutm.y;
+  utm_pos_msg.header.frame_id = "world_UTM"; //ENU
+  utm_pos_msg.pose.position.easting = utmConverter_toutm.x;
+  utm_pos_msg.pose.position.northing = utmConverter_toutm.y;
   utm_pos_msg.pose.position.depth = depth;
   utm_pos_msg.pose.position.band = utmConverter_toutm.zone_l;
   utm_pos_msg.pose.position.zone = utmConverter_toutm.zone_n;
-
+  
+  //TODO change this to ENU
   utm_pos_msg.pose.orientation.w = q1;
   utm_pos_msg.pose.orientation.x = q2;
   utm_pos_msg.pose.orientation.y = q3;

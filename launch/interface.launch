@@ -7,11 +7,12 @@
     
     <node pkg="captain_interface" type="transform_broadcaster.py" name="transform_broadcaster" output="screen"> </node>
 
-    <node pkg="tf" type="static_transform_publisher" name="world_ned_broadcaster"                   args="0 0 0 0 0 0 1 world world_ned 100" />
-
+    <!-- <node pkg="tf" type="static_transform_publisher" name="world_ned_broadcaster"                   args="0 0 0 0 0 0 1 world world_ned 100" /> -->
+    <!-- <node pkg="tf" type="static_transform_publisher" name="world_ned_broadcaster"                   args="0 0 0 0 0 0 1 world world_ned 100" /> -->
     <!-- <node pkg="tf" type="static_transform_publisher" name="world_ned_broadcaster"                   args="0.1 0 0 0 0 0 1 world_ned local_ned 100" /> -->
     <!-- <node pkg="tf" type="static_transform_publisher" name="world_enu_utm_broadcaster"               args="0 0 0 0 0 0 1 world_ned world_enu_utm 100" /> -->
     
+    <node pkg="tf" type="static_transform_publisher" name="world_nedto_local_ned_broadcaster"       args="0 0 0 0 0 0 1 world_utm_ned local_ned 100" />
     <node pkg="tf" type="static_transform_publisher" name="world_local_enu_broadcaster"             args="0 0 0 0 1 0 0 local_ned local_enu 100" />
     <node pkg="tf" type="static_transform_publisher" name="world_local_broadcaster_imu"             args="-3 0 0 0 0 0 1 local_ned local_imu 100" />
     <node pkg="tf" type="static_transform_publisher" name="world_local_broadcaster_pressure"        args="-3.1 0 0 0 0 0 1 local_ned local_pressure 100" />

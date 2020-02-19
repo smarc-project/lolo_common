@@ -22,7 +22,14 @@ class TF_Broadcaster:
     def callback_state(self,msg):
 
         #Send transform World
-        self.br_world.sendTransform((0,0,0), (0,0,0,1), rospy.Time.now(), "world_wgs84", "world")
+        self.br_world.sendTransform((msg.pose.pose.position.x,msg.pose.pose.position.y,msg.pose.pose.position.z), 
+                                    (msg.pose.pose.orientation.w,
+                                    msg.pose.pose.orientation.x,
+                                    msg.pose.pose.orientation.y,
+                                    msg.pose.pose.orientation.z), 
+                                    rospy.Time.now(), 
+                                    "world_wgs84", 
+                                    "world")
         
         #Compute UTM position
         pos = fromLatLong(np.degrees(msg.pose.pose.position.x), np.degrees(msg.pose.pose.position.y))
@@ -35,22 +42,22 @@ class TF_Broadcaster:
         #rotation from (xyz,xyzw)
 
         #self.br_ned_utm.sendTransform((pos.northing - msg.pose.pose.position.x, pos.easting  - msg.pose.pose.position.y , msg.pose.pose.position.z), msg.pose.pose.orientation,
-        self.br_ned_utm.sendTransform((5 - msg.pose.pose.position.x, pos.easting  - 5 , msg.pose.pose.position.z), 
+        self.br_ned_utm.sendTransform((pos.northing, pos.easting, msg.pose.pose.position.z), 
                         (msg.pose.pose.orientation.x,
                         msg.pose.pose.orientation.y,
                         msg.pose.pose.orientation.z,
                         msg.pose.pose.orientation.w),
                         rospy.Time.now(),
-                        "local_ned",
+                        "world_utm_ned",
                         "world")
         
-        self.br_enu_utm.sendTransform((pos.easting - msg.pose.pose.position.y, pos.northing  - msg.pose.pose.position.x , msg.pose.pose.position.z),
+        self.br_enu_utm.sendTransform((pos.easting, pos.northing , -msg.pose.pose.position.z),
                         (msg.pose.pose.orientation.w,
                          msg.pose.pose.orientation.x,
                          msg.pose.pose.orientation.y,
                          msg.pose.pose.orientation.z),
                          rospy.Time.now(),
-                        "world_enu_utm",
+                        "world_utm",
                         "world")
 
         #newMsg = Pose()
