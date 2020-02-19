@@ -81,7 +81,7 @@ void RosInterFace::init(ros::NodeHandle* nh, CaptainInterFace* cap) {
   status_position_pub     = n->advertise<geometry_msgs::PoseWithCovarianceStamped>("/lolo/core/state/position",10);
   status_position_pub_UTM = n->advertise<smarc_msgs::UTMposeStamped>("/lolo/core/state/position_UTM",10);
   status_twist_pub        = n->advertise<geometry_msgs::TwistWithCovarianceStamped>("lolo/core/state/twist",10);
-  control_status_pub      = n->advertise<smarc_msgs::CaptainStatus>("/lolo/core/control_status", 10);
+  control_status_pub      = n->advertise<captain_interface::CaptainStatus>("/lolo/core/control_status", 10);
 
   ////TODO remove this once it's implemented in behavior tree
   //vehiclestate_pub    = n->advertise<imc_ros_bridge::VehicleState>("/lolo/lolo/vehicle_state", 10);

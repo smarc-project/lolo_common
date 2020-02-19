@@ -18,7 +18,7 @@
 #include <sensor_msgs/Imu.h>
 #include <sensor_msgs/NavSatFix.h>
 #include "smarc_msgs/DVL.h"
-#include "smarc_msgs/CaptainStatus.h"
+#include "captain_interface/CaptainStatus.h"
 #include "smarc_msgs/UTMpoint.h"
 #include "smarc_msgs/UTMpose.h"
 #include "smarc_msgs/UTMposeStamped.h"
@@ -29,7 +29,6 @@ struct RosInterFace {
   //================== ROS Nodehandle ====================//
   ros::NodeHandle* n;
   CaptainInterFace* captain;
-  //UTM utmConverter;
 
   void init(ros::NodeHandle* nh, CaptainInterFace* cap);
 

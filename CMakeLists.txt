@@ -9,6 +9,7 @@ add_compile_options(-std=c++11)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
   geometry_msgs
+  message_generation
   nav_msgs
   sensor_msgs
   roscpp
@@ -16,6 +17,18 @@ find_package(catkin REQUIRED COMPONENTS
   std_msgs
   smarc_msgs
   genmsg
+)
+
+## Messages
+add_message_files(
+  FILES
+  CaptainStatus.msg
+)
+
+## Generate added messages and services with any dependencies listed here
+generate_messages(
+  DEPENDENCIES
+  std_msgs
 )
 
 catkin_package(
@@ -44,8 +57,8 @@ add_library(other_stuff
 
 add_executable(interface src/main.cpp)
 
-add_dependencies(other_stuff ${catkin_EXPORTED_TARGETS} )
-add_dependencies(interface ${catkin_EXPORTED_TARGETS} )
+add_dependencies(other_stuff ${catkin_EXPORTED_TARGETS} captain_interface_generate_messages_cpp)
+add_dependencies(interface ${catkin_EXPORTED_TARGETS} captain_interface_generate_messages_cpp)
 
 target_link_libraries(
   interface

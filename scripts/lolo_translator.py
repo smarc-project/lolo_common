@@ -8,10 +8,17 @@ from geometry_msgs.msg import Pose
 from sensor_msgs.msg import NavSatFix
 import tf
 
-from smarc_msgs.msg import CaptainStatus
+from captain_interface.msg import CaptainStatus
 from smarc_msgs.msg import Float32Stamped
+
 from imc_ros_bridge.msg import VehicleState
 from imc_ros_bridge.msg import EstimatedState
+from imc_ros_bridge.msg import DesiredHeading
+from imc_ros_bridge.msg import DesiredHeadingRate
+from imc_ros_bridge.msg import DesiredPitch
+from imc_ros_bridge.msg import DesiredRoll
+from imc_ros_bridge.msg import DesiredSpeed
+from imc_ros_bridge.msg import DesiredZ
 
 import math
 import numpy as np
@@ -46,19 +53,25 @@ class translator:
         self.heartbeat_publisher = rospy.Publisher("/lolo/Heartbeat", Empty, queue_size=1)
 
         #State
-        self.state_publisher = rospy.Publisher("/lolo/lolo/estimated_state", EstimatedState, queue_size=1)
+        self.state_publisher = rospy.Publisher("/lolo/imc/estimated_state", EstimatedState, queue_size=1)
         self.state_pos_subscriber = rospy.Subscriber("/lolo/core/state/position", PoseWithCovarianceStamped, self.callback_state_pos)
         self.state_twist_subscriber = rospy.Subscriber("/lolo/core/state/twist", TwistWithCovarianceStamped, self.callback_state_twist)
         self.state_altitude_subscriber = rospy.Subscriber("/lolo/core/state/altitude", Float32Stamped, self.callback_state_altitude)
 
         #Gps
-        self.gps_publisher_fix = rospy.Publisher("/lolo/lolo/gps_fix", NavSatFix, queue_size=1)
-        self.gps_publisher_nav = rospy.Publisher("/lolo/lolo/gps_nav_data", NavSatFix, queue_size=1)
+        self.gps_publisher_fix = rospy.Publisher("/lolo/imc/gps_fix", NavSatFix, queue_size=1)
+        self.gps_publisher_nav = rospy.Publisher("/lolo/imc/gps_nav_data", NavSatFix, queue_size=1)
         self.gps_subscriber = rospy.Subscriber("/lolo/core/gps", NavSatFix, self.callback_gps)
 
         #VehicleState
-        self.vehiclestate_publisher = rospy.Publisher("/lolo/lolo/vehicle_state", VehicleState, queue_size=1)
+        self.vehiclestate_publisher = rospy.Publisher("/lolo/imc/vehicle_state", VehicleState, queue_size=1)
         self.captainstatus_subscriber = rospy.Subscriber("/lolo/core/control_status", CaptainStatus, self.callback_captainstatus)
+
+        #Controller setpoints
+        self.targetYaw_publisher = rospy.Publisher("lolo/imc/desired_heading", DesiredHeading, queue_size=1)
+        self.targetPitch_publisher = rospy.Publisher("lolo/imc/desired_pitch", DesiredPitch, queue_size=1)
+        self.targetSpeed_publisher = rospy.Publisher("lolo/imc/desired_speed", DesiredSpeed, queue_size=1)
+        self.targetDepth_publisher = rospy.Publisher("lolo/imc/desired_z", DesiredZ, queue_size=1)
 
     def callback_state_twist(self,msg):
         self.lolo.vx = msg.twist.twist.linear.x
@@ -81,7 +94,7 @@ class translator:
         euler = tf.transformations.euler_from_quaternion(quaternion)
         self.lolo.roll = euler[0]
         self.lolo.pitch = euler[1]
-        self.lolo.yaw = euler[2]
+        self.lolo.yaw = euler[2] #unwrap!
 
         newMsg = EstimatedState()
         
@@ -129,6 +142,24 @@ class translator:
       vehiclestate_msg.control_loops = 0; #TODO find out how this is used
       #vehiclestate_msg.last_error_time =
       self.vehiclestate_publisher.publish(vehiclestate_msg)
+
+      msg_heading = DesiredHeading() 
+      msg_heading.value = msg.targetYaw
+      self.targetYaw_publisher.publish(msg_heading)
+
+      msg_pitch = DesiredPitch() 
+      msg_pitch.value = msg.targetPitch
+      self.targetPitch_publisher.publish(msg_pitch)
+
+      msg_speed = DesiredSpeed() 
+      msg_speed.value = msg.targetSpeed
+      self.targetSpeed_publisher.publish(msg_speed)
+
+      msg_z = DesiredZ() 
+      msg_z.value = msg.targetDepth 
+      msg_z.z_units = msg_z.Z_DEPTH
+      self.targetDepth_publisher.publish(msg_z)
+
       
 
 

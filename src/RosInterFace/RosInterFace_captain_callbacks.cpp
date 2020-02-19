@@ -96,7 +96,7 @@ void RosInterFace::captain_callback_CONTROL() {
   float targetDepth    = captain->parse_float();
   float targetAltitude = captain->parse_float();
 
-  smarc_msgs::CaptainStatus msg;
+  captain_interface::CaptainStatus msg;
   msg.header.stamp = ros::Time(sec,usec*1000);
   msg.header.seq = sequence;
   msg.header.frame_id = "world_ned";
