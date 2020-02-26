@@ -48,6 +48,8 @@ class WaypointServer(object):
             if counter % 100 == 0:
                 print("Publish stuff to LOLO")
                 targetSpeed = 1
+                targetDepth = self.nav_goal.position.z
+
                 wp = UTMpoint()
                 wp.easting = self.nav_goal.position.x
                 wp.northing = self.nav_goal.position.y
@@ -56,6 +58,7 @@ class WaypointServer(object):
 
                 self.wp_publisher.publish(wp)
                 self.speed_publisher.publish(Header(),targetSpeed)
+                self.depth_publisher.publish(Header(), -targetDepth) #Setpoint is in NED frame
 
                 self._feedback.base_position = PoseStamped()
                 self._feedback.base_position.pose.position.x = self._current_position_UTM.easting
@@ -71,6 +74,7 @@ class WaypointServer(object):
         targetSpeed = 0
         #self.wp_publisher
         self.speed_publisher.publish(Header(),targetSpeed)
+        self.depth_publisher.publish(Header(), 0)
 
 
         if success:
@@ -99,6 +103,7 @@ class WaypointServer(object):
         self._action_name = name
 
         self.base_frame = rospy.get_param('~base_frame', "you/forgot/base_frame/param")
+        self.GOAL_TOLERANCE = rospy.get_param('~GOAL_TOLERANCE', 10)
 
         self.nav_goal = None
 
@@ -108,11 +113,11 @@ class WaypointServer(object):
         #Lolo setpoints
         self.wp_publisher = rospy.Publisher("/lolo/core/UTMwaypoint_cmd", UTMpoint, queue_size=1)
         self.speed_publisher = rospy.Publisher("/lolo/core/speed_cmd", Float32Stamped, queue_size=1)
-        #self.depth_publisher = rospy.Publisher("/lolo/core/depth_cmd", Float32Stamped, queue_size=1)
+        self.depth_publisher = rospy.Publisher("/lolo/core/depth_cmd", Float32Stamped, queue_size=1)
         #self.altitude_publisher = rospy.Publisher("/lolo/core/depth_cmd", Float32Stamped, queue_size=1)
 
         #Timer
-        rospy.Timer(rospy.Duration(0.5), self.timer_callback)
+        rospy.Timer(rospy.Duration(0.25), self.timer_callback)
 
         #Action server stuff
         self._as = actionlib.SimpleActionServer(self._action_name, MoveBaseAction, execute_cb=self.execute_cb, auto_start = False)

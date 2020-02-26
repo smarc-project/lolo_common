@@ -12,7 +12,8 @@
     <arg name="bridge_addr" default="127.0.0.1"/>
     <arg name="bridge_port" default="6002"/>
     <arg name="system_name" default="$(arg robot_name)"/>
-    <arg name="imc_id" default="5"/>
+    <arg name="imc_id" default="6"/>
+    <arg name="goal_tolerance" default="2"/>
 
     <group ns="$(arg robot_name)">
 
@@ -29,6 +30,7 @@
             <arg name="bridge_addr" value="$(arg bridge_addr)"/>
             <arg name="bridge_port" value="$(arg bridge_port)"/>
             <arg name="imc_system_name" value="$(arg system_name)"/>
+            <arg name="imc_namespace" value="imc"/>
             <arg name="imc_id" value="$(arg imc_id)"/>
         </include>
         
@@ -42,6 +44,7 @@
         <group ns="ctrl">
             <node name="gotowp_server" type="waypoint_actionserver_UTM.py" pkg="captain_interface" output="screen">
                 <param name="base_frame" value="$(arg robot_name)/base_link"/>
+                <param name="GOAL_TOLERANCE" value="$(arg goal_tolerance)" />
             </node>
         </group>
 

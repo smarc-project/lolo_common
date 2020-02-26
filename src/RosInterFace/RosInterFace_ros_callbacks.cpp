@@ -20,10 +20,7 @@ void RosInterFace::ros_callback_done(const std_msgs::Empty::ConstPtr &_msg) {
 void RosInterFace::ros_callback_waypoint(const geometry_msgs::Point::ConstPtr &_msg) {
   float lat = _msg->x;
   float lon = _msg->y;
-  //float depth = _msg->z; //depth or altitude?
   captain->new_package(SC_SET_TARGET_WAYPOINT); // set target waypoint
-  //captain->add_float(lat);
-  //captain->add_float(lon);
   captain->add_double(lat);
   captain->add_double(lon);
   captain->send_package();
@@ -49,6 +46,7 @@ void RosInterFace::ros_callback_speed(const smarc_msgs::Float32Stamped::ConstPtr
 void RosInterFace::ros_callback_depth(const smarc_msgs::Float32Stamped::ConstPtr &_msg) {
   float targetDepth = _msg->data;
 
+  //TODO check transform
   //Change sign if enu is used
   //std::string frame = _msg->header.frame_id;
   //if(frame == "world_utm") targetDepth = -targetDepth;
@@ -71,6 +69,7 @@ void RosInterFace::ros_callback_altitude(const smarc_msgs::Float32Stamped::Const
 void RosInterFace::ros_callback_yaw(const smarc_msgs::Float32Stamped::ConstPtr &_msg) {
   float targetYaw = _msg->data;
 
+  //TODO check transform
   //Change sign if enu is used
   std::string frame = _msg->header.frame_id;
   //if(frame == "world_utm") targetYaw = -targetYaw + pi/4;
@@ -83,6 +82,7 @@ void RosInterFace::ros_callback_yaw(const smarc_msgs::Float32Stamped::ConstPtr &
 void RosInterFace::ros_callback_yawrate(const smarc_msgs::Float32Stamped::ConstPtr &_msg) {
   float targetYawRate = _msg->data;
 
+  //TODO check transform
   //Change sign if enu is used
   std::string frame = _msg->header.frame_id;
   //if(frame == "world_utm") targetYawRate = -targetYawRate;
@@ -95,6 +95,7 @@ void RosInterFace::ros_callback_yawrate(const smarc_msgs::Float32Stamped::ConstP
 void RosInterFace::ros_callback_pitch(const smarc_msgs::Float32Stamped::ConstPtr &_msg) {
   float targetPitch = _msg->data;
 
+  //TODO check transform
   //Change sign if enu is used
   std::string frame = _msg->header.frame_id;
   //if(frame == "world_utm") targetPitch = -targetPitch;
@@ -118,6 +119,7 @@ void RosInterFace::ros_callback_rpm(const smarc_msgs::Float32Stamped::ConstPtr &
 void RosInterFace::ros_callback_rudderPort(const smarc_msgs::Float32Stamped::ConstPtr &_msg) {
   float angle = _msg->data;
 
+  //TODO check transform
   //Change sign if enu is used
   std::string frame = _msg->header.frame_id;
   //if(frame == "world_utm") angle = -angle;
@@ -130,6 +132,7 @@ void RosInterFace::ros_callback_rudderPort(const smarc_msgs::Float32Stamped::Con
 void RosInterFace::ros_callback_rudderStrb(const smarc_msgs::Float32Stamped::ConstPtr &_msg) {
   float angle = _msg->data;
 
+  //TODO check transform
   //Change sign if enu is used
   std::string frame = _msg->header.frame_id;
   //if(frame == "world_utm") angle = -angle;
@@ -142,6 +145,7 @@ void RosInterFace::ros_callback_rudderStrb(const smarc_msgs::Float32Stamped::Con
 void RosInterFace::ros_callback_elevator(const smarc_msgs::Float32Stamped::ConstPtr &_msg) {
   float angle = _msg->data;
 
+  //TODO check transform
   //Change sign if enu is used
   std::string frame = _msg->header.frame_id;
   //if(frame == "world_utm") angle = -angle;
