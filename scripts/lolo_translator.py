@@ -19,6 +19,7 @@ from imc_ros_bridge.msg import DesiredPitch
 from imc_ros_bridge.msg import DesiredRoll
 from imc_ros_bridge.msg import DesiredSpeed
 from imc_ros_bridge.msg import DesiredZ
+from imc_ros_bridge.msg import RemoteState
 
 import math
 import numpy as np
@@ -57,6 +58,9 @@ class translator:
         self.state_pos_subscriber = rospy.Subscriber("/lolo/core/state/position", PoseWithCovarianceStamped, self.callback_state_pos)
         self.state_twist_subscriber = rospy.Subscriber("/lolo/core/state/twist", TwistWithCovarianceStamped, self.callback_state_twist)
         self.state_altitude_subscriber = rospy.Subscriber("/lolo/core/state/altitude", Float32Stamped, self.callback_state_altitude)
+
+        #remote state
+        self.remote_state_publisher = rospy.Publisher("lolo/imc/remote_state", RemoteState, queue_size=1)
 
         #Gps
         self.gps_publisher_fix = rospy.Publisher("/lolo/imc/gps_fix", NavSatFix, queue_size=1)
@@ -121,6 +125,13 @@ class translator:
         newMsg.alt =     self.lolo.altitude                 # Altitude.
 
         self.state_publisher.publish(newMsg)
+
+        remoteMsg = RemoteState()
+        remoteMsg.lat = newMsg.lat-0.00001
+        remoteMsg.lon = newMsg.lon
+        remoteMsg.psi = newMsg.psi
+        remoteMsg.depth = newMsg.depth
+        self.remote_state_publisher.publish(remoteMsg)
 
     def callback_gps(self, msg):
         #print("new GPS")
