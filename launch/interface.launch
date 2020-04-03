@@ -18,8 +18,7 @@
     <node pkg="tf" type="static_transform_publisher" name="world_local_broadcaster_pressure"        args="-3.1 0 0 0 0 0 1 local_ned local_pressure 100" />
     <node pkg="tf" type="static_transform_publisher" name="world_local_broadcaster_gps"             args="-2.5 0 -0.5 0 0 0 1 local_ned local_gps 100" />
     <node pkg="tf" type="static_transform_publisher" name="world_local_broadcaster_dvl"             args="-2.5 0 0.5 0 0 0 1 local_ned local_dvl 100" />
-    <node pkg="tf" type="static_transform_publisher" name="world_local_broadcaster_rudder_strb"     args="-3 0.25 0.2 0 0 0 1 local_ned local_rudder_strb 100" />
-    <node pkg="tf" type="static_transform_publisher" name="world_local_broadcaster_rudder_port"     args="-3 -0.25 0.2 0 0 0 1 local_ned local_rudder_port 100" />
+    <node pkg="tf" type="static_transform_publisher" name="world_local_broadcaster_rudder"          args="-3 0 0.2 0 0 0 1 local_ned local_rudder 100" />
     <node pkg="tf" type="static_transform_publisher" name="world_local_broadcaster_elevator"        args="-4 0 0 0 0 0 1 local_ned local_elevator 100" />
     <node pkg="tf" type="static_transform_publisher" name="world_local_broadcaster_thruster_strb"   args="-4 0.25 0 0 0 0 1 local_ned local_thruster_strb 100" />
     <node pkg="tf" type="static_transform_publisher" name="world_local_broadcaster_thruster_port"   args="-4 0.25 0 0 0 0 1 local_ned local_thruster_port 100" />

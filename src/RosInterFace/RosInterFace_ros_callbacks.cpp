@@ -116,7 +116,7 @@ void RosInterFace::ros_callback_rpm(const smarc_msgs::Float32Stamped::ConstPtr &
 };
 
 
-void RosInterFace::ros_callback_rudderPort(const smarc_msgs::Float32Stamped::ConstPtr &_msg) {
+void RosInterFace::ros_callback_rudder(const smarc_msgs::Float32Stamped::ConstPtr &_msg) {
   float angle = _msg->data;
 
   //TODO check transform
@@ -124,20 +124,7 @@ void RosInterFace::ros_callback_rudderPort(const smarc_msgs::Float32Stamped::Con
   std::string frame = _msg->header.frame_id;
   //if(frame == "world_utm") angle = -angle;
 
-  captain->new_package(SC_SET_RUDDER_PORT); // Control message
-  captain->add_float(angle);
-  captain->send_package();
-};
-
-void RosInterFace::ros_callback_rudderStrb(const smarc_msgs::Float32Stamped::ConstPtr &_msg) {
-  float angle = _msg->data;
-
-  //TODO check transform
-  //Change sign if enu is used
-  std::string frame = _msg->header.frame_id;
-  //if(frame == "world_utm") angle = -angle;
-
-  captain->new_package(SC_SET_RUDDER_STRB);
+  captain->new_package(SC_SET_RUDDER); // Control message
   captain->add_float(angle);
   captain->send_package();
 };

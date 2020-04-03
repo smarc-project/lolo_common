@@ -63,8 +63,7 @@ struct RosInterFace {
   ros::Subscriber thrusterStrb_sub;
 
   //control surfaces
-  ros::Subscriber rudderPort_sub;
-  ros::Subscriber rudderStrb_sub;
+  ros::Subscriber rudder_sub;
   ros::Subscriber elevator_sub;
 
   //Lolo onboard console
@@ -82,10 +81,8 @@ struct RosInterFace {
   ros::Publisher thrusterStrb_torque_pub;
 
   //constrol surfaces
-  ros::Publisher rudderPort_angle_pub;
-  ros::Publisher rudderPort_current_pub;
-  ros::Publisher rudderStrb_angle_pub;
-  ros::Publisher rudderStrb_current_pub;
+  ros::Publisher rudder_angle_pub;
+  ros::Publisher rudder_current_pub;
   ros::Publisher elevator_angle_pub;
   ros::Publisher elevator_current_pub;
   ros::Publisher elevon_port_angle_pub;
@@ -133,8 +130,7 @@ struct RosInterFace {
   void ros_callback_yawrate(const smarc_msgs::Float32Stamped::ConstPtr &_msg);
   void ros_callback_pitch(const smarc_msgs::Float32Stamped::ConstPtr &_msg);
   void ros_callback_rpm(const smarc_msgs::Float32Stamped::ConstPtr &_msg);
-  void ros_callback_rudderPort(const smarc_msgs::Float32Stamped::ConstPtr &_msg);
-  void ros_callback_rudderStrb(const smarc_msgs::Float32Stamped::ConstPtr &_msg);
+  void ros_callback_rudder(const smarc_msgs::Float32Stamped::ConstPtr &_msg);
   void ros_callback_elevator(const smarc_msgs::Float32Stamped::ConstPtr &_msg);
   void ros_callback_thrusterPort(const smarc_msgs::Float32Stamped::ConstPtr &_msg);
   void ros_callback_thrusterStrb(const smarc_msgs::Float32Stamped::ConstPtr &_msg);
@@ -147,8 +143,7 @@ struct RosInterFace {
 
 void captain_callback_STATUS();
 void captain_callback_CONTROL();
-void captain_callback_RUDDER_PORT();
-void captain_callback_RUDDER_STRB();
+void captain_callback_RUDDER();
 void captain_callback_ELEVATOR();
 void captain_callback_ELEVON_PORT();
 void captain_callback_ELEVON_STRB();
@@ -169,8 +164,7 @@ void captain_callback_MENUSTREAM();
     switch (msgID) {
       case CS_STATUS: {       captain_callback_STATUS(); } break; //status
       case CS_CONTROL: {      captain_callback_CONTROL(); } break; //control
-      case CS_RUDDER_PORT: {  captain_callback_RUDDER_PORT(); } break; //port rudder
-      case CS_RUDDER_STRB: {  captain_callback_RUDDER_STRB(); } break; //strb rudder
+      case CS_RUDDER: {       captain_callback_RUDDER(); } break; // rudder
       case CS_ELEVATOR: {     captain_callback_ELEVATOR(); } break; //elevator
       case CS_ELEVON_PORT: {  captain_callback_ELEVON_PORT(); } break; //Port elevon
       case CS_ELEVON_STRB: {  captain_callback_ELEVON_STRB(); } break; //Strb elevon

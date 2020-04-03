@@ -113,7 +113,7 @@ void RosInterFace::captain_callback_CONTROL() {
   control_status_pub.publish(msg);
 }
 
-void RosInterFace::captain_callback_RUDDER_PORT() {
+void RosInterFace::captain_callback_RUDDER() {
   uint64_t timestamp    = captain->parse_llong();
   uint32_t sequence     = captain->parse_long();
   float target_angle    = captain->parse_float();
@@ -127,41 +127,14 @@ void RosInterFace::captain_callback_RUDDER_PORT() {
 
   smarc_msgs::Float32Stamped angle_message_ned;
   angle_message_ned.header = header;
-  angle_message_ned.header.frame_id = "local_rudder_port";
+  angle_message_ned.header.frame_id = "local_rudder";
   angle_message_ned.data = current_angle;
-  rudderPort_angle_pub.publish(angle_message_ned);
+  rudder_angle_pub.publish(angle_message_ned);
 
   /*
   smarc_msgs::Float32Stamped current_message;
   current_message.header = header;
   current_message.header.frame_id = "local_rudder_port";
-  current_message.data = current;
-  rudderPort_current_pub.publish(current_message);
-  */
-}
-
-void RosInterFace::captain_callback_RUDDER_STRB() {
-  uint64_t timestamp    = captain->parse_llong();
-  uint32_t sequence     = captain->parse_long();
-  float target_angle    = captain->parse_float();
-  float current_angle   = captain->parse_float();
-
-  std_msgs::Header header;
-  uint64_t sec = timestamp / 1000000;
-  uint64_t usec = timestamp % 1000000;
-  header.stamp = ros::Time(sec,usec*1000);
-  header.seq = sequence;
-
-  smarc_msgs::Float32Stamped angle_message_ned;
-  angle_message_ned.header = header;
-  angle_message_ned.header.frame_id = "local_rudder_strb";
-  angle_message_ned.data = current_angle;
-  rudderStrb_angle_pub.publish(angle_message_ned);
-
-  /*
-  smarc_msgs::Float32Stamped current_message;
-  current_message.header = header;
-  current_message.header.frame_id = "world";
   current_message.data = current;
   rudderPort_current_pub.publish(current_message);
   */

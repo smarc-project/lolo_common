@@ -31,8 +31,7 @@ void RosInterFace::init(ros::NodeHandle* nh, CaptainInterFace* cap) {
   thrusterStrb_sub = n->subscribe<smarc_msgs::Float32Stamped>("/lolo/core/thruster_strb_cmd", 1, &RosInterFace::ros_callback_thrusterStrb, this);
 
   //control surfaces
-  rudderPort_sub  = n->subscribe<smarc_msgs::Float32Stamped>("/lolo/core/rudder_port_cmd", 1, &RosInterFace::ros_callback_rudderPort, this);
-  rudderStrb_sub  = n->subscribe<smarc_msgs::Float32Stamped>("/lolo/core/rudder_strb_cmd", 1, &RosInterFace::ros_callback_rudderStrb, this);
+  rudder_sub  = n->subscribe<smarc_msgs::Float32Stamped>("/lolo/core/rudder_cmd", 1, &RosInterFace::ros_callback_rudder, this);
   elevator_sub    = n->subscribe<smarc_msgs::Float32Stamped>("/lolo/core/elevator_cmd", 1, &RosInterFace::ros_callback_elevator, this);
 
   //menu
@@ -51,11 +50,8 @@ void RosInterFace::init(ros::NodeHandle* nh, CaptainInterFace* cap) {
   thrusterStrb_torque_pub  = n->advertise<smarc_msgs::Float32Stamped>("/lolo/core/thruster_strb_fb/torque", 10);
 
   // --- Rudders --- //
-  rudderPort_angle_pub    = n->advertise<smarc_msgs::Float32Stamped>("/lolo/core/rudder_port_fb/angle", 10);
-  rudderPort_current_pub  = n->advertise<smarc_msgs::Float32Stamped>("/lolo/core/rudder_port_fb/current", 10);
-
-  rudderStrb_angle_pub    = n->advertise<smarc_msgs::Float32Stamped>("/lolo/core/rudder_strb_fb/angle", 10);
-  rudderStrb_current_pub  = n->advertise<smarc_msgs::Float32Stamped>("/lolo/core/rudder_strb_fb/current", 10);
+  rudder_angle_pub    = n->advertise<smarc_msgs::Float32Stamped>("/lolo/core/rudder_fb/angle", 10);
+  rudder_current_pub  = n->advertise<smarc_msgs::Float32Stamped>("/lolo/core/rudder_fb/current", 10);
 
   // --- Elevator --- //
   elevator_angle_pub      = n->advertise<smarc_msgs::Float32Stamped>("/lolo/core/elevator_fb/angle", 10);
