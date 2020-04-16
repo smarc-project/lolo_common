@@ -274,7 +274,40 @@ void RosInterFace::captain_callback_THRUSTER_STRB() {
 }
 
 void RosInterFace::captain_callback_BATTERY() {
-  //TODO something
+  uint64_t timestamp    = captain->parse_llong();
+  uint64_t sec = timestamp / 1000000;
+  uint64_t usec = timestamp % 1000000;
+  uint32_t sequence     = captain->parse_long();
+
+  uint64_t timestampHealth = captain->parse_llong();
+  float voltage = captain->parse_float();
+  float current = captain->parse_float();
+  float energy = captain->parse_float();
+  uint8_t Batterypacks = captain->parse_float();
+
+  struct tempData {
+    uint64_t ts = 0;
+    float temp1 = 0.0;
+    float temp2 = 0.0;
+    float temp3 = 0.0;
+    float temp4 = 0.0; 
+  }
+
+  tempData temp[Batterypacks]{
+    temp[1],
+    temp[2]
+  };
+
+  for (int i = 0; i<Batterypacks; i++){
+    temp[i].ts = captain->parse_llong();
+    temp[i].temp1 = captain->parse_float();
+    temp[i].temp2 = captain->parse_float();
+    temp[i].temp3 = captain->parse_float();
+    temp[i].temp4 = captain->parse_float():
+  }
+
+  
+
 }
 
 void RosInterFace::captain_callback_DVL() {
