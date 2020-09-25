@@ -57,7 +57,7 @@ class translator:
         self.state_publisher = rospy.Publisher("/lolo/imc/estimated_state", EstimatedState, queue_size=1)
         self.state_pos_subscriber = rospy.Subscriber("/lolo/core/state/position", PoseWithCovarianceStamped, self.callback_state_pos)
         self.state_twist_subscriber = rospy.Subscriber("/lolo/core/state/twist", TwistWithCovarianceStamped, self.callback_state_twist)
-        self.state_altitude_subscriber = rospy.Subscriber("/lolo/core/state/altitude", Float32Stamped, self.callback_state_altitude)
+        self.state_altitude_subscriber = rospy.Subscriber("/lolo/core/state/altitude", Float32, self.callback_state_altitude)
 
         #remote state
         self.remote_state_publisher = rospy.Publisher("lolo/imc/remote_state", RemoteState, queue_size=1)
@@ -125,13 +125,14 @@ class translator:
         newMsg.alt =     self.lolo.altitude                 # Altitude.
 
         self.state_publisher.publish(newMsg)
-
+        '''
         remoteMsg = RemoteState()
         remoteMsg.lat = newMsg.lat-0.00001
         remoteMsg.lon = newMsg.lon
         remoteMsg.psi = newMsg.psi
         remoteMsg.depth = newMsg.depth
         self.remote_state_publisher.publish(remoteMsg)
+        '''
 
     def callback_gps(self, msg):
         #print("new GPS")
@@ -144,14 +145,7 @@ class translator:
       vehiclestate_msg.op_mode = vehiclestate_msg.SERVICE;
       if(msg.active_control_input == 4): vehiclestate_msg.op_mode = vehiclestate_msg.ERROR;
       vehiclestate_msg.error_count = 0
-      #vehiclestate_msg.error_ents = ;
-      #vehiclestate_msg.maneuver_type =
-      #vehiclestate_msg.maneuver_stime =
-      #vehiclestate_msg.maneuver_eta =
-      #vehiclestate_msg.flags =
-      #vehiclestate_msg.last_error =
-      vehiclestate_msg.control_loops = 0; #TODO find out how this is used
-      #vehiclestate_msg.last_error_time =
+      vehiclestate_msg.control_loops = 0
       self.vehiclestate_publisher.publish(vehiclestate_msg)
 
       msg_heading = DesiredHeading() 
@@ -178,7 +172,7 @@ def main():
     print("Starting")
     rospy.init_node('lolo_translation_node', anonymous=False)
 
-    tr = translator();
+    tr = translator()
 
     rate = rospy.Rate(1) # 1hz
     while not rospy.is_shutdown():

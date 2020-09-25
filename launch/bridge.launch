@@ -16,15 +16,6 @@
     <arg name="goal_tolerance" default="2"/>
 
     <group ns="$(arg robot_name)">
-
-        <!-- 
-        <group ns="ctrl">
-            <node name="gotowp_server" type="waypoint_actionserver.py" pkg="captain_interface" output="screen">
-                <param name="base_frame" value="$(arg robot_name)/base_link"/>
-            </node>
-        </group> -->
-
-        
         <include file="$(find imc_ros_bridge)/launch/bridge.launch">
             <arg name="neptus_addr" value="$(arg neptus_addr)"/>
             <arg name="bridge_addr" value="$(arg bridge_addr)"/>
@@ -33,24 +24,5 @@
             <arg name="imc_namespace" value="imc"/>
             <arg name="imc_id" value="$(arg imc_id)"/>
         </include>
-        
-        
-        <!--
-        <node name="neptus_bt" pkg="waypoints" type="neptus_bt.py" output="screen">
-            <param name="system_name" value="$(arg system_name)" />
-            <remap from="/bezier_planner" to="ctrl/bezier_planner"/>
-        </node> -->
-
-        <group ns="ctrl">
-            <node name="gotowp_server" type="waypoint_actionserver_UTM.py" pkg="captain_interface" output="screen">
-                <param name="base_frame" value="$(arg robot_name)/base_link"/>
-                <param name="GOAL_TOLERANCE" value="$(arg goal_tolerance)" />
-            </node>
-        </group>
-
-        <node name="lolo_bt" pkg="waypoints" type="lolo_bt.py" output="screen">
-            <param name="system_name" value="$(arg system_name)" />
-            <remap from="/bezier_planner" to="ctrl/bezier_planner"/>
-        </node>
     </group>
 </launch>
