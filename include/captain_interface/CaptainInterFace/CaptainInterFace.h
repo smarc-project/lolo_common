@@ -54,7 +54,7 @@ public:
   uint8_t       messageID() {return msgID;};
 
   void          add_byte(uint8_t b);               //
-  void          add_string(std::string s);              //
+  void          add_string(std::string s);         //
   void          add_float(float val);              //
   void          add_double(double val);            //
   void          add_long(uint32_t val);            //

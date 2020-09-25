@@ -13,8 +13,8 @@ void RosInterFace::init(ros::NodeHandle* nh, CaptainInterFace* cap) {
   done_sub  = n->subscribe<std_msgs::Empty>("/lolo/abort", 1, &RosInterFace::ros_callback_abort, this);
 
   //Control commands: High level
-  waypoint_sub  = n->subscribe<geometry_msgs::Point>("/lolo/core/waypoint_cmd"          ,1, &RosInterFace::ros_callback_waypoint, this);
-  //waypoint_sub_UTM  = n->subscribe<smarc_msgs::UTMpoint>("/lolo/core/UTMwaypoint_cmd"   ,1, &RosInterFace::ros_callback_UTMwaypoint, this);
+  waypoint_sub  = n->subscribe<cola2_msgs::DecimalLatLon>("/lolo/core/waypoint_cmd"          ,1, &RosInterFace::ros_callback_waypoint, this);
+  //waypoint_sub_UTM  = n->subscribe<??::UTMpoint>("/lolo/core/UTMwaypoint_cmd"   ,1, &RosInterFace::ros_callback_UTMwaypoint, this);
   speed_sub     = n->subscribe<std_msgs::Float32>("/lolo/core/speed_cmd"       ,1, &RosInterFace::ros_callback_speed,this);
   depth_sub     = n->subscribe<std_msgs::Float32>("/lolo/core/depth_cmd"       ,1, &RosInterFace::ros_callback_depth,this);
   altitude_sub  = n->subscribe<std_msgs::Float32>("/lolo/core/altitude_cmd"    ,1, &RosInterFace::ros_callback_altitude,this);
@@ -31,8 +31,8 @@ void RosInterFace::init(ros::NodeHandle* nh, CaptainInterFace* cap) {
   thrusterStrb_sub = n->subscribe<std_msgs::Float32>("/lolo/core/thruster_strb_cmd", 1, &RosInterFace::ros_callback_thrusterStrb, this);
 
   //control surfaces
-  rudder_sub  = n->subscribe<std_msgs::Float32>("/lolo/core/rudder_cmd", 1, &RosInterFace::ros_callback_rudder, this);
-  elevator_sub    = n->subscribe<std_msgs::Float32>("/lolo/core/elevator_cmd", 1, &RosInterFace::ros_callback_elevator, this);
+  rudder_sub      = n->subscribe<std_msgs::Float32>("/lolo/core/rudder_cmd"   ,1, &RosInterFace::ros_callback_rudder, this);
+  elevator_sub    = n->subscribe<std_msgs::Float32>("/lolo/core/elevator_cmd" ,1, &RosInterFace::ros_callback_elevator, this);
 
   //menu
   menu_sub        = n->subscribe<std_msgs::String>("/lolo/console_in", 1, &RosInterFace::ros_callback_menu, this);
@@ -73,9 +73,11 @@ void RosInterFace::init(ros::NodeHandle* nh, CaptainInterFace* cap) {
   pressure_pub      = n->advertise<sensor_msgs::FluidPressure>("/lolo/core/pressure", 10);
 
   //control / status
+  status_orientation_pub  = n->advertise<geometry_msgs::Quaternion>("/lolo/core/state/orientation", 10);
   status_altitude_pub     = n->advertise<std_msgs::Float32>("/lolo/core/state/altitude", 10);
-  status_position_pub     = n->advertise<geometry_msgs::PoseWithCovarianceStamped>("/lolo/core/state/position",10);
-  //status_position_pub_UTM = n->advertise<smarc_msgs::UTMposeStamped>("/lolo/core/state/position_UTM",10);
+  status_position_pub     = n->advertise<cola2_msgs::DecimalLatLon>("/lolo/core/state/position",10);
+  //status_position_pub_UTM = n->advertise<??::UTMposeStamped>("/lolo/core/state/position_UTM",10);
+  status_depth_pub        = n->advertise<std_msgs::Float32>("/lolo/core/state/depth",10);
   status_twist_pub        = n->advertise<geometry_msgs::TwistWithCovarianceStamped>("lolo/core/state/twist",10);
   control_status_pub      = n->advertise<captain_interface::CaptainStatus>("/lolo/core/control_status", 10);
 

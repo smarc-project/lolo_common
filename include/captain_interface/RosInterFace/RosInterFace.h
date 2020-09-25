@@ -18,6 +18,8 @@
 #include <sensor_msgs/Imu.h>
 #include <sensor_msgs/NavSatFix.h>
 #include <cola2_msgs/DVL.h>
+#include <cola2_msgs/DecimalLatLon.h>
+#include <cola2_msgs/Float32Stamped.h>
 #include "captain_interface/CaptainStatus.h"
 
 struct RosInterFace {
@@ -95,9 +97,11 @@ struct RosInterFace {
   ros::Publisher gps_pub;
 
   //control / status
+  ros::Publisher status_orientation_pub;
   ros::Publisher status_altitude_pub;
   ros::Publisher status_position_pub;
-  ros::Publisher status_position_pub_UTM;
+  ros::Publisher status_depth_pub;
+  //ros::Publisher status_position_pub_UTM;
   ros::Publisher status_twist_pub;
 
   ros::Publisher control_status_pub;
@@ -117,7 +121,7 @@ struct RosInterFace {
   void ros_callback_heartbeat(const std_msgs::Empty::ConstPtr &_msg);
   void ros_callback_abort(const std_msgs::Empty::ConstPtr &_msg);
   void ros_callback_done(const std_msgs::Empty::ConstPtr &_msg);
-  void ros_callback_waypoint(const geometry_msgs::Point::ConstPtr &_msg);
+  void ros_callback_waypoint(const cola2_msgs::DecimalLatLon::ConstPtr &_msg);
   void ros_callback_speed(const std_msgs::Float32::ConstPtr &_msg);
   void ros_callback_depth(const std_msgs::Float32::ConstPtr &_msg);
   void ros_callback_altitude(const std_msgs::Float32::ConstPtr &_msg);
@@ -131,27 +135,26 @@ struct RosInterFace {
   void ros_callback_thrusterStrb(const std_msgs::Float32::ConstPtr &_msg);
   void ros_callback_menu(const std_msgs::String::ConstPtr &_msg);
 
+  //======================================================//
+  //================= Captain callbacks ==================//
+  //======================================================//
 
-//======================================================//
-//================= Captain callbacks ==================//
-//======================================================//
-
-void captain_callback_STATUS();
-void captain_callback_CONTROL();
-void captain_callback_RUDDER();
-void captain_callback_ELEVATOR();
-void captain_callback_ELEVON_PORT();
-void captain_callback_ELEVON_STRB();
-void captain_callback_THRUSTER_PORT();
-void captain_callback_THRUSTER_STRB();
-void captain_callback_BATTERY();
-void captain_callback_DVL();
-void captain_callback_GPS();
-void captain_callback_IMU();
-void captain_callback_MAG();
-void captain_callback_PRESSURE();
-void captain_callback_TEXT();
-void captain_callback_MENUSTREAM();
+  void captain_callback_STATUS();
+  void captain_callback_CONTROL();
+  void captain_callback_RUDDER();
+  void captain_callback_ELEVATOR();
+  void captain_callback_ELEVON_PORT();
+  void captain_callback_ELEVON_STRB();
+  void captain_callback_THRUSTER_PORT();
+  void captain_callback_THRUSTER_STRB();
+  void captain_callback_BATTERY();
+  void captain_callback_DVL();
+  void captain_callback_GPS();
+  void captain_callback_IMU();
+  void captain_callback_MAG();
+  void captain_callback_PRESSURE();
+  void captain_callback_TEXT();
+  void captain_callback_MENUSTREAM();
 
   void captain_callback() {
     int msgID = captain->messageID();
@@ -175,9 +178,6 @@ void captain_callback_MENUSTREAM();
       case CS_MENUSTREAM: {   captain_callback_MENUSTREAM(); } break; //Menu stream data
     };
   };
-
-
-
 };
 
 #endif //ROSINTERFACE_H

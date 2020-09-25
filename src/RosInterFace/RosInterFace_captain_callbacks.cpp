@@ -26,40 +26,29 @@ uint64_t timestamp    = captain->parse_llong();
   float q3          = captain->parse_float();
   float q4          = captain->parse_float();
 
-  //publish position (lon,lat,depth)
-  geometry_msgs::PoseWithCovarianceStamped pos_msg;
-  pos_msg.header.stamp = ros::Time(sec,usec*1000);
-  pos_msg.header.seq = sequence;
-  pos_msg.header.frame_id = "world_ned";
-  pos_msg.pose.pose.position.x = lat;
-  pos_msg.pose.pose.position.y = lon;
-  pos_msg.pose.pose.position.z = depth;
-  pos_msg.pose.pose.orientation.w = q1;
-  pos_msg.pose.pose.orientation.x = q2;
-  pos_msg.pose.pose.orientation.y = q3;
-  pos_msg.pose.pose.orientation.z = q4;
+  //publish orientation
+  geometry_msgs::Quaternion orientation_msg;
+  orientation_msg.w = q1;
+  orientation_msg.x = q2;
+  orientation_msg.y = q3;
+  orientation_msg.z = q4;
+  status_orientation_pub.publish(orientation_msg);
+
+  //publish position (lat lon)
+  cola2_msgs::DecimalLatLon pos_msg;
+  pos_msg.latitude = lat;
+  pos_msg.longitude = lon;
   status_position_pub.publish(pos_msg);
 
-  /*
-  //publish position (easting,northing,depth)
-  utmConverter_toutm.GeoToUTM(lat,lon);
-  smarc_msgs::UTMposeStamped utm_pos_msg;
-  utm_pos_msg.header.stamp = ros::Time(sec,usec*1000);
-  utm_pos_msg.header.seq = sequence;
-  utm_pos_msg.header.frame_id = "world_UTM"; //ENU
-  utm_pos_msg.pose.position.easting = utmConverter_toutm.x;
-  utm_pos_msg.pose.position.northing = utmConverter_toutm.y;
-  utm_pos_msg.pose.position.depth = depth;
-  utm_pos_msg.pose.position.band = utmConverter_toutm.zone_l;
-  utm_pos_msg.pose.position.zone = utmConverter_toutm.zone_n;
-  
-  //TODO change this to ENU
-  utm_pos_msg.pose.orientation.w = q1;
-  utm_pos_msg.pose.orientation.x = q2;
-  utm_pos_msg.pose.orientation.y = q3;
-  utm_pos_msg.pose.orientation.z = q4;
-  status_position_pub_UTM.publish(utm_pos_msg);
-  */
+  //publish depth
+  std_msgs::Float32 depth_msg;
+  depth_msg.data = depth;
+  status_depth_pub.publish(depth_msg);
+
+  //publish altitude
+  std_msgs::Float32 alt_msg;
+  alt_msg.data = altitude;
+  status_altitude_pub.publish(alt_msg);
 
   //Twist NED
   geometry_msgs::TwistWithCovarianceStamped twist_msg;
@@ -73,11 +62,6 @@ uint64_t timestamp    = captain->parse_llong();
   twist_msg.twist.twist.angular.y = rotY;
   twist_msg.twist.twist.angular.z = rotZ;
   status_twist_pub.publish(twist_msg);
-
-  //publish altitude
-  std_msgs::Float32 alt_msg;
-  alt_msg.data = altitude;
-  status_altitude_pub.publish(alt_msg);
 }
 
 void RosInterFace::captain_callback_CONTROL() {
@@ -234,7 +218,7 @@ void RosInterFace::captain_callback_BATTERY() {
   float energy = captain->parse_float();
   uint8_t Batterypacks = captain->parse_float();
 
-  /*
+  /* TODO do something with this data
   struct tempData {
     uint64_t ts = 0;
     float temp1 = 0.0;
@@ -255,11 +239,7 @@ void RosInterFace::captain_callback_BATTERY() {
     temp[i].temp3 = captain->parse_float();
     temp[i].temp4 = captain->parse_float():
   }
-
   */
-  //TODO this should not work?
-  
-
 }
 
 void RosInterFace::captain_callback_DVL() {
@@ -306,6 +286,8 @@ void RosInterFace::captain_callback_DVL() {
   msg.velocity_covariance[8] = c22;
   msg.altitude = range;
   dvl_pub.publish(msg);
+  
+  //TODO add DVLbeam
 }
 
 void RosInterFace::captain_callback_GPS() {
