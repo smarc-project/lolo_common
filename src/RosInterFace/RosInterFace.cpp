@@ -68,7 +68,7 @@ void RosInterFace::init(ros::NodeHandle* nh, CaptainInterFace* cap) {
   //sensors
   imu_pub           = n->advertise<sensor_msgs::Imu>("/lolo/core/imu", 10);
   magnetometer_pub  = n->advertise<sensor_msgs::MagneticField>("/lolo/core/mag", 10);
-  dvl_pub           = n->advertise<smarc_msgs::DVL>("/lolo/core/dvl", 10);
+  dvl_pub           = n->advertise<cola2_msgs::DVL>("/lolo/core/dvl", 10);
   gps_pub           = n->advertise<sensor_msgs::NavSatFix>("/lolo/core/gps", 10);
   pressure_pub      = n->advertise<sensor_msgs::FluidPressure>("/lolo/core/pressure", 10);
 

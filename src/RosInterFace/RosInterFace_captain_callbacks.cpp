@@ -288,14 +288,13 @@ void RosInterFace::captain_callback_DVL() {
   float c21            = captain->parse_float();
   float c22            = captain->parse_float();
 
-  smarc_msgs::DVL msg;
+  cola2_msgs::DVL msg;
   msg.header.stamp = ros::Time(sec,usec*1000);
   msg.header.seq = sequence;
   msg.header.frame_id = "local_dvl";
   msg.velocity.x = sogX;
   msg.velocity.y = sogY;
   msg.velocity.z = sogZ;
-  msg.velocity_reference = smarc_msgs::DVL::VELOCITY_REFERENCE_BOTTOM;
   msg.velocity_covariance[0] = c00;
   msg.velocity_covariance[1] = c10;
   msg.velocity_covariance[2] = c20;
@@ -305,7 +304,7 @@ void RosInterFace::captain_callback_DVL() {
   msg.velocity_covariance[6] = c20;
   msg.velocity_covariance[7] = c21;
   msg.velocity_covariance[8] = c22;
-  msg.range = range;
+  msg.altitude = range;
   dvl_pub.publish(msg);
 }
 

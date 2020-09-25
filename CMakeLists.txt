@@ -15,7 +15,7 @@ find_package(catkin REQUIRED COMPONENTS
   roscpp
   rospy
   std_msgs
-  smarc_msgs
+  cola2_msgs
   genmsg
 )
 
@@ -32,7 +32,7 @@ generate_messages(
 )
 
 catkin_package(
-  CATKIN_DEPENDS roscpp geometry_msgs std_msgs sensor_msgs smarc_msgs #tf
+  CATKIN_DEPENDS roscpp geometry_msgs std_msgs sensor_msgs cola2_msgs#tf
 )
 
 
