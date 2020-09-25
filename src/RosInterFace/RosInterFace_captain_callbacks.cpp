@@ -40,6 +40,7 @@ uint64_t timestamp    = captain->parse_llong();
   pos_msg.pose.pose.orientation.z = q4;
   status_position_pub.publish(pos_msg);
 
+  /*
   //publish position (easting,northing,depth)
   utmConverter_toutm.GeoToUTM(lat,lon);
   smarc_msgs::UTMposeStamped utm_pos_msg;
@@ -58,6 +59,7 @@ uint64_t timestamp    = captain->parse_llong();
   utm_pos_msg.pose.orientation.y = q3;
   utm_pos_msg.pose.orientation.z = q4;
   status_position_pub_UTM.publish(utm_pos_msg);
+  */
 
   //Twist NED
   geometry_msgs::TwistWithCovarianceStamped twist_msg;
@@ -73,10 +75,7 @@ uint64_t timestamp    = captain->parse_llong();
   status_twist_pub.publish(twist_msg);
 
   //publish altitude
-  smarc_msgs::Float32Stamped alt_msg;
-  alt_msg.header.stamp = ros::Time(sec,usec*1000);
-  alt_msg.header.seq = sequence;
-  alt_msg.header.frame_id = "local_dvl";
+  std_msgs::Float32 alt_msg;
   alt_msg.data = altitude;
   status_altitude_pub.publish(alt_msg);
 }
@@ -119,22 +118,12 @@ void RosInterFace::captain_callback_RUDDER() {
   float target_angle    = captain->parse_float();
   float current_angle   = captain->parse_float();
 
-  std_msgs::Header header;
-  uint64_t sec = timestamp / 1000000;
-  uint64_t usec = timestamp % 1000000;
-  header.stamp = ros::Time(sec,usec*1000);
-  header.seq = sequence;
+  std_msgs::Float32 angle_message;
+  angle_message.data = current_angle;
+  rudder_angle_pub.publish(angle_message);
 
-  smarc_msgs::Float32Stamped angle_message_ned;
-  angle_message_ned.header = header;
-  angle_message_ned.header.frame_id = "local_rudder";
-  angle_message_ned.data = current_angle;
-  rudder_angle_pub.publish(angle_message_ned);
-
-  /*
-  smarc_msgs::Float32Stamped current_message;
-  current_message.header = header;
-  current_message.header.frame_id = "local_rudder_port";
+  /* current comsumption message
+  std_msgs::Float32 current_message;
   current_message.data = current;
   rudderPort_current_pub.publish(current_message);
   */
@@ -146,22 +135,12 @@ void RosInterFace::captain_callback_ELEVATOR() {
   float target_angle    = captain->parse_float();
   float current_angle   = captain->parse_float();
 
-  std_msgs::Header header;
-  uint64_t sec = timestamp / 1000000;
-  uint64_t usec = timestamp % 1000000;
-  header.stamp = ros::Time(sec,usec*1000);
-  header.seq = sequence;
+  std_msgs::Float32 angle_message;
+  angle_message.data = current_angle;
+  elevator_angle_pub.publish(angle_message);
 
-  smarc_msgs::Float32Stamped angle_message_ned;
-  angle_message_ned.header = header;
-  angle_message_ned.header.frame_id = "local_elevator";
-  angle_message_ned.data = current_angle;
-  elevator_angle_pub.publish(angle_message_ned);
-
-  /*
-  smarc_msgs::Float32Stamped current_message;
-  current_message.header = header;
-  current_message.header.frame_id = "local_elevator";
+  /* current comsumption message
+  std_msgs::Float32 current_message;
   current_message.data = current;
   rudderPort_current_pub.publish(current_message);
   */
@@ -173,22 +152,12 @@ void RosInterFace::captain_callback_ELEVON_PORT() {
   float target_angle    = captain->parse_float();
   float current_angle   = captain->parse_float();
 
-  std_msgs::Header header;
-  uint64_t sec = timestamp / 1000000;
-  uint64_t usec = timestamp % 1000000;
-  header.stamp = ros::Time(sec,usec*1000);
-  header.seq = sequence;
-
-  smarc_msgs::Float32Stamped angle_message_ned;
-  angle_message_ned.header = header;
-  angle_message_ned.header.frame_id = "local_elevon_port";
-  angle_message_ned.data = current_angle;
-  elevon_port_angle_pub.publish(angle_message_ned);
+  std_msgs::Float32 angle_message;
+  angle_message.data = current_angle;
+  elevon_port_angle_pub.publish(angle_message);
 
   /*
-  smarc_msgs::Float32Stamped current_message;
-  current_message.header = header;
-  current_message.header.frame_id = "local_elevon_port";
+  std_msgs::Float32 current_message;
   current_message.data = current;
   elevon_port_current_pub.publish(current_message);
   */
@@ -200,22 +169,12 @@ void RosInterFace::captain_callback_ELEVON_STRB() {
   float target_angle    = captain->parse_float();
   float current_angle   = captain->parse_float();
 
-  std_msgs::Header header;
-  uint64_t sec = timestamp / 1000000;
-  uint64_t usec = timestamp % 1000000;
-  header.stamp = ros::Time(sec,usec*1000);
-  header.seq = sequence;
+  std_msgs::Float32 angle_message;
+  angle_message.data = current_angle;
+  elevon_strb_angle_pub.publish(angle_message);
 
-  smarc_msgs::Float32Stamped angle_message_ned;
-  angle_message_ned.header = header;
-  angle_message_ned.header.frame_id = "local_elevon_strb";
-  angle_message_ned.data = current_angle;
-  elevon_strb_angle_pub.publish(angle_message_ned);
-
-  /*
-  smarc_msgs::Float32Stamped current_message;
-  current_message.header = header;
-  current_message.header.frame_id = "local_elevon_strb";
+  /* current somsumption message
+  std_msgs::Float32 current_message;
   current_message.data = current;
   elevon_strb_angle_pub.publish(current_message);
   */
@@ -234,14 +193,9 @@ void RosInterFace::captain_callback_THRUSTER_PORT() {
   float energy          = captain->parse_float();
   float voltage         = captain->parse_float();
 
-  std_msgs::Header header;
-  header.stamp = ros::Time(sec,usec*1000);
-  header.seq = sequence;
-  header.frame_id = "local_thruster_port";
-
-  smarc_msgs::Float32Stamped rpm_message; rpm_message.data = rpm; rpm_message.header = header;
-  smarc_msgs::Float32Stamped current_message; current_message.data = current; current_message.header = header;
-  smarc_msgs::Float32Stamped torque_message; torque_message.data = torque; torque_message.header = header;
+  std_msgs::Float32 rpm_message; rpm_message.data = rpm;
+  std_msgs::Float32 current_message; current_message.data = current;
+  std_msgs::Float32 torque_message; torque_message.data = torque;
   thrusterPort_rpm_pub.publish(rpm_message);
   thrusterPort_current_pub.publish(current_message);
   thrusterPort_torque_pub.publish(torque_message);
@@ -260,14 +214,9 @@ void RosInterFace::captain_callback_THRUSTER_STRB() {
   float energy          = captain->parse_float();
   float voltage         = captain->parse_float();
 
-  std_msgs::Header header;
-  header.stamp = ros::Time(sec,usec*1000);
-  header.seq = sequence;
-  header.frame_id = "local_thruster_strb";
-
-  smarc_msgs::Float32Stamped rpm_message; rpm_message.data = rpm; rpm_message.header = header;
-  smarc_msgs::Float32Stamped current_message; current_message.data = current; current_message.header = header;
-  smarc_msgs::Float32Stamped torque_message; torque_message.data = torque; torque_message.header = header;
+  std_msgs::Float32 rpm_message; rpm_message.data = rpm;
+  std_msgs::Float32 current_message; current_message.data = current;
+  std_msgs::Float32 torque_message; torque_message.data = torque;
   thrusterStrb_rpm_pub.publish(rpm_message);
   thrusterStrb_current_pub.publish(current_message);
   thrusterStrb_torque_pub.publish(torque_message);
@@ -285,6 +234,7 @@ void RosInterFace::captain_callback_BATTERY() {
   float energy = captain->parse_float();
   uint8_t Batterypacks = captain->parse_float();
 
+  /*
   struct tempData {
     uint64_t ts = 0;
     float temp1 = 0.0;
@@ -306,6 +256,8 @@ void RosInterFace::captain_callback_BATTERY() {
     temp[i].temp4 = captain->parse_float():
   }
 
+  */
+  //TODO this should not work?
   
 
 }
@@ -376,7 +328,7 @@ void RosInterFace::captain_callback_GPS() {
   msg.longitude = lon;
   msg.status.status = 0;
   msg.status.service = 1;
-      gps_pub.publish(msg);
+  gps_pub.publish(msg);
 }
 
 void RosInterFace::captain_callback_IMU() {
@@ -385,9 +337,6 @@ void RosInterFace::captain_callback_IMU() {
   uint64_t usec = timestamp % 1000000;
   uint32_t sequence     = captain->parse_long();
 
-  //float pitch           = captain->parse_float();
-  //float roll            = captain->parse_float();
-  //float yaw             = captain->parse_float();
   float Q1              = captain->parse_float();
   float Q2              = captain->parse_float();
   float Q3              = captain->parse_float();
@@ -416,8 +365,6 @@ void RosInterFace::captain_callback_IMU() {
   float g_c20            = captain->parse_float();
   float g_c21            = captain->parse_float();
   float g_c22            = captain->parse_float();
-
-  //// NED ////
 
   sensor_msgs::Imu msg;
   msg.header.stamp = ros::Time(sec,usec*1000);

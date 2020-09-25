@@ -19,10 +19,10 @@
 #include <sensor_msgs/NavSatFix.h>
 #include "smarc_msgs/DVL.h"
 #include "captain_interface/CaptainStatus.h"
-#include "smarc_msgs/UTMpoint.h"
-#include "smarc_msgs/UTMpose.h"
-#include "smarc_msgs/UTMposeStamped.h"
-#include "smarc_msgs/Float32Stamped.h"
+//#include "smarc_msgs/UTMpoint.h"
+//#include "smarc_msgs/UTMpose.h"
+//#include "smarc_msgs/UTMposeStamped.h"
+//#include "smarc_msgs/Float32Stamped.h"
 
 struct RosInterFace {
 
@@ -122,18 +122,18 @@ struct RosInterFace {
   void ros_callback_abort(const std_msgs::Empty::ConstPtr &_msg);
   void ros_callback_done(const std_msgs::Empty::ConstPtr &_msg);
   void ros_callback_waypoint(const geometry_msgs::Point::ConstPtr &_msg);
-  void ros_callback_UTMwaypoint(const smarc_msgs::UTMpoint::ConstPtr &_msg);
-  void ros_callback_speed(const smarc_msgs::Float32Stamped::ConstPtr &_msg);
-  void ros_callback_depth(const smarc_msgs::Float32Stamped::ConstPtr &_msg);
-  void ros_callback_altitude(const smarc_msgs::Float32Stamped::ConstPtr &_msg);
-  void ros_callback_yaw(const smarc_msgs::Float32Stamped::ConstPtr &_msg);
-  void ros_callback_yawrate(const smarc_msgs::Float32Stamped::ConstPtr &_msg);
-  void ros_callback_pitch(const smarc_msgs::Float32Stamped::ConstPtr &_msg);
-  void ros_callback_rpm(const smarc_msgs::Float32Stamped::ConstPtr &_msg);
-  void ros_callback_rudder(const smarc_msgs::Float32Stamped::ConstPtr &_msg);
-  void ros_callback_elevator(const smarc_msgs::Float32Stamped::ConstPtr &_msg);
-  void ros_callback_thrusterPort(const smarc_msgs::Float32Stamped::ConstPtr &_msg);
-  void ros_callback_thrusterStrb(const smarc_msgs::Float32Stamped::ConstPtr &_msg);
+  //void ros_callback_UTMwaypoint(const smarc_msgs::UTMpoint::ConstPtr &_msg);
+  void ros_callback_speed(const std_msgs::Float32::ConstPtr &_msg);
+  void ros_callback_depth(const std_msgs::Float32::ConstPtr &_msg);
+  void ros_callback_altitude(const std_msgs::Float32::ConstPtr &_msg);
+  void ros_callback_yaw(const std_msgs::Float32::ConstPtr &_msg);
+  void ros_callback_yawrate(const std_msgs::Float32::ConstPtr &_msg);
+  void ros_callback_pitch(const std_msgs::Float32::ConstPtr &_msg);
+  void ros_callback_rpm(const std_msgs::Float32::ConstPtr &_msg);
+  void ros_callback_rudder(const std_msgs::Float32::ConstPtr &_msg);
+  void ros_callback_elevator(const std_msgs::Float32::ConstPtr &_msg);
+  void ros_callback_thrusterPort(const std_msgs::Float32::ConstPtr &_msg);
+  void ros_callback_thrusterStrb(const std_msgs::Float32::ConstPtr &_msg);
   void ros_callback_menu(const std_msgs::String::ConstPtr &_msg);
 
 
