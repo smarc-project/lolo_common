@@ -2,14 +2,14 @@
 import rospy
 from std_msgs.msg import Header
 from std_msgs.msg import Empty
-from geometry_msgs.msg import PoseWithCovarianceStamped
+from std_msgs.msg import Float32
+from cola2_msgs.msg import DecimalLatLon
 from geometry_msgs.msg import TwistWithCovarianceStamped
-from geometry_msgs.msg import Pose
+from geometry_msgs.msg import Quaternion
 from sensor_msgs.msg import NavSatFix
 import tf
 
 from captain_interface.msg import CaptainStatus
-from smarc_msgs.msg import Float32Stamped
 
 from imc_ros_bridge.msg import VehicleState
 from imc_ros_bridge.msg import EstimatedState
@@ -19,7 +19,6 @@ from imc_ros_bridge.msg import DesiredPitch
 from imc_ros_bridge.msg import DesiredRoll
 from imc_ros_bridge.msg import DesiredSpeed
 from imc_ros_bridge.msg import DesiredZ
-from imc_ros_bridge.msg import RemoteState
 
 import math
 import numpy as np
@@ -55,12 +54,11 @@ class translator:
 
         #State
         self.state_publisher = rospy.Publisher("/lolo/imc/estimated_state", EstimatedState, queue_size=1)
-        self.state_pos_subscriber = rospy.Subscriber("/lolo/core/state/position", PoseWithCovarianceStamped, self.callback_state_pos)
+        self.state_pos_subscriber = rospy.Subscriber("/lolo/core/state/position", DecimalLatLon, self.callback_state_pos)
+        self.state_orientation_subscriber = rospy.Subscriber("lolo/core/state/orientation", Quaternion, self.callback_state_orientation)
+        self.state_depth_subscriber = rospy.Subscriber("/lolo/core/state/depth", Float32, self.callback_state_depth)
         self.state_twist_subscriber = rospy.Subscriber("/lolo/core/state/twist", TwistWithCovarianceStamped, self.callback_state_twist)
         self.state_altitude_subscriber = rospy.Subscriber("/lolo/core/state/altitude", Float32, self.callback_state_altitude)
-
-        #remote state
-        self.remote_state_publisher = rospy.Publisher("lolo/imc/remote_state", RemoteState, queue_size=1)
 
         #Gps
         self.gps_publisher_fix = rospy.Publisher("/lolo/imc/gps_fix", NavSatFix, queue_size=1)
@@ -89,12 +87,14 @@ class translator:
         self.lolo.altitude = msg.data
 
     def callback_state_pos(self,msg):
-        #print("new state")
-        self.lolo.lat = msg.pose.pose.position.x
-        self.lolo.lon = msg.pose.pose.position.y
-        self.lolo.depth = msg.pose.pose.position.z
+        self.lolo.lat = msg.latitude
+        self.lolo.lon = msg.longitude
 
-        quaternion = ( msg.pose.pose.orientation.x, msg.pose.pose.orientation.y, msg.pose.pose.orientation.z, msg.pose.pose.orientation.w )
+    def callback_state_depth(self,msg):
+        self.lolo.depth = msg.data
+
+    def callback_state_orientation(self,msg):
+        quaternion = ( msg.x, msg.y, msg.z, msg.w )
         euler = tf.transformations.euler_from_quaternion(quaternion)
         self.lolo.roll = euler[0]
         self.lolo.pitch = euler[1]
@@ -125,14 +125,6 @@ class translator:
         newMsg.alt =     self.lolo.altitude                 # Altitude.
 
         self.state_publisher.publish(newMsg)
-        '''
-        remoteMsg = RemoteState()
-        remoteMsg.lat = newMsg.lat-0.00001
-        remoteMsg.lon = newMsg.lon
-        remoteMsg.psi = newMsg.psi
-        remoteMsg.depth = newMsg.depth
-        self.remote_state_publisher.publish(remoteMsg)
-        '''
 
     def callback_gps(self, msg):
         #print("new GPS")
@@ -140,7 +132,6 @@ class translator:
         self.gps_publisher_nav.publish(msg)
 
     def callback_captainstatus(self,msg):
-      #print("new captain status")
       vehiclestate_msg = VehicleState()
       vehiclestate_msg.op_mode = vehiclestate_msg.SERVICE;
       if(msg.active_control_input == 4): vehiclestate_msg.op_mode = vehiclestate_msg.ERROR;
@@ -164,8 +155,6 @@ class translator:
       msg_z.value = msg.targetDepth 
       msg_z.z_units = msg_z.Z_DEPTH
       self.targetDepth_publisher.publish(msg_z)
-
-      
 
 
 def main():
