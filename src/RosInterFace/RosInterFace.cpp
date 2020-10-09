@@ -8,12 +8,12 @@ void RosInterFace::init(ros::NodeHandle* nh, CaptainInterFace* cap) {
   //==================================//
 
   //information / other things
-  heartbeat_sub  = n->subscribe<std_msgs::Empty>("/lolo/Heartbeat", 1, &RosInterFace::ros_callback_heartbeat, this);
-  done_sub  = n->subscribe<std_msgs::Empty>("/lolo/done", 1, &RosInterFace::ros_callback_done, this);
+  heartbeat_sub  = n->subscribe<std_msgs::Empty>("/lolo/heartbeat", 1, &RosInterFace::ros_callback_heartbeat, this);
+  done_sub  = n->subscribe<std_msgs::Empty>("/lolo/mission_complete", 1, &RosInterFace::ros_callback_done, this);
   done_sub  = n->subscribe<std_msgs::Empty>("/lolo/abort", 1, &RosInterFace::ros_callback_abort, this);
 
   //Control commands: High level
-  waypoint_sub  = n->subscribe<cola2_msgs::DecimalLatLon>("/lolo/core/waypoint_cmd"          ,1, &RosInterFace::ros_callback_waypoint, this);
+  waypoint_sub  = n->subscribe<smarc_msgs::LatLonStamped>("/lolo/core/waypoint_cmd"          ,1, &RosInterFace::ros_callback_waypoint, this);
   //waypoint_sub_UTM  = n->subscribe<??::UTMpoint>("/lolo/core/UTMwaypoint_cmd"   ,1, &RosInterFace::ros_callback_UTMwaypoint, this);
   speed_sub     = n->subscribe<std_msgs::Float32>("/lolo/core/speed_cmd"       ,1, &RosInterFace::ros_callback_speed,this);
   depth_sub     = n->subscribe<std_msgs::Float32>("/lolo/core/depth_cmd"       ,1, &RosInterFace::ros_callback_depth,this);
@@ -41,28 +41,32 @@ void RosInterFace::init(ros::NodeHandle* nh, CaptainInterFace* cap) {
   //=========== Publishers ===========//
   //==================================//
   // --- Thrusters --- //
-  thrusterPort_rpm_pub     = n->advertise<std_msgs::Float32>("/lolo/core/thruster_port_fb/rpm", 10);
-  thrusterPort_current_pub = n->advertise<std_msgs::Float32>("/lolo/core/thruster_port_fb/current", 10);
-  thrusterPort_torque_pub  = n->advertise<std_msgs::Float32>("/lolo/core/thruster_port_fb/torque", 10);
+  thrusterPort_pub     = n->advertise<smarc_msgs::ThrusterFeedback>("/lolo/core/thruster_port_fb", 10);
+  thrusterStrb_pub     = n->advertise<smarc_msgs::ThrusterFeedback>("/lolo/core/thruster_strb_fb", 10);
+  /*
+  thrusterPort_rpm_pub     = n->advertise<smarc_msgs::FloatStamped>("/lolo/core/thruster_port_fb/rpm", 10);
+  thrusterPort_current_pub = n->advertise<smarc_msgs::FloatStamped>("/lolo/core/thruster_port_fb/current", 10);
+  thrusterPort_torque_pub  = n->advertise<smarc_msgs::FloatStamped>("/lolo/core/thruster_port_fb/torque", 10);
 
-  thrusterStrb_rpm_pub     = n->advertise<std_msgs::Float32>("/lolo/core/thruster_strb_fb/rpm", 10);
-  thrusterStrb_current_pub = n->advertise<std_msgs::Float32>("/lolo/core/thruster_strb_fb/current", 10);
-  thrusterStrb_torque_pub  = n->advertise<std_msgs::Float32>("/lolo/core/thruster_strb_fb/torque", 10);
+  thrusterStrb_rpm_pub     = n->advertise<smarc_msgs::FloatStamped>("/lolo/core/thruster_strb_fb/rpm", 10);
+  thrusterStrb_current_pub = n->advertise<smarc_msgs::FloatStamped>("/lolo/core/thruster_strb_fb/current", 10);
+  thrusterStrb_torque_pub  = n->advertise<smarc_msgs::FloatStamped>("/lolo/core/thruster_strb_fb/torque", 10);
+  */
 
   // --- Rudders --- //
-  rudder_angle_pub    = n->advertise<std_msgs::Float32>("/lolo/core/rudder_fb/angle", 10);
-  rudder_current_pub  = n->advertise<std_msgs::Float32>("/lolo/core/rudder_fb/current", 10);
+  rudder_angle_pub    = n->advertise<smarc_msgs::FloatStamped>("/lolo/core/rudder_fb/angle", 10);
+  rudder_current_pub  = n->advertise<smarc_msgs::FloatStamped>("/lolo/core/rudder_fb/current", 10);
 
   // --- Elevator --- //
-  elevator_angle_pub      = n->advertise<std_msgs::Float32>("/lolo/core/elevator_fb/angle", 10);
-  elevator_current_pub    = n->advertise<std_msgs::Float32>("/lolo/core/elevator_fb/current", 10);
+  elevator_angle_pub      = n->advertise<smarc_msgs::FloatStamped>("/lolo/core/elevator_fb/angle", 10);
+  elevator_current_pub    = n->advertise<smarc_msgs::FloatStamped>("/lolo/core/elevator_fb/current", 10);
 
   // --- Elevons --- //
-  elevon_port_angle_pub   = n->advertise<std_msgs::Float32>("/lolo/core/elevon_port_fb/angle", 10);
-  elevon_port_current_pub = n->advertise<std_msgs::Float32>("/lolo/core/elevon_port_fb/current", 10);
+  elevon_port_angle_pub   = n->advertise<smarc_msgs::FloatStamped>("/lolo/core/elevon_port_fb/angle", 10);
+  elevon_port_current_pub = n->advertise<smarc_msgs::FloatStamped>("/lolo/core/elevon_port_fb/current", 10);
 
-  elevon_strb_angle_pub   = n->advertise<std_msgs::Float32>("/lolo/core/elevon_strb_fb/angle", 10);
-  elevon_strb_current_pub = n->advertise<std_msgs::Float32>("/lolo/core/elevon_strb_fb/current", 10);
+  elevon_strb_angle_pub   = n->advertise<smarc_msgs::FloatStamped>("/lolo/core/elevon_strb_fb/angle", 10);
+  elevon_strb_current_pub = n->advertise<smarc_msgs::FloatStamped>("/lolo/core/elevon_strb_fb/current", 10);
 
 
   //sensors
@@ -73,13 +77,13 @@ void RosInterFace::init(ros::NodeHandle* nh, CaptainInterFace* cap) {
   pressure_pub      = n->advertise<sensor_msgs::FluidPressure>("/lolo/core/pressure", 10);
 
   //control / status
-  status_orientation_pub  = n->advertise<geometry_msgs::Quaternion>("/lolo/core/state/orientation", 10);
-  status_altitude_pub     = n->advertise<std_msgs::Float32>("/lolo/core/state/altitude", 10);
-  status_position_pub     = n->advertise<cola2_msgs::DecimalLatLon>("/lolo/core/state/position",10);
+  status_orientation_pub  = n->advertise<geometry_msgs::QuaternionStamped>("/lolo/core/state/orientation", 10);
+  status_altitude_pub     = n->advertise<smarc_msgs::FloatStamped>("/lolo/core/state/altitude", 10);
+  status_position_pub     = n->advertise<smarc_msgs::LatLonStamped>("/lolo/core/state/position",10);
   //status_position_pub_UTM = n->advertise<??::UTMposeStamped>("/lolo/core/state/position_UTM",10);
-  status_depth_pub        = n->advertise<std_msgs::Float32>("/lolo/core/state/depth",10);
+  status_depth_pub        = n->advertise<smarc_msgs::FloatStamped>("/lolo/core/state/depth",10);
   status_twist_pub        = n->advertise<geometry_msgs::TwistWithCovarianceStamped>("lolo/core/state/twist",10);
-  control_status_pub      = n->advertise<captain_interface::CaptainStatus>("/lolo/core/control_status", 10);
+  control_status_pub      = n->advertise<lolo_msgs::CaptainStatus>("/lolo/core/control_status", 10);
 
   //General purpose text message
   text_pub   = n->advertise<std_msgs::String>("/lolo/text", 10);

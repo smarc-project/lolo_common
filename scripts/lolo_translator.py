@@ -3,13 +3,13 @@ import rospy
 from std_msgs.msg import Header
 from std_msgs.msg import Empty
 from std_msgs.msg import Float32
-from cola2_msgs.msg import DecimalLatLon
+from cola2_msgs.msg import LatLonStamped
 from geometry_msgs.msg import TwistWithCovarianceStamped
-from geometry_msgs.msg import Quaternion
+from geometry_msgs.msg import QuaternionStamped
 from sensor_msgs.msg import NavSatFix
 import tf
 
-from captain_interface.msg import CaptainStatus
+from lolo_msgs.msg import CaptainStatus
 
 from imc_ros_bridge.msg import VehicleState
 from imc_ros_bridge.msg import EstimatedState
@@ -54,8 +54,8 @@ class translator:
 
         #State
         self.state_publisher = rospy.Publisher("/lolo/imc/estimated_state", EstimatedState, queue_size=1)
-        self.state_pos_subscriber = rospy.Subscriber("/lolo/core/state/position", DecimalLatLon, self.callback_state_pos)
-        self.state_orientation_subscriber = rospy.Subscriber("lolo/core/state/orientation", Quaternion, self.callback_state_orientation)
+        self.state_pos_subscriber = rospy.Subscriber("/lolo/core/state/position", LatLonStamped, self.callback_state_pos)
+        self.state_orientation_subscriber = rospy.Subscriber("lolo/core/state/orientation", QuaternionStamped, self.callback_state_orientation)
         self.state_depth_subscriber = rospy.Subscriber("/lolo/core/state/depth", Float32, self.callback_state_depth)
         self.state_twist_subscriber = rospy.Subscriber("/lolo/core/state/twist", TwistWithCovarianceStamped, self.callback_state_twist)
         self.state_altitude_subscriber = rospy.Subscriber("/lolo/core/state/altitude", Float32, self.callback_state_altitude)
@@ -94,7 +94,7 @@ class translator:
         self.lolo.depth = msg.data
 
     def callback_state_orientation(self,msg):
-        quaternion = ( msg.x, msg.y, msg.z, msg.w )
+        quaternion = ( msg.quaternion.x, msg.quaternion.y, msg.quaternion.z, msg.quaternion.w )
         euler = tf.transformations.euler_from_quaternion(quaternion)
         self.lolo.roll = euler[0]
         self.lolo.pitch = euler[1]

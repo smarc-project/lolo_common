@@ -17,7 +17,7 @@ void RosInterFace::ros_callback_done(const std_msgs::Empty::ConstPtr &_msg) {
 };
 
 
-void RosInterFace::ros_callback_waypoint(const cola2_msgs::DecimalLatLon::ConstPtr &_msg) {
+void RosInterFace::ros_callback_waypoint(const smarc_msgs::LatLonStamped::ConstPtr &_msg) {
   double lat = _msg->latitude;
   double lon = _msg->longitude;
   captain->new_package(SC_SET_TARGET_WAYPOINT); // set target waypoint

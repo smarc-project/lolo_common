@@ -10,17 +10,21 @@
 #include <std_msgs/String.h>
 #include <std_msgs/Float32.h>
 #include <std_msgs/Empty.h>
+#include <std_msgs/Header.h>
 #include <geometry_msgs/PoseWithCovarianceStamped.h>
 #include <geometry_msgs/TwistWithCovarianceStamped.h>
 #include <geometry_msgs/Point.h>
+#include <geometry_msgs/QuaternionStamped.h>
 #include <sensor_msgs/FluidPressure.h>
 #include <sensor_msgs/MagneticField.h>
 #include <sensor_msgs/Imu.h>
 #include <sensor_msgs/NavSatFix.h>
 #include <cola2_msgs/DVL.h>
-#include <cola2_msgs/DecimalLatLon.h>
-#include <cola2_msgs/Float32Stamped.h>
-#include "captain_interface/CaptainStatus.h"
+#include <smarc_msgs/LatLonStamped.h>
+#include <smarc_msgs/FloatStamped.h>
+#include <smarc_msgs/ThrusterRPM.h>
+#include <smarc_msgs/ThrusterFeedback.h>
+#include "lolo_msgs/CaptainStatus.h"
 
 struct RosInterFace {
 
@@ -71,12 +75,14 @@ struct RosInterFace {
   //=================== ROS pubishers ====================//
   //======================================================//
   //thrusters
-  ros::Publisher thrusterPort_rpm_pub;
-  ros::Publisher thrusterPort_current_pub;
-  ros::Publisher thrusterPort_torque_pub;
-  ros::Publisher thrusterStrb_rpm_pub;
-  ros::Publisher thrusterStrb_current_pub;
-  ros::Publisher thrusterStrb_torque_pub;
+  ros::Publisher thrusterPort_pub;
+  //ros::Publisher thrusterPort_rpm_pub;
+  //ros::Publisher thrusterPort_current_pub;
+  //ros::Publisher thrusterPort_torque_pub;
+  ros::Publisher thrusterStrb_pub;
+  //ros::Publisher thrusterStrb_rpm_pub;
+  //ros::Publisher thrusterStrb_current_pub;
+  //ros::Publisher thrusterStrb_torque_pub;
 
   //constrol surfaces
   ros::Publisher rudder_angle_pub;
@@ -121,7 +127,7 @@ struct RosInterFace {
   void ros_callback_heartbeat(const std_msgs::Empty::ConstPtr &_msg);
   void ros_callback_abort(const std_msgs::Empty::ConstPtr &_msg);
   void ros_callback_done(const std_msgs::Empty::ConstPtr &_msg);
-  void ros_callback_waypoint(const cola2_msgs::DecimalLatLon::ConstPtr &_msg);
+  void ros_callback_waypoint(const smarc_msgs::LatLonStamped::ConstPtr &_msg);
   void ros_callback_speed(const std_msgs::Float32::ConstPtr &_msg);
   void ros_callback_depth(const std_msgs::Float32::ConstPtr &_msg);
   void ros_callback_altitude(const std_msgs::Float32::ConstPtr &_msg);

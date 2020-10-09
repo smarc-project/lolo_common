@@ -15,24 +15,25 @@ find_package(catkin REQUIRED COMPONENTS
   roscpp
   rospy
   std_msgs
+  lolo_msgs
   cola2_msgs
   genmsg
 )
 
 ## Messages
-add_message_files(
-  FILES
-  CaptainStatus.msg
-)
+#add_message_files(
+#  FILES
+#  #CaptainStatus.msg
+#)
 
 ## Generate added messages and services with any dependencies listed here
-generate_messages(
-  DEPENDENCIES
-  std_msgs
-)
+#generate_messages(
+#  DEPENDENCIES
+#  std_msgs
+#)
 
 catkin_package(
-  CATKIN_DEPENDS roscpp geometry_msgs std_msgs sensor_msgs cola2_msgs#tf
+  CATKIN_DEPENDS roscpp geometry_msgs std_msgs sensor_msgs lolo_msgs cola2_msgs
 )
 
 
