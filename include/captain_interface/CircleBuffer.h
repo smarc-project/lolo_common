@@ -10,7 +10,7 @@ class CircleBuffer {
   uint8_t buffer[CIRCLEBUFFER_SIZE];
   uint16_t head;
 
-  public:
+public:
 
   CircleBuffer() {
     head = 0;
@@ -27,22 +27,6 @@ class CircleBuffer {
     while(real_index < 0) real_index+=CIRCLEBUFFER_SIZE;
     return buffer[real_index];
   };
-
-  /*
-  //TODO fast copy function
-  void print(Stream &s) {
-    s.println("CircleBuffer");
-    s.print("Head : "); Serial.println(head);
-    Serial.print("Data: ");
-    for(int i=0;i<CIRCLEBUFFER_SIZE;i++) {
-      if(i == head) s.print('|');
-      s.print("0x"); s.print(buffer[i],HEX);
-      if(i == head) s.print('|');
-      else s.print(',');
-    }
-    Serial.println("");
-  };
-  */
 };
 //----------------------------------------------------------------
 #endif

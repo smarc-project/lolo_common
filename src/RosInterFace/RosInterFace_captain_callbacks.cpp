@@ -1,6 +1,4 @@
 #include "captain_interface/RosInterFace/RosInterFace.h"
-#include "captain_interface/UTM.h"
-extern UTM utmConverter_toutm;
 
 void RosInterFace::captain_callback_STATUS() {
 uint64_t timestamp    = captain->parse_llong();
@@ -125,12 +123,6 @@ void RosInterFace::captain_callback_RUDDER() {
   angle_message.header.seq = sequence;
   angle_message.header.frame_id = "rudder";
   rudder_angle_pub.publish(angle_message);
-
-  /* current comsumption message
-  smarc_msgs::FloatStamped current_message;
-  current_message.data = current;
-  rudderPort_current_pub.publish(current_message);
-  */
 }
 
 void RosInterFace::captain_callback_ELEVATOR() {
@@ -148,12 +140,6 @@ void RosInterFace::captain_callback_ELEVATOR() {
   angle_message.header.seq = sequence;
   angle_message.header.frame_id = "elvator";
   elevator_angle_pub.publish(angle_message);
-
-  /* current comsumption message
-  smarc_msgs::FloatStamped current_message;
-  current_message.data = current;
-  rudderPort_current_pub.publish(current_message);
-  */
 }
 
 void RosInterFace::captain_callback_ELEVON_PORT() {
@@ -171,12 +157,6 @@ void RosInterFace::captain_callback_ELEVON_PORT() {
   angle_message.header.seq = sequence;
   angle_message.header.frame_id = "elevon_port";
   elevon_port_angle_pub.publish(angle_message);
-
-  /*
-  smarc_msgs::FloatStamped current_message;
-  current_message.data = current;
-  elevon_port_current_pub.publish(current_message);
-  */
 }
 
 void RosInterFace::captain_callback_ELEVON_STRB() {
@@ -194,12 +174,6 @@ void RosInterFace::captain_callback_ELEVON_STRB() {
   angle_message.header.seq = sequence;
   angle_message.header.frame_id = "elevon_strb";
   elevon_strb_angle_pub.publish(angle_message);
-
-  /* current somsumption message
-  smarc_msgs::FloatStamped current_message;
-  current_message.data = current;
-  elevon_strb_angle_pub.publish(current_message);
-  */
 }
 
 void RosInterFace::captain_callback_THRUSTER_PORT() {
@@ -222,15 +196,6 @@ void RosInterFace::captain_callback_THRUSTER_PORT() {
   thruster_msg.rpm.rpm = rpm;
   thruster_msg.current = current;
   thruster_msg.torque = torque;
-
-  /*
-  smarc_msgs::FloatStamped rpm_message; rpm_message.data = rpm;
-  smarc_msgs::FloatStamped current_message; current_message.data = current;
-  smarc_msgs::FloatStamped torque_message; torque_message.data = torque;
-  thrusterPort_rpm_pub.publish(rpm_message);
-  thrusterPort_current_pub.publish(current_message);
-  thrusterPort_torque_pub.publish(torque_message);
-  */
 }
 
 void RosInterFace::captain_callback_THRUSTER_STRB() {
@@ -253,15 +218,6 @@ void RosInterFace::captain_callback_THRUSTER_STRB() {
   thruster_msg.rpm.rpm = rpm;
   thruster_msg.current = current;
   thruster_msg.torque = torque;
-  
-  /*
-  smarc_msgs::FloatStamped rpm_message; rpm_message.data = rpm;
-  smarc_msgs::FloatStamped current_message; current_message.data = current;
-  smarc_msgs::FloatStamped torque_message; torque_message.data = torque;
-  thrusterStrb_rpm_pub.publish(rpm_message);
-  thrusterStrb_current_pub.publish(current_message);
-  thrusterStrb_torque_pub.publish(torque_message);
-  */
 }
 
 void RosInterFace::captain_callback_BATTERY() {
@@ -408,7 +364,7 @@ void RosInterFace::captain_callback_IMU() {
   sensor_msgs::Imu msg;
   msg.header.stamp = ros::Time(sec,usec*1000);
   msg.header.seq = sequence;
-  msg.header.frame_id = "local_imu";
+  msg.header.frame_id = "dome";
 
   msg.orientation.w = Q1;
   msg.orientation.x = Q2;
@@ -465,7 +421,7 @@ void RosInterFace::captain_callback_MAG() {
   sensor_msgs::MagneticField msg;
   msg.header.stamp = ros::Time(sec,usec*1000);
   msg.header.seq = sequence;
-  msg.header.frame_id = "local_imu";
+  msg.header.frame_id = "dome";
   msg.magnetic_field.x = magX;
   msg.magnetic_field.y = magY;
   msg.magnetic_field.z = magZ;
@@ -492,7 +448,7 @@ void RosInterFace::captain_callback_PRESSURE() {
   sensor_msgs::FluidPressure msg;
   msg.header.stamp = ros::Time(sec,usec*1000);
   msg.header.seq = sequence;
-  msg.header.frame_id = "local_pressure";
+  msg.header.frame_id = "dome";
   msg.fluid_pressure = pressure;
   msg.variance = variance;
   pressure_pub.publish(msg);

@@ -6,14 +6,11 @@
 #include "captain_interface/RosInterFace/RosInterFace.h"
 #include "captain_interface/TcpInterFace/TcpInterFace.h"
 #include <stdint.h>
-#include "captain_interface/UTM.h"
 
 #define PORT 8888
 
 TcpInterFace captain;
 RosInterFace rosInterface;
-UTM utmConverter_toutm;
-UTM utmConverter_fromutm;
 
 //TODO use boost::bind to skip this step
 void callback_captain() { rosInterface.captain_callback(); };

@@ -1,8 +1,5 @@
 #include <captain_interface/CaptainInterFace/CaptainInterFace.h>
 
-//#include <Arduino.h>
-
-
 CaptainInterFace::CaptainInterFace() {
   //Do something?
 };
@@ -32,15 +29,13 @@ bool CaptainInterFace::parse_package() {
 
   //Error checks
   if(start != '#'){
-    //Serial.print("not a valid message. Start=0x"); Serial.print(start,HEX); Serial.print(" length: "); Serial.println(length);
-    return false;
-  }//Something is wrong with the package.
+    return false; //Something is wrong with the package.
+  }
 
   uint8_t checksum = 0;
   for (int ii = length-1; ii >0 ; ii--) { checksum = checksum ^ receive_buffer.get(ii); } // XOR
-  if(checksum != CS) {/*Serial.println("Checksum error"); Serial.print("CS Should be: "); Serial.println(checksum); */return false; };
+  if(checksum != CS) { return false; }; //CS does not match
 
-  //Serial.println("Package received");
   unpack_index = length-2;
   package_available = true;
 
@@ -76,7 +71,6 @@ bool CaptainInterFace::send_package() {
   uint8_t cs = calc_checksum(send_buffer,len-1);
   add_byte(cs);         //Add CS
 
-  //Serial.print("Package size: "); Serial.println(len);
   bool success = send_data(send_buffer, len);
 }
 
@@ -107,7 +101,7 @@ void CaptainInterFace::add_double(double val){
 }
 //----------------------------------------------------------------
 void CaptainInterFace::add_long(uint32_t val){
-   // Concatinates a Long int to package (4 bytes)
+  // Concatinates a Long int to package (4 bytes)
   myUnionLong.mylong    = val;
   add_byte(myUnionLong.bytes[0]);
   add_byte(myUnionLong.bytes[1]);
@@ -122,7 +116,7 @@ void CaptainInterFace::add_llong(uint64_t val) {
 }
 //----------------------------------------------------------------
 void CaptainInterFace::add_int(int val){
-   // Concatinates a int to package (2 bytes)
+  // Concatinates a int to package (2 bytes)
   myUnionInt.myInt = val;
   add_byte(myUnionInt.bytes[0]);
   add_byte(myUnionInt.bytes[1]);

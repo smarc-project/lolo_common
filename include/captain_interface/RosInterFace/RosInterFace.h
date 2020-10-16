@@ -76,23 +76,13 @@ struct RosInterFace {
   //======================================================//
   //thrusters
   ros::Publisher thrusterPort_pub;
-  //ros::Publisher thrusterPort_rpm_pub;
-  //ros::Publisher thrusterPort_current_pub;
-  //ros::Publisher thrusterPort_torque_pub;
   ros::Publisher thrusterStrb_pub;
-  //ros::Publisher thrusterStrb_rpm_pub;
-  //ros::Publisher thrusterStrb_current_pub;
-  //ros::Publisher thrusterStrb_torque_pub;
 
   //constrol surfaces
   ros::Publisher rudder_angle_pub;
-  ros::Publisher rudder_current_pub;
   ros::Publisher elevator_angle_pub;
-  ros::Publisher elevator_current_pub;
   ros::Publisher elevon_port_angle_pub;
-  ros::Publisher elevon_port_current_pub;
   ros::Publisher elevon_strb_angle_pub;
-  ros::Publisher elevon_strb_current_pub;
 
 
   //sensors
@@ -107,7 +97,6 @@ struct RosInterFace {
   ros::Publisher status_altitude_pub;
   ros::Publisher status_position_pub;
   ros::Publisher status_depth_pub;
-  //ros::Publisher status_position_pub_UTM;
   ros::Publisher status_twist_pub;
 
   ros::Publisher control_status_pub;
@@ -164,7 +153,6 @@ struct RosInterFace {
 
   void captain_callback() {
     int msgID = captain->messageID();
-    //printf("Received message from captain %d\n", msgID);
     switch (msgID) {
       case CS_STATUS: {       captain_callback_STATUS(); } break; //status
       case CS_CONTROL: {      captain_callback_CONTROL(); } break; //control

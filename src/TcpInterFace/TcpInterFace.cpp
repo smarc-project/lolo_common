@@ -12,12 +12,12 @@ boost::array<char, 128> rbuf; //receive buffer
 
 // Constructor
 TcpInterFace::TcpInterFace() {
-  //Do something?
+  //
 };
 
 void TcpInterFace::setup(boost::asio::ip::tcp::socket* socket) {
   tcpSocket = socket;
-  //TODO start thread for reading
+  //start thread for reading
   readThread = new boost::thread(boost::bind(&TcpInterFace::readData, this));
 };
 
