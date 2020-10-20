@@ -1,5 +1,10 @@
 #include "captain_interface/RosInterFace/RosInterFace.h"
 
+void RosInterFace::captain_callback_LEAK() {
+  smarc_msgs::Leak msg;
+  leak_dome.publish(msg);
+}
+
 void RosInterFace::captain_callback_STATUS() {
 uint64_t timestamp    = captain->parse_llong();
   uint64_t sec = timestamp / 1000000;

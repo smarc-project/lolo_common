@@ -51,8 +51,10 @@ void RosInterFace::init(ros::NodeHandle* nh, CaptainInterFace* cap) {
 
   // --- Elevons --- //
   elevon_port_angle_pub   = n->advertise<smarc_msgs::FloatStamped>("/lolo/core/elevon_port_fb/angle", 10);
-
   elevon_strb_angle_pub   = n->advertise<smarc_msgs::FloatStamped>("/lolo/core/elevon_strb_fb/angle", 10);
+
+  //Leak sensors
+  leak_dome   = n->advertise<smarc_msgs::Leak>("/lolo/leak", 10);
 
 
   //sensors

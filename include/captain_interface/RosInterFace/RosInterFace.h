@@ -24,6 +24,7 @@
 #include <smarc_msgs/FloatStamped.h>
 #include <smarc_msgs/ThrusterRPM.h>
 #include <smarc_msgs/ThrusterFeedback.h>
+#include <smarc_msgs/Leak.h>
 #include "lolo_msgs/CaptainStatus.h"
 
 struct RosInterFace {
@@ -84,6 +85,7 @@ struct RosInterFace {
   ros::Publisher elevon_port_angle_pub;
   ros::Publisher elevon_strb_angle_pub;
 
+  ros::Publisher leak_dome;
 
   //sensors
   ros::Publisher imu_pub;
@@ -134,6 +136,7 @@ struct RosInterFace {
   //================= Captain callbacks ==================//
   //======================================================//
 
+  void captain_callback_LEAK();
   void captain_callback_STATUS();
   void captain_callback_CONTROL();
   void captain_callback_RUDDER();
@@ -154,6 +157,7 @@ struct RosInterFace {
   void captain_callback() {
     int msgID = captain->messageID();
     switch (msgID) {
+      case CS_LEAK: {         captain_callback_LEAK(); }; break; //Leak
       case CS_STATUS: {       captain_callback_STATUS(); } break; //status
       case CS_CONTROL: {      captain_callback_CONTROL(); } break; //control
       case CS_RUDDER: {       captain_callback_RUDDER(); } break; // rudder

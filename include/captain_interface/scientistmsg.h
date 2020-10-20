@@ -5,6 +5,7 @@
 //2019 03 25
 
 //CAPTAIN -> SCIENTIST
+#define CS_LEAK             7
 #define CS_STATUS           8
 #define CS_CONTROL          9
 #define CS_RUDDER           10
