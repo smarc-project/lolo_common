@@ -345,6 +345,9 @@ void RosInterFace::captain_callback_IMU() {
   float accX            = captain->parse_float();
   float accY            = captain->parse_float();
   float accZ            = captain->parse_float();
+  float LAccX           = captain->parse_float();
+  float LAccY           = captain->parse_float();
+  float LAccZ           = captain->parse_float();
 
   float rotX            = captain->parse_float();
   float rotY            = captain->parse_float();
@@ -390,9 +393,9 @@ void RosInterFace::captain_callback_IMU() {
   msg.angular_velocity_covariance[7] = g_c21;
   msg.angular_velocity_covariance[8] = g_c22;
 
-  msg.linear_acceleration.x = accX;
-  msg.linear_acceleration.y = accY;
-  msg.linear_acceleration.z = accZ;
+  msg.linear_acceleration.x = LAccX;
+  msg.linear_acceleration.y = LAccY;
+  msg.linear_acceleration.z = LAccZ;
 
   msg.linear_acceleration_covariance[0] = a_c00;
   msg.linear_acceleration_covariance[1] = a_c10;
