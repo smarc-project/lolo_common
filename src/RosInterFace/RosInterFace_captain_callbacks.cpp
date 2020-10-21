@@ -497,6 +497,15 @@ void RosInterFace::captain_callback_VBS() {
   float vbs_motor_torque = captain->parse_float();                   //motor torque (Nm)
   uint64_t motor_sec = vbs_motor_ts / 1000000;
   uint64_t motor_usec = vbs_motor_ts % 1000000;
+
+  if(newData_motor) {
+    smarc_msgs::ThrusterFeedback msg;
+    msg.header.stamp = ros::Time(motor_sec,motor_usec*1000);
+    msg.header.frame_id = "VBS";
+    msg.rpm.rpm = vbs_motor_rpm;
+    msg.current = vbs_motor_current;
+    msg.torque = vbs_motor_torque;
+  }
 };
 
 void RosInterFace::captain_callback_TEXT() {

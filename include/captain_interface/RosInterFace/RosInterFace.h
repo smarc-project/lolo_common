@@ -85,6 +85,13 @@ struct RosInterFace {
   ros::Publisher elevon_port_angle_pub;
   ros::Publisher elevon_strb_angle_pub;
 
+  //VBS
+  ros::Publisher VBS_front_tank_pub;
+  ros::Publisher VBS_aft_tank_pub;
+  ros::Publisher VBS_valves_pub;
+  ros::Publisher VBS_motor_pub;
+
+  //Leak sensors
   ros::Publisher leak_dome;
 
   //sensors
