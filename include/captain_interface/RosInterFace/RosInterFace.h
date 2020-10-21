@@ -151,6 +151,7 @@ struct RosInterFace {
   void captain_callback_IMU();
   void captain_callback_MAG();
   void captain_callback_PRESSURE();
+  void captain_callback_VBS();
   void captain_callback_TEXT();
   void captain_callback_MENUSTREAM();
 
@@ -172,6 +173,7 @@ struct RosInterFace {
       case CS_IMU: {          captain_callback_IMU(); } break; //IMU
       case CS_MAG: {          captain_callback_MAG(); } break; //MAG
       case CS_PRESSURE: {     captain_callback_PRESSURE();} break; //PRESSURE
+      case CS_VBS: {          captain_callback_VBS(); } break;
       case CS_TEXT: {         captain_callback_TEXT(); } break;  //General purpose text message
       case CS_MENUSTREAM: {   captain_callback_MENUSTREAM(); } break; //Menu stream data
     };

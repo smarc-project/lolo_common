@@ -462,6 +462,43 @@ void RosInterFace::captain_callback_PRESSURE() {
   pressure_pub.publish(msg);
 }
 
+void RosInterFace::captain_callback_VBS() {
+
+  //Front tank
+  int newData_front = captain->parse_byte();
+  uint64_t timestamp_front_tank = captain->parse_llong();            //timestamp from ISB
+  float vbs_front_tank_percent_current = captain->parse_float();     //Front tank volume [0-1]
+  float vbs_front_tank_percent_target = captain->parse_float();      //Front tank target volume [0-1]
+  float vbs_front_tank_pressure = captain->parse_float();            //Front tank pressure
+  float vbs_front_tank_volume = captain->parse_float();              //Front tank volume
+  uint64_t front_tank_sec = timestamp_front_tank / 1000000;
+  uint64_t front_tank_usec = timestamp_front_tank % 1000000;
+
+  //Aft tank
+  int newData_aft = captain->parse_byte();
+  uint64_t timestamp_aft_tank = captain->parse_llong();              //timestamp from ISB
+  float vbs_aft_tank_percent_current = captain->parse_float();       //Aft tank volume [0-1]
+  float vbs_aft_tank_percent_target = captain->parse_float();        //Aft tank target volume [0-1]
+  float vbs_aft_tank_pressure = captain->parse_float();              //Aft tank pressure
+  float vbs_aft_tank_volume = captain->parse_float();                //Aft tank volume
+  uint64_t aft_tank_sec = timestamp_aft_tank / 1000000;
+  uint64_t aft_tank_usec = timestamp_aft_tank % 1000000;
+  
+  //Valve stuff
+  int valves = captain->parse_byte();                                //Valve information
+
+  //Motor stuff
+  int newData_motor = captain->parse_byte();
+  uint64_t vbs_motor_ts = captain->parse_llong();                    //timestamp from ISB
+  float vbs_motor_rpm_target = captain->parse_float();               //Target RPM
+  float vbs_motor_rpm = captain->parse_float();                      //current RPM
+  float vbs_motor_current = captain->parse_float();                  //motor current (A)
+  float vbs_motor_voltage = captain->parse_float();                  //motor voltage (V) (not used)
+  float vbs_motor_torque = captain->parse_float();                   //motor torque (Nm)
+  uint64_t motor_sec = vbs_motor_ts / 1000000;
+  uint64_t motor_usec = vbs_motor_ts % 1000000;
+};
+
 void RosInterFace::captain_callback_TEXT() {
   int length = captain->parse_byte();
   std::string text = captain->parse_string(length);

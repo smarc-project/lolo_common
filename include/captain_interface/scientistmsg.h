@@ -20,6 +20,7 @@
 #define CS_PRESSURE         20
 #define CS_ELEVON_STRB      21
 #define CS_ELEVON_PORT      22
+#define CS_VBS              23
 #define CS_TEXT             40
 #define CS_MENUSTREAM       50
 
