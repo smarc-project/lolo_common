@@ -197,10 +197,11 @@ void RosInterFace::captain_callback_THRUSTER_PORT() {
   smarc_msgs::ThrusterFeedback thruster_msg;
   thruster_msg.header.stamp = ros::Time(sec,usec*1000);
   thruster_msg.header.seq = sequence;
-  thruster_msg.header.frame_id = "elevon_strb";
+  thruster_msg.header.frame_id = "thruster_strb";
   thruster_msg.rpm.rpm = rpm;
   thruster_msg.current = current;
   thruster_msg.torque = torque;
+  thrusterPort_pub.publish(thruster_msg);
 }
 
 void RosInterFace::captain_callback_THRUSTER_STRB() {
@@ -219,10 +220,11 @@ void RosInterFace::captain_callback_THRUSTER_STRB() {
   smarc_msgs::ThrusterFeedback thruster_msg;
   thruster_msg.header.stamp = ros::Time(sec,usec*1000);
   thruster_msg.header.seq = sequence;
-  thruster_msg.header.frame_id = "elevon_strb";
+  thruster_msg.header.frame_id = "thruster_strb";
   thruster_msg.rpm.rpm = rpm;
   thruster_msg.current = current;
   thruster_msg.torque = torque;
+  thrusterStrb_pub.publish(thruster_msg);
 }
 
 void RosInterFace::captain_callback_BATTERY() {
@@ -474,6 +476,17 @@ void RosInterFace::captain_callback_VBS() {
   uint64_t front_tank_sec = timestamp_front_tank / 1000000;
   uint64_t front_tank_usec = timestamp_front_tank % 1000000;
 
+  if(newData_front) {
+    lolo_msgs::VbsTank msg;
+    msg.header.stamp = ros::Time(front_tank_sec,front_tank_usec*1000);
+    msg.header.frame_id = "VBS";
+    msg.precent_current = vbs_front_tank_percent_current;
+    msg.precent_target = vbs_front_tank_percent_target;
+    msg.pressure = vbs_front_tank_pressure;
+    msg.volume = vbs_front_tank_volume;
+    VBS_front_tank_pub.publish(msg);
+  }
+
   //Aft tank
   int newData_aft = captain->parse_byte();
   uint64_t timestamp_aft_tank = captain->parse_llong();              //timestamp from ISB
@@ -483,9 +496,21 @@ void RosInterFace::captain_callback_VBS() {
   float vbs_aft_tank_volume = captain->parse_float();                //Aft tank volume
   uint64_t aft_tank_sec = timestamp_aft_tank / 1000000;
   uint64_t aft_tank_usec = timestamp_aft_tank % 1000000;
+
+  if(newData_aft) {
+    lolo_msgs::VbsTank msg;
+    msg.header.stamp = ros::Time(aft_tank_sec,aft_tank_usec*1000);
+    msg.header.frame_id = "VBS";
+    msg.precent_current = vbs_aft_tank_percent_current;
+    msg.precent_target = vbs_aft_tank_percent_target;
+    msg.pressure = vbs_aft_tank_pressure;
+    msg.volume = vbs_aft_tank_volume;
+    VBS_aft_tank_pub.publish(msg);
+  }
   
   //Valve stuff
   int valves = captain->parse_byte();                                //Valve information
+  //TODO parse this.
 
   //Motor stuff
   int newData_motor = captain->parse_byte();
@@ -505,6 +530,8 @@ void RosInterFace::captain_callback_VBS() {
     msg.rpm.rpm = vbs_motor_rpm;
     msg.current = vbs_motor_current;
     msg.torque = vbs_motor_torque;
+
+    VBS_motor_pub.publish(msg);
   }
 };
 

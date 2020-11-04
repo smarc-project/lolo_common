@@ -3,7 +3,8 @@ import rospy
 from std_msgs.msg import Header
 from std_msgs.msg import Empty
 from std_msgs.msg import Float32
-from cola2_msgs.msg import LatLonStamped
+from smarc_msgs.msg import LatLonStamped
+from smarc_msgs.msg import FloatStamped
 from geometry_msgs.msg import TwistWithCovarianceStamped
 from geometry_msgs.msg import QuaternionStamped
 from sensor_msgs.msg import NavSatFix
@@ -56,9 +57,9 @@ class translator:
         self.state_publisher = rospy.Publisher("/lolo/imc/estimated_state", EstimatedState, queue_size=1)
         self.state_pos_subscriber = rospy.Subscriber("/lolo/core/state/position", LatLonStamped, self.callback_state_pos)
         self.state_orientation_subscriber = rospy.Subscriber("lolo/core/state/orientation", QuaternionStamped, self.callback_state_orientation)
-        self.state_depth_subscriber = rospy.Subscriber("/lolo/core/state/depth", Float32, self.callback_state_depth)
+        self.state_depth_subscriber = rospy.Subscriber("/lolo/core/state/depth", FloatStamped, self.callback_state_depth)
         self.state_twist_subscriber = rospy.Subscriber("/lolo/core/state/twist", TwistWithCovarianceStamped, self.callback_state_twist)
-        self.state_altitude_subscriber = rospy.Subscriber("/lolo/core/state/altitude", Float32, self.callback_state_altitude)
+        self.state_altitude_subscriber = rospy.Subscriber("/lolo/core/state/altitude", FloatStamped, self.callback_state_altitude)
 
         #Gps
         self.gps_publisher_fix = rospy.Publisher("/lolo/imc/gps_fix", NavSatFix, queue_size=1)
@@ -123,7 +124,6 @@ class translator:
         newMsg.r   =     self.lolo.rotZ                     # Angular Velocity in z.
         newMsg.depth =   self.lolo.depth                    # Depth.
         newMsg.alt =     self.lolo.altitude                 # Altitude.
-
         self.state_publisher.publish(newMsg)
 
     def callback_gps(self, msg):

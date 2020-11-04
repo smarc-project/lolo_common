@@ -54,9 +54,9 @@ void RosInterFace::init(ros::NodeHandle* nh, CaptainInterFace* cap) {
   elevon_strb_angle_pub   = n->advertise<smarc_msgs::FloatStamped>("/lolo/core/elevon_strb_fb/angle", 10);
 
   //VBS
-  //VBS_front_tank_pub = /lolo/core/VBS/front_tank_fb
-  //VBS_aft_tank_pub = /lolo/core/VBS/aft_tank_fb
-  //VBS_valves_pub = /lolo/core/VBS/valves_fb
+  VBS_front_tank_pub = n->advertise<lolo_msgs::VbsTank>("/lolo/core/vbs/front_tank_fb", 10);
+  VBS_aft_tank_pub = n->advertise<lolo_msgs::VbsTank>("/lolo/core/vbs/aft_tank_fb", 10);
+  VBS_valves_pub = n->advertise<lolo_msgs::VbsValves>("/lolo/core/vbs/valves_fb", 10);
   VBS_motor_pub = n->advertise<smarc_msgs::ThrusterFeedback>("/lolo/core/VBS/motor_fb", 10);
 
   //Leak sensors
