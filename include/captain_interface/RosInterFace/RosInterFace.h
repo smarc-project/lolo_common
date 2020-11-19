@@ -102,6 +102,7 @@ struct RosInterFace {
   ros::Publisher pressure_pub;
   ros::Publisher dvl_pub;
   ros::Publisher gps_pub;
+  ros::Publisher fls_pub;
 
   //control / status
   ros::Publisher status_orientation_pub;
@@ -161,6 +162,8 @@ struct RosInterFace {
   void captain_callback_MAG();
   void captain_callback_PRESSURE();
   void captain_callback_VBS();
+  void captain_callback_POSITION();
+  void captain_callback_FLS();
   void captain_callback_TEXT();
   void captain_callback_MENUSTREAM();
 
@@ -182,7 +185,9 @@ struct RosInterFace {
       case CS_IMU: {          captain_callback_IMU(); } break; //IMU
       case CS_MAG: {          captain_callback_MAG(); } break; //MAG
       case CS_PRESSURE: {     captain_callback_PRESSURE();} break; //PRESSURE
-      case CS_VBS: {          captain_callback_VBS(); } break;
+      case CS_VBS: {          captain_callback_VBS(); } break; //VBS
+      case CS_POSITION: {     captain_callback_VBS(); } break; //Position
+      case CS_FLS: {          captain_callback_VBS(); } break; //FLS
       case CS_TEXT: {         captain_callback_TEXT(); } break;  //General purpose text message
       case CS_MENUSTREAM: {   captain_callback_MENUSTREAM(); } break; //Menu stream data
     };

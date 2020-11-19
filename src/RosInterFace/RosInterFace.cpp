@@ -69,6 +69,7 @@ void RosInterFace::init(ros::NodeHandle* nh, CaptainInterFace* cap) {
   dvl_pub           = n->advertise<cola2_msgs::DVL>("/lolo/core/dvl", 10);
   gps_pub           = n->advertise<sensor_msgs::NavSatFix>("/lolo/core/gps", 10);
   pressure_pub      = n->advertise<sensor_msgs::FluidPressure>("/lolo/core/pressure", 10);
+  fls_pub           = n->advertise<smarc_msgs::FloatStamped>("/lolo/core/fls", 10);
 
   //control / status
   status_orientation_pub  = n->advertise<geometry_msgs::QuaternionStamped>("/lolo/core/state/orientation", 10);

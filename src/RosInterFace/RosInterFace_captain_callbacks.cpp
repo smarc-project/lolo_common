@@ -6,7 +6,7 @@ void RosInterFace::captain_callback_LEAK() {
 }
 
 void RosInterFace::captain_callback_STATUS() {
-uint64_t timestamp    = captain->parse_llong();
+  uint64_t timestamp    = captain->parse_llong();
   uint64_t sec = timestamp / 1000000;
   uint64_t usec = timestamp % 1000000;
   uint32_t sequence     = captain->parse_long();
@@ -41,6 +41,7 @@ uint64_t timestamp    = captain->parse_llong();
   orientation_msg.quaternion.z = q4;
   status_orientation_pub.publish(orientation_msg);
 
+  /* moved to callback_position
   //publish position (lat lon)
   smarc_msgs::LatLonStamped pos_msg;
   pos_msg.header.stamp = ros::Time(sec,usec*1000);
@@ -50,7 +51,9 @@ uint64_t timestamp    = captain->parse_llong();
   pos_msg.latitude = lat;
   pos_msg.longitude = lon;
   status_position_pub.publish(pos_msg);
+  */
 
+  /*
   //publish depth
   smarc_msgs::FloatStamped depth_msg;
   depth_msg.data = depth;
@@ -58,6 +61,7 @@ uint64_t timestamp    = captain->parse_llong();
   depth_msg.header.seq = sequence;
   depth_msg.header.frame_id = "dome";
   status_depth_pub.publish(depth_msg);
+  */
 
   //publish altitude
   smarc_msgs::FloatStamped alt_msg;
@@ -197,7 +201,7 @@ void RosInterFace::captain_callback_THRUSTER_PORT() {
   smarc_msgs::ThrusterFeedback thruster_msg;
   thruster_msg.header.stamp = ros::Time(sec,usec*1000);
   thruster_msg.header.seq = sequence;
-  thruster_msg.header.frame_id = "thruster_strb";
+  thruster_msg.header.frame_id = "thruster_port";
   thruster_msg.rpm.rpm = rpm;
   thruster_msg.current = current;
   thruster_msg.torque = torque;
@@ -533,6 +537,60 @@ void RosInterFace::captain_callback_VBS() {
 
     VBS_motor_pub.publish(msg);
   }
+};
+
+void RosInterFace::captain_callback_POSITION() {
+
+  uint64_t timestamp    = captain->parse_llong();
+  uint64_t sec = timestamp / 1000000;
+  uint64_t usec = timestamp % 1000000;
+  uint32_t sequence     = captain->parse_long();
+  
+  double lat        = captain->parse_double();
+  double lon        = captain->parse_double();
+  float depth       = captain->parse_float();
+
+  float SOGX        = captain->parse_float();
+  float SOGY        = captain->parse_float();
+  float SOGZ        = captain->parse_float();
+
+  //publish position (lat lon)
+  smarc_msgs::LatLonStamped pos_msg;
+  pos_msg.header.stamp = ros::Time(sec,usec*1000);
+  pos_msg.header.seq = sequence;
+  pos_msg.header.frame_id = "dome";
+  
+  pos_msg.latitude = lat;
+  pos_msg.longitude = lon;
+  status_position_pub.publish(pos_msg);
+ 
+  //publish depth
+  smarc_msgs::FloatStamped depth_msg;
+  depth_msg.data = depth;
+  depth_msg.header.stamp = ros::Time(sec,usec*1000);
+  depth_msg.header.seq = sequence;
+  depth_msg.header.frame_id = "dome";
+  status_depth_pub.publish(depth_msg);
+};
+
+void RosInterFace::captain_callback_FLS() {
+  //FLS
+  uint64_t timestamp    = captain->parse_llong();
+  uint64_t sec = timestamp / 1000000;
+  uint64_t usec = timestamp % 1000000;
+  uint32_t sequence     = captain->parse_long();
+  
+  float range        = captain->parse_float();
+  float confidence   = captain->parse_float();
+  
+  //publish depth
+  smarc_msgs::FloatStamped fls_msg;
+  fls_msg.data = range;
+  fls_msg.header.stamp = ros::Time(sec,usec*1000);
+  fls_msg.header.seq = sequence;
+  fls_msg.header.frame_id = "front";
+  fls_pub.publish(fls_msg);
+
 };
 
 void RosInterFace::captain_callback_TEXT() {
