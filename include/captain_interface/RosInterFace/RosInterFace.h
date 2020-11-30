@@ -6,6 +6,10 @@
 
 #include "captain_interface/scientistmsg.h"
 
+#ifndef PI 
+#define PI 3.141592653589793238462643383279502884197169399375105820974944592307816406286
+#endif
+
 //Ros messages
 #include <std_msgs/String.h>
 #include <std_msgs/Float32.h>
@@ -20,14 +24,16 @@
 #include <sensor_msgs/Imu.h>
 #include <sensor_msgs/NavSatFix.h>
 #include <cola2_msgs/DVL.h>
-#include <smarc_msgs/LatLonStamped.h>
+#include <geographic_msgs/GeoPoint.h>
+#include <geographic_msgs/GeoPointStamped.h>
+//#include <smarc_msgs/LatLonStamped.h>
 #include <smarc_msgs/FloatStamped.h>
 #include <smarc_msgs/ThrusterRPM.h>
 #include <smarc_msgs/ThrusterFeedback.h>
 #include <smarc_msgs/Leak.h>
 #include <lolo_msgs/CaptainStatus.h>
-#include <lolo_msgs/VbsValves.h>
-#include <lolo_msgs/VbsTank.h>
+//#include <lolo_msgs/VbsValves.h>
+//#include <lolo_msgs/VbsTank.h>
 
 struct RosInterFace {
 
@@ -128,7 +134,8 @@ struct RosInterFace {
   void ros_callback_heartbeat(const std_msgs::Empty::ConstPtr &_msg);
   void ros_callback_abort(const std_msgs::Empty::ConstPtr &_msg);
   void ros_callback_done(const std_msgs::Empty::ConstPtr &_msg);
-  void ros_callback_waypoint(const smarc_msgs::LatLonStamped::ConstPtr &_msg);
+  //void ros_callback_waypoint(const smarc_msgs::LatLonStamped::ConstPtr &_msg);
+  void ros_callback_waypoint(const geographic_msgs::GeoPoint::ConstPtr &_msg);
   void ros_callback_speed(const std_msgs::Float32::ConstPtr &_msg);
   void ros_callback_depth(const std_msgs::Float32::ConstPtr &_msg);
   void ros_callback_altitude(const std_msgs::Float32::ConstPtr &_msg);
@@ -186,8 +193,8 @@ struct RosInterFace {
       case CS_MAG: {          captain_callback_MAG(); } break; //MAG
       case CS_PRESSURE: {     captain_callback_PRESSURE();} break; //PRESSURE
       case CS_VBS: {          captain_callback_VBS(); } break; //VBS
-      case CS_POSITION: {     captain_callback_VBS(); } break; //Position
-      case CS_FLS: {          captain_callback_VBS(); } break; //FLS
+      case CS_POSITION: {     captain_callback_POSITION(); } break; //Position
+      case CS_FLS: {          captain_callback_FLS(); } break; //FLS
       case CS_TEXT: {         captain_callback_TEXT(); } break;  //General purpose text message
       case CS_MENUSTREAM: {   captain_callback_MENUSTREAM(); } break; //Menu stream data
     };

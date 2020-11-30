@@ -43,13 +43,14 @@ void RosInterFace::captain_callback_STATUS() {
 
   /* moved to callback_position
   //publish position (lat lon)
-  smarc_msgs::LatLonStamped pos_msg;
+  geographic_msgs::GeoPointStamped pos_msg;
+
   pos_msg.header.stamp = ros::Time(sec,usec*1000);
   pos_msg.header.seq = sequence;
   pos_msg.header.frame_id = "dome";
   
-  pos_msg.latitude = lat;
-  pos_msg.longitude = lon;
+  pos_msg.position.latitude = lat*(180.0 / PI);
+  pos_msg.position.longitude = lon * (180.0 / PI);
   status_position_pub.publish(pos_msg);
   */
 
@@ -330,10 +331,10 @@ void RosInterFace::captain_callback_GPS() {
   msg.header.stamp = ros::Time(sec,usec*1000);
   msg.header.seq = sequence;
   msg.header.frame_id = "gps";
-  msg.latitude = lat;
-  msg.longitude = lon;
-  msg.status.status = 0;
-  msg.status.service = 1;
+  msg.latitude = 180.0*lat / PI;
+  msg.longitude = 180.0*lon / PI;
+  msg.status.status = 0; //TODO set status
+  msg.status.service = 1; //TODO set service
   gps_pub.publish(msg);
 }
 
@@ -469,7 +470,7 @@ void RosInterFace::captain_callback_PRESSURE() {
 }
 
 void RosInterFace::captain_callback_VBS() {
-
+  /*
   //Front tank
   int newData_front = captain->parse_byte();
   uint64_t timestamp_front_tank = captain->parse_llong();            //timestamp from ISB
@@ -510,6 +511,7 @@ void RosInterFace::captain_callback_VBS() {
     msg.pressure = vbs_aft_tank_pressure;
     msg.volume = vbs_aft_tank_volume;
     VBS_aft_tank_pub.publish(msg);
+    
   }
   
   //Valve stuff
@@ -537,6 +539,7 @@ void RosInterFace::captain_callback_VBS() {
 
     VBS_motor_pub.publish(msg);
   }
+  */
 };
 
 void RosInterFace::captain_callback_POSITION() {
@@ -555,13 +558,14 @@ void RosInterFace::captain_callback_POSITION() {
   float SOGZ        = captain->parse_float();
 
   //publish position (lat lon)
-  smarc_msgs::LatLonStamped pos_msg;
+  geographic_msgs::GeoPointStamped pos_msg;
+
   pos_msg.header.stamp = ros::Time(sec,usec*1000);
   pos_msg.header.seq = sequence;
   pos_msg.header.frame_id = "dome";
   
-  pos_msg.latitude = lat;
-  pos_msg.longitude = lon;
+  pos_msg.position.latitude = lat*(180.0 / PI);
+  pos_msg.position.longitude = lon * (180.0 / PI);
   status_position_pub.publish(pos_msg);
  
   //publish depth

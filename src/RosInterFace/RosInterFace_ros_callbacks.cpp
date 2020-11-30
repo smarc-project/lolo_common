@@ -16,13 +16,13 @@ void RosInterFace::ros_callback_done(const std_msgs::Empty::ConstPtr &_msg) {
   captain->send_package();
 };
 
-
-void RosInterFace::ros_callback_waypoint(const smarc_msgs::LatLonStamped::ConstPtr &_msg) {
+//void RosInterFace::ros_callback_waypoint(const smarc_msgs::LatLonStamped::ConstPtr &_msg) {
+void RosInterFace::ros_callback_waypoint(const geographic_msgs::GeoPoint::ConstPtr &_msg) {
   double lat = _msg->latitude;
   double lon = _msg->longitude;
   captain->new_package(SC_SET_TARGET_WAYPOINT); // set target waypoint
-  captain->add_double(lat);
-  captain->add_double(lon);
+  captain->add_double((PI / 180) * lat);
+  captain->add_double((PI / 180) * lon);
   captain->send_package();
 };
 
