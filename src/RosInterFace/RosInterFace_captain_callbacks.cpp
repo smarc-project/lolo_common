@@ -587,14 +587,15 @@ void RosInterFace::captain_callback_FLS() {
   float range        = captain->parse_float();
   float confidence   = captain->parse_float();
   
-  //publish depth
-  smarc_msgs::FloatStamped fls_msg;
-  fls_msg.data = range;
-  fls_msg.header.stamp = ros::Time(sec,usec*1000);
-  fls_msg.header.seq = sequence;
-  fls_msg.header.frame_id = "front";
-  fls_pub.publish(fls_msg);
-
+  //publish depth if confidence = 100%
+  if(confidence > 99) {
+    smarc_msgs::FloatStamped fls_msg;
+    fls_msg.data = range;
+    fls_msg.header.stamp = ros::Time(sec,usec*1000);
+    fls_msg.header.seq = sequence;
+    fls_msg.header.frame_id = "front";
+    fls_pub.publish(fls_msg);  
+  }
 };
 
 void RosInterFace::captain_callback_TEXT() {

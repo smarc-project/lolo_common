@@ -16,6 +16,7 @@ find_package(catkin REQUIRED COMPONENTS
   rospy
   std_msgs
   lolo_msgs
+  smarc_msgs
   cola2_msgs
   genmsg
 )
