@@ -59,8 +59,8 @@ add_library(other_stuff
 
 add_executable(interface src/main.cpp)
 
-add_dependencies(other_stuff ${catkin_EXPORTED_TARGETS} captain_interface_generate_messages_cpp)
-add_dependencies(interface ${catkin_EXPORTED_TARGETS} captain_interface_generate_messages_cpp)
+add_dependencies(other_stuff ${catkin_EXPORTED_TARGETS})
+add_dependencies(interface ${catkin_EXPORTED_TARGETS})
 
 target_link_libraries(
   interface
