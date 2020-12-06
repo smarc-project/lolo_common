@@ -72,6 +72,7 @@ bool CaptainInterFace::send_package() {
   add_byte(cs);         //Add CS
 
   bool success = send_data(send_buffer, len);
+  return success;
 }
 
 //----------------------------------------------------------------
