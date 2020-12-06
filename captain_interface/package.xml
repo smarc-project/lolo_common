@@ -56,7 +56,6 @@
   <build_depend>rospy</build_depend>
   <build_depend>std_msgs</build_depend>
   <build_depend>lolo_msgs</build_depend>
-  <build_depend>cola2_msgs</build_depend>
   <build_depend>sensor_msgs</build_depend>
   <build_depend>smarc_msgs</build_depend>
   <build_depend>lolo_msgs</build_depend>
@@ -75,7 +74,6 @@
   <exec_depend>sensor_msgs</exec_depend>
   <exec_depend>lolo_msgs</exec_depend>
   <exec_depend>smarc_msgs</exec_depend>
-  <exec_depend>cola2_msgs</exec_depend>
 
 
   <!-- The export tag contains other, unspecified, tags -->

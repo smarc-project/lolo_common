@@ -23,10 +23,9 @@
 #include <sensor_msgs/MagneticField.h>
 #include <sensor_msgs/Imu.h>
 #include <sensor_msgs/NavSatFix.h>
-#include <cola2_msgs/DVL.h>
 #include <geographic_msgs/GeoPoint.h>
 #include <geographic_msgs/GeoPointStamped.h>
-//#include <smarc_msgs/LatLonStamped.h>
+#include <smarc_msgs/DVL.h>
 #include <smarc_msgs/FloatStamped.h>
 #include <smarc_msgs/ThrusterRPM.h>
 #include <smarc_msgs/ThrusterFeedback.h>

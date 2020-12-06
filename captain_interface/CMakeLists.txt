@@ -17,7 +17,6 @@ find_package(catkin REQUIRED COMPONENTS
   std_msgs
   lolo_msgs
   smarc_msgs
-  cola2_msgs
   genmsg
 )
 
@@ -34,7 +33,7 @@ find_package(catkin REQUIRED COMPONENTS
 #)
 
 catkin_package(
-  CATKIN_DEPENDS roscpp geometry_msgs std_msgs sensor_msgs lolo_msgs cola2_msgs
+  CATKIN_DEPENDS roscpp geometry_msgs std_msgs sensor_msgs lolo_msgs smarc_msgs
 )
 
 

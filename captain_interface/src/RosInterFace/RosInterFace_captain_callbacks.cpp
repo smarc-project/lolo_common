@@ -294,7 +294,7 @@ void RosInterFace::captain_callback_DVL() {
   float c21            = captain->parse_float();
   float c22            = captain->parse_float();
 
-  cola2_msgs::DVL msg;
+  smarc_msgs::DVL msg;
   msg.header.stamp = ros::Time(sec,usec*1000);
   msg.header.seq = sequence;
   msg.header.frame_id = "dvl";
