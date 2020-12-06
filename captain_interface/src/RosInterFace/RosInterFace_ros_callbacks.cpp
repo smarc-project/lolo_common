@@ -26,49 +26,49 @@ void RosInterFace::ros_callback_waypoint(const geographic_msgs::GeoPoint::ConstP
   captain->send_package();
 };
 
-void RosInterFace::ros_callback_speed(const std_msgs::Float32::ConstPtr &_msg) {
+void RosInterFace::ros_callback_speed(const std_msgs::Float64::ConstPtr &_msg) {
   float targetSpeed = _msg->data;
   captain->new_package(SC_SET_TARGET_SPEED);
   captain->add_float(targetSpeed);
   captain->send_package();
 };
 
-void RosInterFace::ros_callback_depth(const std_msgs::Float32::ConstPtr &_msg) {
+void RosInterFace::ros_callback_depth(const std_msgs::Float64::ConstPtr &_msg) {
   float targetDepth = _msg->data;
   captain->new_package(SC_SET_TARGET_DEPTH);
   captain->add_float(targetDepth);
   captain->send_package();
 };
 
-void RosInterFace::ros_callback_altitude(const std_msgs::Float32::ConstPtr &_msg) {
+void RosInterFace::ros_callback_altitude(const std_msgs::Float64::ConstPtr &_msg) {
   float targetAltitude = _msg->data;
   captain->new_package(SC_SET_TARGET_ALTITUDE);
   captain->add_float(targetAltitude);
   captain->send_package();
 };
 
-void RosInterFace::ros_callback_yaw(const std_msgs::Float32::ConstPtr &_msg) {
+void RosInterFace::ros_callback_yaw(const std_msgs::Float64::ConstPtr &_msg) {
   float targetYaw = _msg->data;
   captain->new_package(SC_SET_TARGET_YAW);
   captain->add_float(targetYaw);
   captain->send_package();
 };
 
-void RosInterFace::ros_callback_yawrate(const std_msgs::Float32::ConstPtr &_msg) {
+void RosInterFace::ros_callback_yawrate(const std_msgs::Float64::ConstPtr &_msg) {
   float targetYawRate = _msg->data;
   captain->new_package(SC_SET_TARGET_YAW_RATE);
   captain->add_float(targetYawRate);
   captain->send_package();
 };
 
-void RosInterFace::ros_callback_pitch(const std_msgs::Float32::ConstPtr &_msg) {
+void RosInterFace::ros_callback_pitch(const std_msgs::Float64::ConstPtr &_msg) {
   float targetPitch = _msg->data;
   captain->new_package(SC_SET_TARGET_PITCH);
   captain->add_float(targetPitch);
   captain->send_package();
 };
 
-void RosInterFace::ros_callback_rpm(const std_msgs::Float32::ConstPtr &_msg) {
+void RosInterFace::ros_callback_rpm(const std_msgs::Float64::ConstPtr &_msg) {
   float targetRPM = _msg->data;
   captain->new_package(SC_SET_TARGET_RPM);
   captain->add_float(targetRPM);
@@ -76,27 +76,27 @@ void RosInterFace::ros_callback_rpm(const std_msgs::Float32::ConstPtr &_msg) {
 };
 
 
-void RosInterFace::ros_callback_rudder(const std_msgs::Float32::ConstPtr &_msg) {
+void RosInterFace::ros_callback_rudder(const std_msgs::Float64::ConstPtr &_msg) {
   float angle = _msg->data;
   captain->new_package(SC_SET_RUDDER);
   captain->add_float(angle);
   captain->send_package();
 };
 
-void RosInterFace::ros_callback_elevator(const std_msgs::Float32::ConstPtr &_msg) {
+void RosInterFace::ros_callback_elevator(const std_msgs::Float64::ConstPtr &_msg) {
   float angle = _msg->data;
   captain->new_package(SC_SET_ELEVATOR);
   captain->add_float(angle);
   captain->send_package();
 };
 
-void RosInterFace::ros_callback_thrusterPort(const std_msgs::Float32::ConstPtr &_msg) {
+void RosInterFace::ros_callback_thrusterPort(const std_msgs::Float64::ConstPtr &_msg) {
   captain->new_package(SC_SET_THRUSTER_PORT);
   captain->add_float(_msg->data);
   captain->send_package();
 };
 
-void RosInterFace::ros_callback_thrusterStrb(const std_msgs::Float32::ConstPtr &_msg) {
+void RosInterFace::ros_callback_thrusterStrb(const std_msgs::Float64::ConstPtr &_msg) {
   captain->new_package(SC_SET_THRUSTER_STRB);
   captain->add_float(_msg->data);
   captain->send_package();

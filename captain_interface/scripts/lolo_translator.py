@@ -2,7 +2,7 @@
 import rospy
 from std_msgs.msg import Header
 from std_msgs.msg import Empty
-from std_msgs.msg import Float32
+from std_msgs.msg import Float64
 from smarc_msgs.msg import LatLonStamped
 from smarc_msgs.msg import FloatStamped
 from geometry_msgs.msg import TwistWithCovarianceStamped
