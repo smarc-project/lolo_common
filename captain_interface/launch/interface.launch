@@ -1,0 +1,8 @@
+<launch>
+    <!-- Captain interface node -->
+    <node pkg="captain_interface" type="interface" name="interface" output="screen"> </node>
+
+    <!-- Translation node to send data to neptus without the behavior tree -->
+    <!--<node pkg="captain_interface" type="lolo_translator.py" name="interface_translator" output="screen"> </node>-->
+    
+</launch>
