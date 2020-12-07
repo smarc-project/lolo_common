@@ -72,6 +72,7 @@ void RosInterFace::captain_callback_STATUS() {
   alt_msg.header.frame_id = "dome";
   status_altitude_pub.publish(alt_msg);
 
+  /*
   //Twist NED
   geometry_msgs::TwistWithCovarianceStamped twist_msg;
   twist_msg.header.stamp = ros::Time(sec,usec*1000);
@@ -84,6 +85,7 @@ void RosInterFace::captain_callback_STATUS() {
   twist_msg.twist.twist.angular.y = rotY;
   twist_msg.twist.twist.angular.z = rotZ;
   status_twist_pub.publish(twist_msg);
+  */
 }
 
 void RosInterFace::captain_callback_CONTROL() {
@@ -557,6 +559,15 @@ void RosInterFace::captain_callback_POSITION() {
   float SOGY        = captain->parse_float();
   float SOGZ        = captain->parse_float();
 
+  float ROTX        = captain->parse_float();
+  float ROTY        = captain->parse_float();
+  float ROTZ        = captain->parse_float();
+
+  float q1          = captain->parse_float();
+  float q2          = captain->parse_float();
+  float q3          = captain->parse_float();
+  float q4          = captain->parse_float();
+
   //publish position (lat lon)
   geographic_msgs::GeoPointStamped pos_msg;
 
@@ -575,6 +586,42 @@ void RosInterFace::captain_callback_POSITION() {
   depth_msg.header.seq = sequence;
   depth_msg.header.frame_id = "dome";
   status_depth_pub.publish(depth_msg);
+
+  //publish velocities
+  geometry_msgs::TwistWithCovarianceStamped twist_msg;
+  twist_msg.header.stamp = ros::Time(sec,usec*1000);
+  twist_msg.header.seq = sequence;
+  twist_msg.header.frame_id = "dome";
+  twist_msg.twist.twist.linear.x = SOGX;
+  twist_msg.twist.twist.linear.y = SOGY;
+  twist_msg.twist.twist.linear.z = SOGZ;
+  twist_msg.twist.twist.angular.x = ROTX;
+  twist_msg.twist.twist.angular.y = ROTY;
+  twist_msg.twist.twist.angular.z = ROTZ;
+  status_twist_pub.publish(twist_msg);
+
+  //Quaternion message
+  //publish orientation
+  geometry_msgs::Quaternion orientation_msg;  
+  orientation_msg.w = q1;
+  orientation_msg.x = q2;
+  orientation_msg.y = q3;
+  orientation_msg.z = q4;
+
+  smarc_msgs::LatLonToUTMOdometry srv;
+  //TODO header
+  srv.request.lat_lon_odom.lat_lon_pose.position = pos_msg.position;
+  srv.request.lat_lon_odom.lat_lon_pose.orientation = orientation_msg;
+  srv.request.lat_lon_odom.twist = twist_msg.twist;
+  
+  if (odom_client.call(srv)) {
+    ROS_INFO("Call to action server sucsessfull");
+    odom_pub.publish(srv.response);
+  }
+  else
+  {
+    ROS_ERROR("Failed to call service to convert utm to latlon. waypoint not sent to the captain");
+  }
 };
 
 void RosInterFace::captain_callback_FLS() {

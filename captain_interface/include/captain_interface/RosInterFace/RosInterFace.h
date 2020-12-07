@@ -25,6 +25,10 @@
 #include <sensor_msgs/NavSatFix.h>
 #include <geographic_msgs/GeoPoint.h>
 #include <geographic_msgs/GeoPointStamped.h>
+#include <nav_msgs/Odometry.h>
+#include <smarc_msgs/UTMToLatLon.h>
+#include <smarc_msgs/LatLonToUTMOdometry.h>
+#include <smarc_msgs/LatLonOdometry.h>
 #include <smarc_msgs/DVL.h>
 #include <smarc_msgs/FloatStamped.h>
 #include <smarc_msgs/ThrusterRPM.h>
@@ -41,6 +45,12 @@ struct RosInterFace {
   CaptainInterFace* captain;
 
   void init(ros::NodeHandle* nh, CaptainInterFace* cap);
+
+  //======================================================//
+  //================== Service clients ===================//
+  //======================================================//
+  ros::ServiceClient utm_to_latlon_client;
+  ros::ServiceClient odom_client;
 
   //======================================================//
   //================== ROS subscribers ===================//
@@ -116,6 +126,9 @@ struct RosInterFace {
   ros::Publisher status_depth_pub;
   ros::Publisher status_twist_pub;
 
+  //Odometry pub
+  ros::Publisher odom_pub;
+
   ros::Publisher control_status_pub;
   ros::Publisher vehiclestate_pub;
 
@@ -133,7 +146,7 @@ struct RosInterFace {
   void ros_callback_heartbeat(const std_msgs::Empty::ConstPtr &_msg);
   void ros_callback_abort(const std_msgs::Empty::ConstPtr &_msg);
   void ros_callback_done(const std_msgs::Empty::ConstPtr &_msg);
-  //void ros_callback_waypoint(const smarc_msgs::LatLonStamped::ConstPtr &_msg);
+  void ros_callback_waypoint_utm(const geometry_msgs::Point::ConstPtr &_msg);
   void ros_callback_waypoint(const geographic_msgs::GeoPoint::ConstPtr &_msg);
   void ros_callback_speed(const std_msgs::Float64::ConstPtr &_msg);
   void ros_callback_depth(const std_msgs::Float64::ConstPtr &_msg);
