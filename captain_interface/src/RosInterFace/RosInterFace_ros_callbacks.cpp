@@ -22,7 +22,7 @@ void RosInterFace::ros_callback_waypoint_utm(const geometry_msgs::Point::ConstPt
   srv.request.utm_point = *_msg;
   if (utm_to_latlon_client.call(srv))
   {
-    ROS_INFO("Call to action server sucsessfull");
+    ROS_INFO("Call to service sucsessfull");
     boost::shared_ptr<geographic_msgs::GeoPoint> latlonmsg(new geographic_msgs::GeoPoint());
     latlonmsg->latitude = srv.response.lat_lon_point.latitude;
     latlonmsg->longitude = srv.response.lat_lon_point.longitude;

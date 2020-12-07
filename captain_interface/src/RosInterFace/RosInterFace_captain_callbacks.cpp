@@ -615,12 +615,12 @@ void RosInterFace::captain_callback_POSITION() {
   srv.request.lat_lon_odom.twist = twist_msg.twist;
   
   if (odom_client.call(srv)) {
-    ROS_INFO("Call to action server sucsessfull");
-    odom_pub.publish(srv.response);
+    ROS_INFO("Call to service sucsessfull");
+    odom_pub.publish(srv.response.odom);
   }
   else
   {
-    ROS_ERROR("Failed to call service to convert utm to latlon. waypoint not sent to the captain");
+    //ROS_ERROR("Failed to call service to convert position to odom");
   }
 };
 
