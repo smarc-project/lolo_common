@@ -2,7 +2,7 @@
 
 <arg name="robot_name" default="lolo"/>
 
-<param name="utm_zone" type="int" value="32"/>
+<param name="utm_zone" type="int" value="34"/>
 <param name="utm_band" type="string" value="V"/>
 
 <include file="$(find lolo_description)/launch/lolo_description.launch">
