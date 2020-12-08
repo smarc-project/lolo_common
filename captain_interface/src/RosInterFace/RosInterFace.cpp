@@ -3,6 +3,9 @@
 void RosInterFace::init(ros::NodeHandle* nh, CaptainInterFace* cap) { 
   n = nh; captain = cap; 
 
+  utm_to_latlon_client = n->serviceClient<smarc_msgs::UTMToLatLon>("utm_to_lat_lon");
+  odom_client = n->serviceClient<smarc_msgs::LatLonToUTMOdometry>("lat_lon_to_utm_odom");
+
   //==================================//
   //=========== Subscribers ==========//
   //==================================//
@@ -13,7 +16,7 @@ void RosInterFace::init(ros::NodeHandle* nh, CaptainInterFace* cap) {
   done_sub  = n->subscribe<std_msgs::Empty>("/lolo/core/abort", 1, &RosInterFace::ros_callback_abort, this);
 
   //Control commands: High level
-  //waypoint_sub  = n->subscribe<smarc_msgs::LatLonStamped>("/lolo/core/waypoint_cmd"          ,1, &RosInterFace::ros_callback_waypoint, this);
+  waypoint_sub_UTM  = n->subscribe<geometry_msgs::Point> ("/lolo/core/waypoint_setpoint_utm" ,1, &RosInterFace::ros_callback_waypoint_utm, this);
   waypoint_sub  = n->subscribe<geographic_msgs::GeoPoint>("/lolo/ctrl/waypoint_setpoint"  ,1, &RosInterFace::ros_callback_waypoint, this);
   speed_sub     = n->subscribe<std_msgs::Float64>("/lolo/ctrl/speed_setpoint"       ,1, &RosInterFace::ros_callback_speed,this);
   depth_sub     = n->subscribe<std_msgs::Float64>("/lolo/ctrl/depth_setpoint"       ,1, &RosInterFace::ros_callback_depth,this);
@@ -81,6 +84,9 @@ void RosInterFace::init(ros::NodeHandle* nh, CaptainInterFace* cap) {
   status_depth_pub        = n->advertise<smarc_msgs::FloatStamped>("/lolo/core/state/depth",10);
   status_twist_pub        = n->advertise<geometry_msgs::TwistWithCovarianceStamped>("lolo/core/state/twist",10);
   control_status_pub      = n->advertise<lolo_msgs::CaptainStatus>("/lolo/core/control_status", 10);
+
+  //Odometry
+  odom_pub                = n->advertise<nav_msgs::Odometry>("/lolo/dr/odom", 10);
 
   //General purpose text message
   text_pub   = n->advertise<std_msgs::String>("/lolo/text", 10);
