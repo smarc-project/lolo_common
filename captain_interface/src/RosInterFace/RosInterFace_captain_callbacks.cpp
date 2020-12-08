@@ -326,6 +326,7 @@ void RosInterFace::captain_callback_GPS() {
   float lon           = captain->parse_double();
   float cog           = captain->parse_float();
   float sog           = captain->parse_float();
+  char status         = captain->parse_byte();
 
   sensor_msgs::NavSatFix msg;
   msg.header.stamp = ros::Time(sec,usec*1000);
@@ -333,7 +334,7 @@ void RosInterFace::captain_callback_GPS() {
   msg.header.frame_id = "gps";
   msg.latitude = 180.0*lat / PI;
   msg.longitude = 180.0*lon / PI;
-  msg.status.status = 0; //TODO set status
+  msg.status.status = status; //Set as the status char from GPS 
   msg.status.service = 1; //TODO set service
   gps_pub.publish(msg);
 }
@@ -400,9 +401,9 @@ void RosInterFace::captain_callback_IMU() {
   msg.angular_velocity_covariance[7] = g_c21;
   msg.angular_velocity_covariance[8] = g_c22;
 
-  msg.linear_acceleration.x = LAccX;
-  msg.linear_acceleration.y = LAccY;
-  msg.linear_acceleration.z = LAccZ;
+  msg.linear_acceleration.x = accX;
+  msg.linear_acceleration.y = accY;
+  msg.linear_acceleration.z = accZ;
 
   msg.linear_acceleration_covariance[0] = a_c00;
   msg.linear_acceleration_covariance[1] = a_c10;
