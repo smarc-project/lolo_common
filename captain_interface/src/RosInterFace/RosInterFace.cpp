@@ -16,7 +16,7 @@ void RosInterFace::init(ros::NodeHandle* nh, CaptainInterFace* cap) {
   done_sub  = n->subscribe<std_msgs::Empty>("/lolo/core/abort", 1, &RosInterFace::ros_callback_abort, this);
 
   //Control commands: High level
-  waypoint_sub_UTM  = n->subscribe<geometry_msgs::Point> ("/lolo/core/waypoint_setpoint_utm" ,1, &RosInterFace::ros_callback_waypoint_utm, this);
+  waypoint_sub_UTM  = n->subscribe<geometry_msgs::Point> ("/lolo/ctrl/waypoint_setpoint_utm" ,1, &RosInterFace::ros_callback_waypoint_utm, this);
   waypoint_sub  = n->subscribe<geographic_msgs::GeoPoint>("/lolo/ctrl/waypoint_setpoint"  ,1, &RosInterFace::ros_callback_waypoint, this);
   speed_sub     = n->subscribe<std_msgs::Float64>("/lolo/ctrl/speed_setpoint"       ,1, &RosInterFace::ros_callback_speed,this);
   depth_sub     = n->subscribe<std_msgs::Float64>("/lolo/ctrl/depth_setpoint"       ,1, &RosInterFace::ros_callback_depth,this);
