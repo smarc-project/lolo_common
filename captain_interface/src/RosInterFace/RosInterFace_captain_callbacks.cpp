@@ -616,7 +616,7 @@ void RosInterFace::captain_callback_POSITION() {
   srv.request.lat_lon_odom.twist = twist_msg.twist;
   
   if (odom_client.call(srv)) {
-    ROS_INFO("Call to service sucsessfull");
+    //ROS_INFO("Call to service sucsessfull");
     odom_pub.publish(srv.response.odom);
   }
   else
