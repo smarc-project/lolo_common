@@ -30,8 +30,8 @@ void RosInterFace::init(ros::NodeHandle* nh, CaptainInterFace* cap) {
 
   //Control commands low level
   //Thruster
-  thrusterPort_sub = n->subscribe<std_msgs::Float64>("/lolo/core/thruster_1_cmd", 1, &RosInterFace::ros_callback_thrusterPort, this);
-  thrusterStrb_sub = n->subscribe<std_msgs::Float64>("/lolo/core/thruster_2_cmd", 1, &RosInterFace::ros_callback_thrusterStrb, this);
+  thrusterPort_sub = n->subscribe<std_msgs::Float64>("/lolo/core/thruster1_cmd", 1, &RosInterFace::ros_callback_thrusterPort, this);
+  thrusterStrb_sub = n->subscribe<std_msgs::Float64>("/lolo/core/thruster2_cmd", 1, &RosInterFace::ros_callback_thrusterStrb, this);
 
   //control surfaces
   rudder_sub      = n->subscribe<std_msgs::Float64>("/lolo/core/rudder_cmd"   ,1, &RosInterFace::ros_callback_rudder, this);
@@ -44,8 +44,8 @@ void RosInterFace::init(ros::NodeHandle* nh, CaptainInterFace* cap) {
   //=========== Publishers ===========//
   //==================================//
   // --- Thrusters --- //
-  thrusterPort_pub     = n->advertise<smarc_msgs::ThrusterFeedback>("/lolo/core/thruster_1_fb", 10);
-  thrusterStrb_pub     = n->advertise<smarc_msgs::ThrusterFeedback>("/lolo/core/thruster_2_fb", 10);
+  thrusterPort_pub     = n->advertise<smarc_msgs::ThrusterFeedback>("/lolo/core/thruster1_fb", 10);
+  thrusterStrb_pub     = n->advertise<smarc_msgs::ThrusterFeedback>("/lolo/core/thruster2_fb", 10);
 
   // --- Rudders --- //
   rudder_angle_pub    = n->advertise<smarc_msgs::FloatStamped>("/lolo/core/rudder_fb", 10);
