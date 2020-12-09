@@ -55,13 +55,15 @@ class LoloJointStateConverter(object):
     def __init__(self):
         self.joint_state_pub = rospy.Publisher("command_states", JointState, queue_size=10)
 
-        self.elevon_stbd_sub = rospy.Subscriber("core/elevon_strb_fb/angle", FloatStamped, self.elevon_stbd_callback)
-        self.elevon_port_sub = rospy.Subscriber("core/elevon_port_fb/angle", FloatStamped, self.elevon_port_callback)
-        self.elevator_sub = rospy.Subscriber("core/elevator_fb/angle", FloatStamped, self.elevator_callback)
-        self.rudder_sub = rospy.Subscriber("core/rudder_fb/angle", FloatStamped, self.rudder_callback)
+        self.elevon_stbd_sub = rospy.Subscriber("core/elevon_strb_fb", FloatStamped, self.elevon_stbd_callback)
+        self.elevon_port_sub = rospy.Subscriber("core/elevon_port_fb", FloatStamped, self.elevon_port_callback)
+        self.elevator_sub = rospy.Subscriber("core/elevator_fb", FloatStamped, self.elevator_callback)
+        self.rudder_sub = rospy.Subscriber("core/rudder_fb", FloatStamped, self.rudder_callback)
 
-        self.thruster_stbd_sub = rospy.Subscriber("core/thruster_strb_fb/rpm", ThrusterFeedback, self.thruster_stbd_callback)
-        self.thruster_port_sub = rospy.Subscriber("core/thruster_port_fb/rpm", ThrusterFeedback, self.thruster_port_callback)
+        #self.thruster_stbd_sub = rospy.Subscriber("core/thruster_strb_fb/rpm", ThrusterFeedback, self.thruster_stbd_callback)
+        #self.thruster_port_sub = rospy.Subscriber("core/thruster_port_fb/rpm", ThrusterFeedback, self.thruster_port_callback)
+        self.thruster_port_sub = rospy.Subscriber("core/thruster1_fb", ThrusterFeedback, self.thruster_port_callback)
+        self.thruster_stbd_sub = rospy.Subscriber("core/thruster2_fb", ThrusterFeedback, self.thruster_stbd_callback)
 
         self.start_time = rospy.Time.now()
         self.velocities = [0., 0.]
