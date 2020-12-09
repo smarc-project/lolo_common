@@ -10,13 +10,13 @@ class LoloJointStateConverter(object):
     def elevon_port_callback(self, msg):
         state = JointState()
         state.name = ["lolo/elevon_port_joint"]
-        state.position = [msg.data]
+        state.position = [-msg.data]
         self.joint_state_pub.publish(state)
 
     def elevon_stbd_callback(self, msg):
         state = JointState()
         state.name = ["lolo/elevon_stbd_joint"]
-        state.position = [msg.data]
+        state.position = [-msg.data]
         self.joint_state_pub.publish(state)
 
     def rudder_callback(self, msg):
@@ -28,20 +28,20 @@ class LoloJointStateConverter(object):
     def elevator_callback(self, msg):
         state = JointState()
         state.name = ["lolo/elevator_joint"]
-        state.position = [msg.data]
+        state.position = [-msg.data]
         self.joint_state_pub.publish(state)
 
     def thruster_port_callback(self, msg):
         state = JointState()
         state.name = ["lolo/thruster_joint_port"]
-        self.velocities[0] = 2.*math.pi/60.*float(msg.rpm.rpm)
+        self.velocities[0] = -0.1 * 2.*math.pi/60.*float(msg.rpm.rpm)
         state.velocity = [self.velocities[0]]
         self.joint_state_pub.publish(state)
 
     def thruster_stbd_callback(self, msg):
         state = JointState()
         state.name = ["lolo/thruster_joint_stbd"]
-        self.velocities[1] = 2.*math.pi/60.*float(msg.rpm.rpm)
+        self.velocities[1] = 0.1 * 2.*math.pi/60.*float(msg.rpm.rpm)
         state.velocity = [self.velocities[1]]
         self.joint_state_pub.publish(state)
 
