@@ -69,7 +69,7 @@ void RosInterFace::captain_callback_STATUS() {
   alt_msg.data = altitude;
   alt_msg.header.stamp = ros::Time(sec,usec*1000);
   alt_msg.header.seq = sequence;
-  alt_msg.header.frame_id = "dome";
+  alt_msg.header.frame_id = "lolo/dvl_link";
   status_altitude_pub.publish(alt_msg);
 
   /*
@@ -133,7 +133,7 @@ void RosInterFace::captain_callback_RUDDER() {
   angle_message.data = current_angle;
   angle_message.header.stamp = ros::Time(sec,usec*1000);
   angle_message.header.seq = sequence;
-  angle_message.header.frame_id = "rudder";
+  angle_message.header.frame_id = "lolo/rudder_port";
   rudder_angle_pub.publish(angle_message);
 }
 
@@ -150,7 +150,7 @@ void RosInterFace::captain_callback_ELEVATOR() {
   angle_message.data = current_angle;
   angle_message.header.stamp = ros::Time(sec,usec*1000);
   angle_message.header.seq = sequence;
-  angle_message.header.frame_id = "elvator";
+  angle_message.header.frame_id = "lolo/elvator";
   elevator_angle_pub.publish(angle_message);
 }
 
@@ -167,7 +167,7 @@ void RosInterFace::captain_callback_ELEVON_PORT() {
   angle_message.data = current_angle;
   angle_message.header.stamp = ros::Time(sec,usec*1000);
   angle_message.header.seq = sequence;
-  angle_message.header.frame_id = "elevon_port";
+  angle_message.header.frame_id = "lolo/elevon_port";
   elevon_port_angle_pub.publish(angle_message);
 }
 
@@ -184,7 +184,7 @@ void RosInterFace::captain_callback_ELEVON_STRB() {
   angle_message.data = current_angle;
   angle_message.header.stamp = ros::Time(sec,usec*1000);
   angle_message.header.seq = sequence;
-  angle_message.header.frame_id = "elevon_strb";
+  angle_message.header.frame_id = "lolo/elevon_stbd";
   elevon_strb_angle_pub.publish(angle_message);
 }
 
@@ -204,7 +204,7 @@ void RosInterFace::captain_callback_THRUSTER_PORT() {
   smarc_msgs::ThrusterFeedback thruster_msg;
   thruster_msg.header.stamp = ros::Time(sec,usec*1000);
   thruster_msg.header.seq = sequence;
-  thruster_msg.header.frame_id = "thruster_port";
+  thruster_msg.header.frame_id = "lolo/thruster_port";
   thruster_msg.rpm.rpm = rpm;
   thruster_msg.current = current;
   thruster_msg.torque = torque;
@@ -227,7 +227,7 @@ void RosInterFace::captain_callback_THRUSTER_STRB() {
   smarc_msgs::ThrusterFeedback thruster_msg;
   thruster_msg.header.stamp = ros::Time(sec,usec*1000);
   thruster_msg.header.seq = sequence;
-  thruster_msg.header.frame_id = "thruster_strb";
+  thruster_msg.header.frame_id = "lolo/thruster_stbd";
   thruster_msg.rpm.rpm = rpm;
   thruster_msg.current = current;
   thruster_msg.torque = torque;
@@ -299,7 +299,7 @@ void RosInterFace::captain_callback_DVL() {
   smarc_msgs::DVL msg;
   msg.header.stamp = ros::Time(sec,usec*1000);
   msg.header.seq = sequence;
-  msg.header.frame_id = "dvl";
+  msg.header.frame_id = "lolo/dvl_link";
   msg.velocity.x = sogX;
   msg.velocity.y = sogY;
   msg.velocity.z = sogZ;
@@ -333,7 +333,7 @@ void RosInterFace::captain_callback_GPS() {
   sensor_msgs::NavSatFix msg;
   msg.header.stamp = ros::Time(sec,usec*1000);
   msg.header.seq = sequence;
-  msg.header.frame_id = "gps";
+  msg.header.frame_id = "lolo/gps_link";
   msg.latitude = 180.0*lat / PI;
   msg.longitude = 180.0*lon / PI;
   msg.status.status = status; //Set as the status char from GPS 
@@ -382,7 +382,7 @@ void RosInterFace::captain_callback_IMU() {
   sensor_msgs::Imu msg;
   msg.header.stamp = ros::Time(sec,usec*1000);
   msg.header.seq = sequence;
-  msg.header.frame_id = "dome";
+  msg.header.frame_id = "lolo/imu_link";
 
   msg.orientation.w = Q1;
   msg.orientation.x = Q2;
@@ -439,7 +439,7 @@ void RosInterFace::captain_callback_MAG() {
   sensor_msgs::MagneticField msg;
   msg.header.stamp = ros::Time(sec,usec*1000);
   msg.header.seq = sequence;
-  msg.header.frame_id = "dome";
+  msg.header.frame_id = "lolo/compass_link";
   msg.magnetic_field.x = magX;
   msg.magnetic_field.y = magY;
   msg.magnetic_field.z = magZ;
@@ -466,7 +466,7 @@ void RosInterFace::captain_callback_PRESSURE() {
   sensor_msgs::FluidPressure msg;
   msg.header.stamp = ros::Time(sec,usec*1000);
   msg.header.seq = sequence;
-  msg.header.frame_id = "dome";
+  msg.header.frame_id = "lolo/pressure_link";
   msg.fluid_pressure = pressure;
   msg.variance = variance;
   pressure_pub.publish(msg);
@@ -574,7 +574,7 @@ void RosInterFace::captain_callback_POSITION() {
 
   pos_msg.header.stamp = ros::Time(sec,usec*1000);
   pos_msg.header.seq = sequence;
-  pos_msg.header.frame_id = "dome";
+  pos_msg.header.frame_id = "lolo/base_link";
   
   pos_msg.position.latitude = lat*(180.0 / PI);
   pos_msg.position.longitude = lon * (180.0 / PI);
@@ -585,14 +585,14 @@ void RosInterFace::captain_callback_POSITION() {
   depth_msg.data = depth;
   depth_msg.header.stamp = ros::Time(sec,usec*1000);
   depth_msg.header.seq = sequence;
-  depth_msg.header.frame_id = "dome";
+  depth_msg.header.frame_id = "lolo/base_link";
   status_depth_pub.publish(depth_msg);
 
   //publish velocities
   geometry_msgs::TwistWithCovarianceStamped twist_msg;
   twist_msg.header.stamp = ros::Time(sec,usec*1000);
   twist_msg.header.seq = sequence;
-  twist_msg.header.frame_id = "dome";
+  twist_msg.header.frame_id = "lolo/base_link";
   twist_msg.twist.twist.linear.x = SOGX;
   twist_msg.twist.twist.linear.y = SOGY;
   twist_msg.twist.twist.linear.z = SOGZ;
@@ -641,7 +641,7 @@ void RosInterFace::captain_callback_FLS() {
     fls_msg.data = range;
     fls_msg.header.stamp = ros::Time(sec,usec*1000);
     fls_msg.header.seq = sequence;
-    fls_msg.header.frame_id = "front";
+    fls_msg.header.frame_id = "lolo/fls_link";
     fls_pub.publish(fls_msg);  
   }
 };
