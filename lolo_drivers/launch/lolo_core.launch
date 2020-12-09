@@ -13,8 +13,11 @@
     <arg name="robot_name" value="$(arg robot_name)"/>
 </include>
 
+<!--
 <node pkg="lolo_drivers" type="old_pose_converter.py" name="old_pose_converter" output="screen" ns="$(arg robot_name)">
     <param name="robot_name" value="$(arg robot_name)"/>
 </node>
+-->
+<node pkg="captain_interface" type="interface" name="captain_interface" output="screen" ns="$(arg robot_name)"/>
 
 </launch>
