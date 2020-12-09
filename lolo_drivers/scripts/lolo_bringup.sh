@@ -25,6 +25,7 @@ tmux -2 new-session -d -s $SESSION
 tmux rename-window "roscore"
 tmux new-window -t $SESSION:1 -n 'core'
 tmux new-window -t $SESSION:2 -n 'bt'
+tmux new-window -t $SESSION:3 -n 'sidescan'
 
 tmux select-window -t $SESSION:0
 tmux send-keys "roscore" C-m
@@ -37,9 +38,11 @@ tmux send-keys "roslaunch lolo_drivers lolo_core.launch utm_zone:=$UTM_ZONE utm_
 tmux select-window -t $SESSION:2
 tmux send-keys "roslaunch sam_mission mission.launch utm_zone:=$UTM_ZONE utm_band:=$UTM_BAND neptus_addr:=$NEPTUS_IP bridge_addr:=$LOLO_IP bridge_port:=$BRIDGE_PORT"
 
+tmux select-window -t $SESSION:3
+tmux send-keys "roslaunch lolo_sidescan test.launch"
+
 # Set default window
 tmux select-window -t $SESSION:0
 
 # Attach to session
 tmux -2 attach-session -t $SESSION
-
