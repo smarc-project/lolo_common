@@ -2,6 +2,9 @@
     <!-- Captain interface node -->
     <node pkg="captain_interface" type="interface" name="interface" output="screen"> </node>
 
+    <!-- Captain interface node -->
+    <node pkg="captain_interface" type="waypoint_actionserver.py" name="waypoint_action_server" output="screen"/>
+
     <!-- Translation node to send data to neptus without the behavior tree -->
     <!--<node pkg="captain_interface" type="lolo_translator.py" name="interface_translator" output="screen"> </node>-->
     
