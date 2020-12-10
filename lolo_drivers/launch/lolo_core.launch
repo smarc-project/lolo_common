@@ -20,6 +20,8 @@
     <param name="robot_name" value="$(arg robot_name)"/>
 </node>
 -->
-<node pkg="captain_interface" type="interface" name="captain_interface" output="screen" ns="$(arg robot_name)"/>
+<!-- <node pkg="captain_interface" type="interface" name="captain_interface" output="screen" ns="$(arg robot_name)"/> -->
+
+<include file="$(find captain_interface)/launch/interface.launch" ns="$(arg robot_name)"/>
 
 </launch>
