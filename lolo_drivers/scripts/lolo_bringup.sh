@@ -14,9 +14,9 @@ UTM_BAND=V
 
 # IP Addresses to connect to neptus
 # The IP of the computer running neptus
-NEPTUS_IP=192.168.1.55
-# IP of SAM
-LOLO_IP=192.168.1.140
+NEPTUS_IP=10.8.0.58 # Yi's computer
+# IP of LOLO
+LOLO_IP=10.8.0.30
 # Port for the imc-ros-bridge, usually doesnt change from 6002.
 BRIDGE_PORT=6002
 
@@ -36,7 +36,7 @@ tmux select-window -t $SESSION:1
 tmux send-keys "roslaunch lolo_drivers lolo_core.launch utm_zone:=$UTM_ZONE utm_band:=$UTM_BAND"
 
 tmux select-window -t $SESSION:2
-tmux send-keys "roslaunch sam_mission mission.launch utm_zone:=$UTM_ZONE utm_band:=$UTM_BAND neptus_addr:=$NEPTUS_IP bridge_addr:=$LOLO_IP bridge_port:=$BRIDGE_PORT"
+tmux send-keys "roslaunch bt_mission mission.launch neptus_addr:=$NEPTUS_IP bridge_addr:=$LOLO_IP bridge_port:=$BRIDGE_PORT"
 
 tmux select-window -t $SESSION:3
 tmux send-keys "roslaunch lolo_sidescan test.launch"
