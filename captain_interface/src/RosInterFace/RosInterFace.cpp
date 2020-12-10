@@ -80,7 +80,7 @@ void RosInterFace::init(ros::NodeHandle* nh, CaptainInterFace* cap) {
   //control / status
   status_orientation_pub  = n->advertise<geometry_msgs::QuaternionStamped>("/lolo/core/state/orientation", 10);
   status_altitude_pub     = n->advertise<smarc_msgs::FloatStamped>("/lolo/core/state/altitude", 10);
-  status_position_pub     = n->advertise<geographic_msgs::GeoPointStamped>("/lolo/dr/lat_lon",10);
+  status_position_pub     = n->advertise<geographic_msgs::GeoPoint>("/lolo/dr/lat_lon",10);
   status_depth_pub        = n->advertise<smarc_msgs::FloatStamped>("/lolo/core/state/depth",10);
   status_twist_pub        = n->advertise<geometry_msgs::TwistWithCovarianceStamped>("lolo/core/state/twist",10);
   control_status_pub      = n->advertise<lolo_msgs::CaptainStatus>("/lolo/core/control_status", 10);
