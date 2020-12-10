@@ -570,14 +570,14 @@ void RosInterFace::captain_callback_POSITION() {
   float q4          = captain->parse_float();
 
   //publish position (lat lon)
-  geographic_msgs::GeoPointStamped pos_msg;
+  geographic_msgs::GeoPoint pos_msg;
 
-  pos_msg.header.stamp = ros::Time(sec,usec*1000);
-  pos_msg.header.seq = sequence;
-  pos_msg.header.frame_id = "lolo/base_link";
+  //pos_msg.header.stamp = ros::Time(sec,usec*1000);
+  //pos_msg.header.seq = sequence;
+  //pos_msg.header.frame_id = "lolo/base_link";
   
-  pos_msg.position.latitude = lat*(180.0 / PI);
-  pos_msg.position.longitude = lon * (180.0 / PI);
+  pos_msg.latitude = lat*(180.0 / PI);
+  pos_msg.longitude = lon * (180.0 / PI);
   status_position_pub.publish(pos_msg);
  
   //publish depth
@@ -611,7 +611,7 @@ void RosInterFace::captain_callback_POSITION() {
 
   smarc_msgs::LatLonToUTMOdometry srv;
   //TODO header
-  srv.request.lat_lon_odom.lat_lon_pose.position = pos_msg.position;
+  srv.request.lat_lon_odom.lat_lon_pose.position = pos_msg;
   srv.request.lat_lon_odom.lat_lon_pose.orientation = orientation_msg;
   srv.request.lat_lon_odom.twist = twist_msg.twist;
   

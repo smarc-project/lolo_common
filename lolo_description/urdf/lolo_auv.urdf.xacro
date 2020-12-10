@@ -15,6 +15,13 @@
     </visual>
   </link>
 
+  <link name="$(arg robot_namespace)/dvl_link"/>
+  <link name="$(arg robot_namespace)/compass_link"/>
+  <link name="$(arg robot_namespace)/fls_link"/>
+  <link name="$(arg robot_namespace)/imu_link"/>
+  <link name="$(arg robot_namespace)/pressure_link"/>
+  <link name="$(arg robot_namespace)/gps_link"/>
+
   <link name="$(arg robot_namespace)/elevator">
     <visual>
       <origin xyz="0 0 0" rpy="${0.5*pi} 0 0" />
@@ -185,6 +192,42 @@
     <parent link="$(arg robot_namespace)/base_link"/>
     <child link="$(arg robot_namespace)/pose_sensor_link"/>
     <limit effort="0" lower="0" upper="0" velocity="0"/>
+  </joint>
+
+  <joint name="$(arg robot_namespace)/dvl_joint" type="fixed">
+    <origin xyz="0 0 0" rpy="0 0 0" />
+    <parent link="$(arg robot_namespace)/base_link"/>
+    <child link="$(arg robot_namespace)/dvl_link"/>
+  </joint>
+
+  <joint name="$(arg robot_namespace)/compass_joint" type="fixed">
+    <origin xyz="0 0 0" rpy="0 0 0" />
+    <parent link="$(arg robot_namespace)/base_link"/>
+    <child link="$(arg robot_namespace)/compass_link"/>
+  </joint>
+
+  <joint name="$(arg robot_namespace)/fls_joint" type="fixed">
+    <origin xyz="0 0 0" rpy="0 0 0" />
+    <parent link="$(arg robot_namespace)/base_link"/>
+    <child link="$(arg robot_namespace)/fls_link"/>
+  </joint>
+
+  <joint name="$(arg robot_namespace)/imu_joint" type="fixed">
+    <origin xyz="0 0 0" rpy="0 0 0" />
+    <parent link="$(arg robot_namespace)/base_link"/>
+    <child link="$(arg robot_namespace)/imu_link"/>
+  </joint>
+
+  <joint name="$(arg robot_namespace)/pressure_joint" type="fixed">
+    <origin xyz="0 0 0" rpy="0 0 0" />
+    <parent link="$(arg robot_namespace)/base_link"/>
+    <child link="$(arg robot_namespace)/pressure_link"/>
+  </joint>
+
+  <joint name="$(arg robot_namespace)/gps_joint" type="fixed">
+    <origin xyz="0 0 0" rpy="0 0 0" />
+    <parent link="$(arg robot_namespace)/base_link"/>
+    <child link="$(arg robot_namespace)/gps_link"/>
   </joint>
 
 </robot>

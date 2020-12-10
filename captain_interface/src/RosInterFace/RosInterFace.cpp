@@ -30,8 +30,8 @@ void RosInterFace::init(ros::NodeHandle* nh, CaptainInterFace* cap) {
 
   //Control commands low level
   //Thruster
-  thrusterPort_sub = n->subscribe<std_msgs::Float64>("/lolo/core/thruster_1_cmd", 1, &RosInterFace::ros_callback_thrusterPort, this);
-  thrusterStrb_sub = n->subscribe<std_msgs::Float64>("/lolo/core/thruster_2_cmd", 1, &RosInterFace::ros_callback_thrusterStrb, this);
+  thrusterPort_sub = n->subscribe<std_msgs::Float64>("/lolo/core/thruster1_cmd", 1, &RosInterFace::ros_callback_thrusterPort, this);
+  thrusterStrb_sub = n->subscribe<std_msgs::Float64>("/lolo/core/thruster2_cmd", 1, &RosInterFace::ros_callback_thrusterStrb, this);
 
   //control surfaces
   rudder_sub      = n->subscribe<std_msgs::Float64>("/lolo/core/rudder_cmd"   ,1, &RosInterFace::ros_callback_rudder, this);
@@ -44,8 +44,8 @@ void RosInterFace::init(ros::NodeHandle* nh, CaptainInterFace* cap) {
   //=========== Publishers ===========//
   //==================================//
   // --- Thrusters --- //
-  thrusterPort_pub     = n->advertise<smarc_msgs::ThrusterFeedback>("/lolo/core/thruster_1_fb", 10);
-  thrusterStrb_pub     = n->advertise<smarc_msgs::ThrusterFeedback>("/lolo/core/thruster_2_fb", 10);
+  thrusterPort_pub     = n->advertise<smarc_msgs::ThrusterFeedback>("/lolo/core/thruster1_fb", 10);
+  thrusterStrb_pub     = n->advertise<smarc_msgs::ThrusterFeedback>("/lolo/core/thruster2_fb", 10);
 
   // --- Rudders --- //
   rudder_angle_pub    = n->advertise<smarc_msgs::FloatStamped>("/lolo/core/rudder_fb", 10);
@@ -80,7 +80,7 @@ void RosInterFace::init(ros::NodeHandle* nh, CaptainInterFace* cap) {
   //control / status
   status_orientation_pub  = n->advertise<geometry_msgs::QuaternionStamped>("/lolo/core/state/orientation", 10);
   status_altitude_pub     = n->advertise<smarc_msgs::FloatStamped>("/lolo/core/state/altitude", 10);
-  status_position_pub     = n->advertise<geographic_msgs::GeoPointStamped>("/lolo/dr/lat_lon",10);
+  status_position_pub     = n->advertise<geographic_msgs::GeoPoint>("/lolo/dr/lat_lon",10);
   status_depth_pub        = n->advertise<smarc_msgs::FloatStamped>("/lolo/core/state/depth",10);
   status_twist_pub        = n->advertise<geometry_msgs::TwistWithCovarianceStamped>("lolo/core/state/twist",10);
   control_status_pub      = n->advertise<lolo_msgs::CaptainStatus>("/lolo/core/control_status", 10);

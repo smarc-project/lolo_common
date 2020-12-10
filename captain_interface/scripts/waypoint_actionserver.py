@@ -20,10 +20,10 @@ class GotoWaypointAction(object):
         self._as = actionlib.SimpleActionServer(self._action_name, smarc_msgs.msg.GotoWaypointAction, execute_cb=self.execute_cb, auto_start = False)
         self._as.start()
 
-        self.waypoint_pub = rospy.Publisher("lolo/ctrl/waypoint_setpoint_utm", Point, queue_size=1)
-        self.rpm_pub = rospy.Publisher("lolo/ctrl/rpm_setpoint", Float64, queue_size=1)
-        self.speed_pub = rospy.Publisher("lolo/ctrl/speed_setpoint", Float64, queue_size=1)
-        self.depth_pub = rospy.Publisher("lolo/ctrl/depth_setpoint", Float64, queue_size=1)
+        self.waypoint_pub = rospy.Publisher("ctrl/waypoint_setpoint_utm", Point, queue_size=1)
+        self.rpm_pub = rospy.Publisher("ctrl/rpm_setpoint", Float64, queue_size=1)
+        self.speed_pub = rospy.Publisher("ctrl/speed_setpoint", Float64, queue_size=1)
+        self.depth_pub = rospy.Publisher("ctrl/depth_setpoint", Float64, queue_size=1)
         #TODO:
         # speed
         # altude
@@ -49,7 +49,7 @@ class GotoWaypointAction(object):
                 break
 
             try:
-                (trans,rot) = listener.lookupTransform('utm', '/lolo/base_link', rospy.Time(0))
+                (trans,rot) = listener.lookupTransform('utm', 'lolo/base_link', rospy.Time(0))
                 print("lolo position: " + str(trans))
             except (tf.LookupException, tf.ConnectivityException, tf.ExtrapolationException):
                 print("tranform error")
@@ -114,5 +114,5 @@ class GotoWaypointAction(object):
 if __name__ == '__main__':
     rospy.init_node('lolo_waypoint_action')
     listener = tf.TransformListener()
-    server = GotoWaypointAction(rospy.get_name(), listener)
+    server = GotoWaypointAction("ctrl/goto_waypoint", listener)
     rospy.spin()
