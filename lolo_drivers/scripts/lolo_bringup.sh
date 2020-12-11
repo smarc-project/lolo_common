@@ -36,10 +36,10 @@ tmux select-window -t $SESSION:1
 tmux send-keys "roslaunch lolo_drivers lolo_core.launch utm_zone:=$UTM_ZONE utm_band:=$UTM_BAND"
 
 tmux select-window -t $SESSION:2
-tmux send-keys "roslaunch bt_mission mission.launch neptus_addr:=$NEPTUS_IP bridge_addr:=$LOLO_IP bridge_port:=$BRIDGE_PORT"
+tmux send-keys "roslaunch bt_mission mission.launch waypoint_tolerance:=5 neptus_addr:=$NEPTUS_IP bridge_addr:=$LOLO_IP bridge_port:=$BRIDGE_PORT robot_name:=lolo imc_id:=6 imc_system_name:=lolo"
 
 tmux select-window -t $SESSION:3
-tmux send-keys "roslaunch lolo_sidescan test.launch"
+tmux send-keys "roslaunch lolo_sidescan real.launch"
 
 # Set default window
 tmux select-window -t $SESSION:0

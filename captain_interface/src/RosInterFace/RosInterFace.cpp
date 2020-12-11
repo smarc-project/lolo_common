@@ -13,7 +13,7 @@ void RosInterFace::init(ros::NodeHandle* nh, CaptainInterFace* cap) {
   //information / other things
   heartbeat_sub  = n->subscribe<std_msgs::Empty>("/lolo/core/heartbeat", 1, &RosInterFace::ros_callback_heartbeat, this);
   done_sub  = n->subscribe<std_msgs::Empty>("/lolo/core/mission_complete", 1, &RosInterFace::ros_callback_done, this);
-  done_sub  = n->subscribe<std_msgs::Empty>("/lolo/core/abort", 1, &RosInterFace::ros_callback_abort, this);
+  abort_sub  = n->subscribe<std_msgs::Empty>("/lolo/core/abort", 1, &RosInterFace::ros_callback_abort, this);
 
   //Control commands: High level
   waypoint_sub_UTM  = n->subscribe<geometry_msgs::Point> ("/lolo/ctrl/waypoint_setpoint_utm" ,1, &RosInterFace::ros_callback_waypoint_utm, this);
