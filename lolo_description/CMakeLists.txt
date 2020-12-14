@@ -160,6 +160,10 @@ include_directories(
 #   scripts/my_python_script
 #   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 # )
+install(PROGRAMS
+  scripts/joint_state_converter.py
+  DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+)
 
 ## Mark executables and/or libraries for installation
 # install(TARGETS ${PROJECT_NAME} ${PROJECT_NAME}_node
@@ -179,6 +183,20 @@ include_directories(
 #install(DIRECTORY lolo_auv_sim/models
 #        DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/${PACKAGE_NAME}
 #        PATTERN "*~" EXCLUDE)
+install(DIRECTORY launch/
+  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/launch
+  PATTERN ".svn" EXCLUDE
+)
+
+install(DIRECTORY mesh/
+  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/mesh
+  PATTERN ".svn" EXCLUDE
+)
+
+install(DIRECTORY urdf/
+  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/urdf
+  PATTERN ".svn" EXCLUDE
+)
 
 #############
 ## Testing ##
