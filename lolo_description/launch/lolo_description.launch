@@ -4,7 +4,7 @@
 
   <group ns="$(arg namespace)">
     <param name="robot_description"
-           command="$(find xacro)/xacro.py '$(find lolo_description)/urdf/lolo_auv.urdf.xacro' robot_namespace:=$(arg namespace)" />
+           command="$(find xacro)/xacro '$(find lolo_description)/urdf/lolo_auv.urdf.xacro' robot_namespace:=$(arg namespace)" />
 
     <node pkg="lolo_description" type="joint_state_converter.py" name="joint_state_converter" output="screen"/>
 
