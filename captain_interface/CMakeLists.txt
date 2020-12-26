@@ -35,6 +35,8 @@ find_package(catkin REQUIRED COMPONENTS
 
 catkin_package(
   CATKIN_DEPENDS roscpp geometry_msgs std_msgs sensor_msgs lolo_msgs smarc_msgs
+  INCLUDE_DIRS include
+  LIBRARIES other_stuff
 )
 
 
@@ -66,4 +68,34 @@ target_link_libraries(
   interface
   other_stuff
   ${catkin_LIBRARIES}
+)
+
+# Mark executable scripts (Python etc.) for installation
+install(PROGRAMS
+  scripts/actionclient.py
+  scripts/lolo_translator.py
+  scripts/menu_input.py
+  scripts/menu_output.py
+  scripts/waypoint_actionserver.py
+  DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+)
+
+# Mark executables and/or libraries for installation
+install(TARGETS interface other_stuff
+  ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+  LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+  RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+)
+
+# Mark cpp header files for installation
+install(DIRECTORY include/${PROJECT_NAME}/
+  DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
+  FILES_MATCHING PATTERN "*.h"
+  PATTERN ".svn" EXCLUDE
+)
+
+# Install launch files
+install(DIRECTORY launch/
+  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/launch
+  PATTERN ".svn" EXCLUDE
 )
