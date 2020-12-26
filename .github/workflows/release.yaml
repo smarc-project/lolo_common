@@ -29,7 +29,7 @@ jobs:
         run: |
           mkdir bloom-release-debs
           while read line; do
-            pkg="${line:2}"
+            pkg=$(echo $line | cut -c3-)
             echo "Doing ${pkg}"
             cd $pkg
             ls
