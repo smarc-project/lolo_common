@@ -53,7 +53,8 @@ include_directories(
 
 add_library(other_stuff
   src/CaptainInterFace/CaptainInterFace.cpp
-  src/TcpInterFace/TcpInterFace.cpp
+  #src/TcpInterFace/TcpInterFace.cpp
+  src/UDPInterface/UDPInterface.cpp
   src/RosInterFace/RosInterFace.cpp
   src/RosInterFace/RosInterFace_ros_callbacks.cpp
   src/RosInterFace/RosInterFace_captain_callbacks.cpp
