@@ -46,7 +46,7 @@ void UDPInterface::readData() {
 }
 
 bool UDPInterface::send_data(char* buf, uint8_t len) {
-  printf("Sending data\n");
+  //printf("Sending data\n");
   udpSocket->send_to(boost::asio::buffer(buf,len), *lolo_endpoint);
   
   return true;

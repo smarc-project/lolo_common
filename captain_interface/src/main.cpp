@@ -40,8 +40,18 @@ int main(int argc, char *argv[]) {
   captain.setCallback(callback_captain);
 
   //TODO get this from rosparam
-  ip::address lolo_ip = ip::address::from_string("192.168.0.90");
+
+  //parameters
   int lolo_port = 8888;
+  std::string lolo_ip_str;
+  
+  n.param("LOLO_PORT", lolo_port, 8880);
+  n.param<std::string>("LOLO_IP", lolo_ip_str, "192.168.1.90");
+
+  //ip::address lolo_ip = ip::address::from_string("192.168.0.90");
+  ip::address lolo_ip = ip::address::from_string(lolo_ip_str);
+  
+  std::cout << "lolo_ip_str: " << lolo_ip_str << std::endl;
 
   //Create udp socket
   boost::asio::io_service io_service;
@@ -49,17 +59,27 @@ int main(int argc, char *argv[]) {
   receiver_endpoint.address(lolo_ip);
   receiver_endpoint.port(lolo_port);
 
-  //udp::socket socket(io_service);
-  //socket.open(udp::v4());
   udp::socket socket(io_service, udp::endpoint(udp::v4(), 8888));
-  //socket.open(udp::v4());
   captain.setup(&socket, &receiver_endpoint);
   
-  ros::Rate loop_rate(100);
+  //Send something to the captain so it can get the ip of the scientist computer
+  captain.new_package(0);
+  captain.send_package();
+  
+  int i=0;
+  ros::Rate loop_rate(1000);
   while(ros::ok()) {
     ros::spinOnce();
     loop_rate.sleep();
     //captain.loop(); //send heartbeat to lolo?
+
+    if(i > 1000) {
+      //Send something to the captain so it can get the ip of the scientist computer
+      captain.new_package(0);
+      captain.send_package();
+      i=0;
+    }
+    i++;
   }
 
   captain.stop();
