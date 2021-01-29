@@ -4,7 +4,6 @@
 #include <boost/chrono.hpp>
 #include <boost/thread/thread.hpp>
 #include "captain_interface/RosInterFace/RosInterFace.h"
-//#include "captain_interface/TcpInterFace/TcpInterFace.h"
 #include "captain_interface/UDPInterface/UDPInterface.h"
 #include <stdint.h>
 
@@ -39,19 +38,13 @@ int main(int argc, char *argv[]) {
   //Set callback
   captain.setCallback(callback_captain);
 
-  //TODO get this from rosparam
-
   //parameters
   int lolo_port = 8888;
   std::string lolo_ip_str;
   
-  n.param("LOLO_PORT", lolo_port, 8880);
+  n.param("LOLO_PORT", lolo_port, 8888);
   n.param<std::string>("LOLO_IP", lolo_ip_str, "192.168.1.90");
-
-  //ip::address lolo_ip = ip::address::from_string("192.168.0.90");
   ip::address lolo_ip = ip::address::from_string(lolo_ip_str);
-  
-  std::cout << "lolo_ip_str: " << lolo_ip_str << std::endl;
 
   //Create udp socket
   boost::asio::io_service io_service;

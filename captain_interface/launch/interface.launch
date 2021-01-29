@@ -1,11 +1,12 @@
 <launch>
+
+    <!-- Ip address of captain -->
+    <arg name="captain_ip" default="192.168.1.90" />
+
     <!-- Captain interface node -->
     <node pkg="captain_interface" type="interface" name="interface" output="screen"> </node>
 
-    <!-- Captain interface node -->
+    <!-- Waypoint actionserver -->
     <node pkg="captain_interface" type="waypoint_actionserver.py" name="waypoint_action_server" output="screen"/>
 
-    <!-- Translation node to send data to neptus without the behavior tree -->
-    <!--<node pkg="captain_interface" type="lolo_translator.py" name="interface_translator" output="screen"> </node>-->
-    
 </launch>
