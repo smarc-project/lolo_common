@@ -4,7 +4,9 @@
     <arg name="captain_ip" default="192.168.1.90" />
 
     <!-- Captain interface node -->
-    <node pkg="captain_interface" type="interface" name="interface" output="screen"> </node>
+    <node pkg="captain_interface" type="interface" name="interface" output="screen">
+        <param name="captain_ip" value="$(arg captain_ip)" type="str"/>
+    </node>
 
     <!-- Waypoint actionserver -->
     <node pkg="captain_interface" type="waypoint_actionserver.py" name="waypoint_action_server" output="screen"/>

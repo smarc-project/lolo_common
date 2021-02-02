@@ -41,10 +41,11 @@ int main(int argc, char *argv[]) {
   //parameters
   int lolo_port = 8888;
   std::string lolo_ip_str;
-  
-  n.param("LOLO_PORT", lolo_port, 8888);
-  n.param<std::string>("LOLO_IP", lolo_ip_str, "192.168.1.90");
+
+  ros::param::param<std::string>("~captain_ip", lolo_ip_str, "192.168.1.90");
   ip::address lolo_ip = ip::address::from_string(lolo_ip_str);
+
+  ROS_INFO("Captain ip address: %s", lolo_ip_str.c_str());
 
   //Create udp socket
   boost::asio::io_service io_service;
