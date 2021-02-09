@@ -646,6 +646,15 @@ void RosInterFace::captain_callback_FLS() {
   }
 };
 
+void RosInterFace::captain_callback_SERVICE() {
+  std::cout << "Received service response from captain" << std::endl;
+  lolo_msgs::CaptainService msg;
+  msg.ref = captain->parse_int();
+  msg.reply = captain->parse_byte();
+  //TODO Add data to array if it ever gets used
+  service_pub.publish(msg);
+}
+
 void RosInterFace::captain_callback_TEXT() {
   int length = captain->parse_byte();
   std::string text = captain->parse_string(length);

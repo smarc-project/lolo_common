@@ -35,6 +35,7 @@
 #include <smarc_msgs/ThrusterFeedback.h>
 #include <smarc_msgs/Leak.h>
 #include <lolo_msgs/CaptainStatus.h>
+#include <lolo_msgs/CaptainService.h>
 //#include <lolo_msgs/VbsValves.h>
 //#include <lolo_msgs/VbsTank.h>
 
@@ -86,6 +87,9 @@ struct RosInterFace {
   ros::Subscriber rudder_sub;
   ros::Subscriber elevator_sub;
 
+  //"Service"
+  ros::Subscriber service_sub;
+
   //Lolo onboard console
   ros::Subscriber menu_sub;
 
@@ -132,6 +136,8 @@ struct RosInterFace {
   ros::Publisher control_status_pub;
   ros::Publisher vehiclestate_pub;
 
+  //"Service"
+  ros::Publisher service_pub;
 
   //General purpose text output
   ros::Publisher text_pub;
@@ -159,6 +165,7 @@ struct RosInterFace {
   void ros_callback_elevator(const std_msgs::Float64::ConstPtr &_msg);
   void ros_callback_thrusterPort(const std_msgs::Float64::ConstPtr &_msg);
   void ros_callback_thrusterStrb(const std_msgs::Float64::ConstPtr &_msg);
+  void ros_callback_service(const lolo_msgs::CaptainService::ConstPtr &_msg);
   void ros_callback_menu(const std_msgs::String::ConstPtr &_msg);
 
   //======================================================//
@@ -183,6 +190,7 @@ struct RosInterFace {
   void captain_callback_VBS();
   void captain_callback_POSITION();
   void captain_callback_FLS();
+  void captain_callback_SERVICE();
   void captain_callback_TEXT();
   void captain_callback_MENUSTREAM();
 
@@ -208,6 +216,7 @@ struct RosInterFace {
       case CS_POSITION: {     captain_callback_POSITION(); } break; //Position
       case CS_FLS: {          captain_callback_FLS(); } break; //FLS
       case CS_TEXT: {         captain_callback_TEXT(); } break;  //General purpose text message
+      case CS_REQUEST_OUT:{   captain_callback_SERVICE(); } break; //"service call"
       case CS_MENUSTREAM: {   captain_callback_MENUSTREAM(); } break; //Menu stream data
     };
   };

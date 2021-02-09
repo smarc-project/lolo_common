@@ -120,6 +120,18 @@ void RosInterFace::ros_callback_thrusterStrb(const std_msgs::Float64::ConstPtr &
   captain->send_package();
 };
 
+void RosInterFace::ros_callback_service(const lolo_msgs::CaptainService::ConstPtr &_msg) {
+  std::cout << "Send service request to captain" << std::endl;
+  captain->new_package(SC_REQUEST_IN);
+  captain->add_int(_msg->ref);
+  captain->add_byte(_msg->id);
+  captain->add_byte(_msg->action);
+  //for(int i=0; i< _msg->data.size() && i < 200; i++) {
+  //  captain->add_byte(data[i]);
+  //}
+  captain->send_package();
+};
+
 void RosInterFace::ros_callback_menu(const std_msgs::String::ConstPtr &_msg) {
   captain->new_package(SC_MENUSTREAM);
   std::string s = _msg->data;

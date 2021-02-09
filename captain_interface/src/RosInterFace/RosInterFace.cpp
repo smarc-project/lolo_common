@@ -37,6 +37,9 @@ void RosInterFace::init(ros::NodeHandle* nh, CaptainInterFace* cap) {
   rudder_sub      = n->subscribe<std_msgs::Float64>("/lolo/core/rudder_cmd"   ,1, &RosInterFace::ros_callback_rudder, this);
   elevator_sub    = n->subscribe<std_msgs::Float64>("/lolo/core/elevator_cmd" ,1, &RosInterFace::ros_callback_elevator, this);
 
+  //"Service"
+  service_sub     = n->subscribe<lolo_msgs::CaptainService>("/lolo/core/captain_srv_in" ,1, &RosInterFace::ros_callback_service, this);
+
   //menu
   menu_sub        = n->subscribe<std_msgs::String>("/lolo/console_in", 1, &RosInterFace::ros_callback_menu, this);
 
@@ -87,6 +90,9 @@ void RosInterFace::init(ros::NodeHandle* nh, CaptainInterFace* cap) {
 
   //Odometry
   odom_pub                = n->advertise<nav_msgs::Odometry>("/lolo/dr/odom", 10);
+
+  //"Service"
+  service_pub             = n->advertise<lolo_msgs::CaptainService>("/lolo/core/captain_srv_out", 10);
 
   //General purpose text message
   text_pub   = n->advertise<std_msgs::String>("/lolo/text", 10);
