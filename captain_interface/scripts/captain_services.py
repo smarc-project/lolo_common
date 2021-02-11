@@ -51,6 +51,7 @@ class srvHandler:
     self.reply_msg = None
     
     #publish request
+    print("Sending request to captain")
     self.pub.publish(request);
 
     #Wait for lolo to reply
@@ -70,7 +71,7 @@ class srvHandler:
       
     #timeout
     print("timeout :(")
-    return SetBoolResponse(success=False, message="it probably failed")
+    return SetBoolResponse(success=False, message="Timeout")
 
 def main():
 
