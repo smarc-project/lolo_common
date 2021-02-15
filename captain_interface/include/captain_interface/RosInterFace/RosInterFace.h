@@ -36,6 +36,8 @@
 #include <smarc_msgs/Leak.h>
 #include <lolo_msgs/CaptainStatus.h>
 #include <lolo_msgs/CaptainService.h>
+#include <smarc_msgs/ControllerStatus.h>
+#include <smarc_msgs/SensorStatus.h>
 //#include <lolo_msgs/VbsValves.h>
 //#include <lolo_msgs/VbsTank.h>
 
@@ -123,6 +125,9 @@ struct RosInterFace {
   ros::Publisher gps_pub;
   ros::Publisher fls_pub;
 
+  //Sensor status
+  ros::Publisher dvl_status_pub;
+
   //control / status
   ros::Publisher status_orientation_pub;
   ros::Publisher status_altitude_pub;
@@ -144,6 +149,21 @@ struct RosInterFace {
 
   //Lolo onboard console
   ros::Publisher menu_pub;
+
+  //Controller status publishers
+  ros::Publisher ctrl_status_waypoint_pub;
+  ros::Publisher ctrl_status_yaw_pub;
+  ros::Publisher ctrl_status_yawrate_pub;
+  ros::Publisher ctrl_status_depth_pub;
+  ros::Publisher ctrl_status_altitude_pub;
+  ros::Publisher ctrl_status_pitch_pub;
+  ros::Publisher ctrl_status_speed_pub;
+  ros::Publisher ctrl_status_rpm_pub;
+  ros::Publisher ctrl_status_rpm_strb_pub;
+  ros::Publisher ctrl_status_rpm_port_pub;
+  ros::Publisher ctrl_status_elevator_pub;
+  ros::Publisher ctrl_status_rudder_pub;
+  ros::Publisher ctrl_status_VBS_pub;
 
   //======================================================//
   //=================== ROS callbacks ====================//
@@ -191,6 +211,8 @@ struct RosInterFace {
   void captain_callback_POSITION();
   void captain_callback_FLS();
   void captain_callback_SERVICE();
+  void captain_callback_SENSOR_STATUS();
+  void captain_callback_CTRL_STATUS();
   void captain_callback_TEXT();
   void captain_callback_MENUSTREAM();
 
@@ -215,6 +237,8 @@ struct RosInterFace {
       case CS_VBS: {          captain_callback_VBS(); } break; //VBS
       case CS_POSITION: {     captain_callback_POSITION(); } break; //Position
       case CS_FLS: {          captain_callback_FLS(); } break; //FLS
+      case CS_SENSOR_STATUS: {captain_callback_SENSOR_STATUS(); } break; //Sensor status
+      case CS_CTRL_STATUS: {  captain_callback_CTRL_STATUS(); } break; //Sensor status
       case CS_TEXT: {         captain_callback_TEXT(); } break;  //General purpose text message
       case CS_REQUEST_OUT:{   captain_callback_SERVICE(); } break; //"service call"
       case CS_MENUSTREAM: {   captain_callback_MENUSTREAM(); } break; //Menu stream data

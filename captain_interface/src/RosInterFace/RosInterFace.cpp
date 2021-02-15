@@ -80,6 +80,9 @@ void RosInterFace::init(ros::NodeHandle* nh, CaptainInterFace* cap) {
   pressure_pub      = n->advertise<sensor_msgs::FluidPressure>("/lolo/core/pressure", 10);
   fls_pub           = n->advertise<smarc_msgs::FloatStamped>("/lolo/core/fls", 10);
 
+  //Sensor status
+  dvl_status_pub   = n->advertise<smarc_msgs::SensorStatus>("/lolo/core/dvl_status",10);
+
   //control / status
   status_orientation_pub  = n->advertise<geometry_msgs::QuaternionStamped>("/lolo/core/state/orientation", 10);
   status_altitude_pub     = n->advertise<smarc_msgs::FloatStamped>("/lolo/core/state/altitude", 10);
@@ -87,6 +90,20 @@ void RosInterFace::init(ros::NodeHandle* nh, CaptainInterFace* cap) {
   status_depth_pub        = n->advertise<smarc_msgs::FloatStamped>("/lolo/core/state/depth",10);
   status_twist_pub        = n->advertise<geometry_msgs::TwistWithCovarianceStamped>("lolo/core/state/twist",10);
   control_status_pub      = n->advertise<lolo_msgs::CaptainStatus>("/lolo/core/control_status", 10);
+
+  ctrl_status_waypoint_pub  = n->advertise<smarc_msgs::ControllerStatus>("/lolo/ctrl/onboard_waypoint_controller_status",10);
+  ctrl_status_yaw_pub       = n->advertise<smarc_msgs::ControllerStatus>("/lolo/ctrl/onboard_yaw_controller_status",10);
+  ctrl_status_yawrate_pub   = n->advertise<smarc_msgs::ControllerStatus>("/lolo/ctrl/onboard_yawrate_controller_status",10);
+  ctrl_status_depth_pub     = n->advertise<smarc_msgs::ControllerStatus>("/lolo/ctrl/onboard_depth_controller_status",10);
+  ctrl_status_altitude_pub  = n->advertise<smarc_msgs::ControllerStatus>("/lolo/ctrl/onboard_altitude_controller_status",10);
+  ctrl_status_pitch_pub     = n->advertise<smarc_msgs::ControllerStatus>("/lolo/ctrl/onboard_pitch_controller_status",10);
+  ctrl_status_speed_pub     = n->advertise<smarc_msgs::ControllerStatus>("/lolo/ctrl/onboard_speed_controller_status",10);
+  //ctrl_status_rpm_pub      = n->advertise<lolo_msgs::ControllerStatus>("/lolo/ctrl/onboard_rpm_controller_status");
+  //ctrl_status_rpm_strb_pub = n->advertise<lolo_msgs::ControllerStatus>("/lolo/ctrl/onboard_rpm_strb_controller_status");
+  //ctrl_status_rpm_port_pub = n->advertise<lolo_msgs::ControllerStatus>("/lolo/ctrl/onboard_rpm_port_controller_status");
+  //ctrl_status_elevator_pub = n->advertise<lolo_msgs::ControllerStatus>("/lolo/ctrl/onboard_elevator_controller_status");
+  //ctrl_status_rudder_pub   = n->advertise<lolo_msgs::ControllerStatus>("/lolo/ctrl/onboard_rudder_controller_status");
+  //ctrl_status_VBS_pub      = n->advertise<lolo_msgs::ControllerStatus>("/lolo/ctrl/onboard_VBS_controller_status");
 
   //Odometry
   odom_pub                = n->advertise<nav_msgs::Odometry>("/lolo/dr/odom", 10);

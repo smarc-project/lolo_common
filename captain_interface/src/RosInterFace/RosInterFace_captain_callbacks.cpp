@@ -646,6 +646,67 @@ void RosInterFace::captain_callback_FLS() {
   }
 };
 
+void RosInterFace::captain_callback_SENSOR_STATUS() {
+  bool DVL_OK = captain->parse_byte();
+
+  smarc_msgs::SensorStatus dvl_msg;
+  dvl_msg.sensor_status = DVL_OK;
+  dvl_msg.service_name = "/lolo/core/toggle_dvl";
+  dvl_status_pub.publish(dvl_msg);
+};
+
+void RosInterFace::captain_callback_CTRL_STATUS() {
+  bool scientistinterface_enable_waypoint = captain->parse_byte();
+  bool scientistinterface_enable_yaw      = captain->parse_byte();
+  bool scientistinterface_enable_yawrate  = captain->parse_byte();
+  bool scientistinterface_enable_depth    = captain->parse_byte();
+  bool scientistinterface_enable_altitude = captain->parse_byte();
+  bool scientistinterface_enable_pitch    = captain->parse_byte();
+  bool scientistinterface_enable_speed    = captain->parse_byte();
+  bool scientistinterface_enable_rpm      = captain->parse_byte();
+  bool scientistinterface_enable_rpm_strb = captain->parse_byte();
+  bool scientistinterface_enable_rpm_port = captain->parse_byte();
+  bool scientistinterface_enable_elevator = captain->parse_byte();
+  bool scientistinterface_enable_rudder   = captain->parse_byte();
+  bool scientistinterface_enable_VBS      = captain->parse_byte();
+
+  smarc_msgs::ControllerStatus msg_waypoint;
+  msg_waypoint.control_status = scientistinterface_enable_waypoint;
+  msg_waypoint.service_name = "/lolo/ctrl/toggle_onboard_waypoint_ctrl";
+  ctrl_status_waypoint_pub.publish(msg_waypoint);
+
+  smarc_msgs::ControllerStatus msg_yaw;
+  msg_yaw.control_status = scientistinterface_enable_yaw;
+  msg_yaw.service_name = "/lolo/ctrl/toggle_onboard_yaw_ctrl";
+  ctrl_status_yaw_pub.publish(msg_waypoint);
+
+  smarc_msgs::ControllerStatus msg_yawrate;
+  msg_yawrate.control_status = scientistinterface_enable_yawrate;
+  msg_yawrate.service_name = "/lolo/ctrl/toggle_onboard_yawrate_ctrl";
+  ctrl_status_yawrate_pub.publish(msg_yawrate);
+
+  smarc_msgs::ControllerStatus msg_depth;
+  msg_depth.control_status = scientistinterface_enable_depth;
+  msg_depth.service_name = "/lolo/ctrl/toggle_onboard_depth_ctrl";
+  ctrl_status_depth_pub.publish(msg_depth);
+
+  smarc_msgs::ControllerStatus msg_altitude;
+  msg_altitude.control_status = scientistinterface_enable_altitude;
+  msg_altitude.service_name = "/lolo/ctrl/toggle_onboard_altitude_ctrl";
+  ctrl_status_altitude_pub.publish(msg_altitude);
+
+  smarc_msgs::ControllerStatus msg_pitch;
+  msg_pitch.control_status = scientistinterface_enable_pitch;
+  msg_pitch.service_name = "/lolo/ctrl/toggle_onboard_pitch_ctrl";
+  ctrl_status_pitch_pub.publish(msg_pitch);
+
+  smarc_msgs::ControllerStatus msg_speed;
+  msg_speed.control_status = scientistinterface_enable_speed;
+  msg_speed.service_name = "/lolo/ctrl/toggle_onboard_speed_ctrl";
+  ctrl_status_speed_pub.publish(msg_speed);
+};
+
+
 void RosInterFace::captain_callback_SERVICE() {
   std::cout << "Received service response from captain" << std::endl;
   lolo_msgs::CaptainService msg;

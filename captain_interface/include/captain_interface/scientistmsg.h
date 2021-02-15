@@ -23,6 +23,8 @@
 #define CS_VBS              23
 #define CS_POSITION         24
 #define CS_FLS              25
+#define CS_CTRL_STATUS      26
+#define CS_SENSOR_STATUS    27
 #define CS_TEXT             40
 #define CS_MENUSTREAM       50
 #define CS_REQUEST_OUT      100

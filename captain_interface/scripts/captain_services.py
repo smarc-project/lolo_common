@@ -73,6 +73,12 @@ class srvHandler:
     print("timeout :(")
     return SetBoolResponse(success=False, message="Timeout")
 
+
+
+def srv_fail(msg):
+    return SetBoolResponse(success=False, message="Not allowed")
+
+
 def main():
 
   random.seed()
@@ -110,6 +116,9 @@ def main():
   #Speed
   handler_speed = srvHandler(SERVICE_CONTROLLER_SPEED)
   service_speed = rospy.Service('/lolo/ctrl/toggle_onboard_speed_ctrl', SetBool, handler_speed.srv_cb)
+
+  #toggle dvl (not allowed. DVL is controlled by the captain)
+  service_DVL = rospy.Service('/lolo/core/toggle_dvl', SetBool, srv_fail)
 
   rospy.spin()
 
