@@ -26,16 +26,16 @@ void RosInterFace::init(ros::NodeHandle* nh, CaptainInterFace* cap) {
   yaw_sub       = n->subscribe<std_msgs::Float64>("/lolo/ctrl/yaw_setpoint"          ,1, &RosInterFace::ros_callback_yaw,this);
   yawrate_sub   = n->subscribe<std_msgs::Float64>("/lolo/ctrl/yawrate_setpoint"      ,1, &RosInterFace::ros_callback_yawrate,this);
   pitch_sub     = n->subscribe<std_msgs::Float64>("/lolo/ctrl/pitch_setpoint"        ,1, &RosInterFace::ros_callback_pitch,this);
-  rpm_sub       = n->subscribe<std_msgs::Float64>("/lolo/ctrl/rpm_setpoint"          ,1, &RosInterFace::ros_callback_rpm, this);
+  rpm_sub       = n->subscribe<smarc_msgs::ThrusterRPM>("/lolo/ctrl/rpm_setpoint"          ,1, &RosInterFace::ros_callback_rpm, this);
 
   //Control commands low level
   //Thruster
-  thrusterPort_sub = n->subscribe<std_msgs::Float64>("/lolo/core/thruster1_cmd", 1, &RosInterFace::ros_callback_thrusterPort, this);
-  thrusterStrb_sub = n->subscribe<std_msgs::Float64>("/lolo/core/thruster2_cmd", 1, &RosInterFace::ros_callback_thrusterStrb, this);
+  thrusterPort_sub = n->subscribe<smarc_msgs::ThrusterRPM>("/lolo/core/thruster1_cmd", 1, &RosInterFace::ros_callback_thrusterPort, this);
+  thrusterStrb_sub = n->subscribe<smarc_msgs::ThrusterRPM>("/lolo/core/thruster2_cmd", 1, &RosInterFace::ros_callback_thrusterStrb, this);
 
   //control surfaces
-  rudder_sub      = n->subscribe<std_msgs::Float64>("/lolo/core/rudder_cmd"   ,1, &RosInterFace::ros_callback_rudder, this);
-  elevator_sub    = n->subscribe<std_msgs::Float64>("/lolo/core/elevator_cmd" ,1, &RosInterFace::ros_callback_elevator, this);
+  rudder_sub      = n->subscribe<std_msgs::Float32>("/lolo/core/rudder_cmd"   ,1, &RosInterFace::ros_callback_rudder, this);
+  elevator_sub    = n->subscribe<std_msgs::Float32>("/lolo/core/elevator_cmd" ,1, &RosInterFace::ros_callback_elevator, this);
 
   //"Service"
   service_sub     = n->subscribe<lolo_msgs::CaptainService>("/lolo/core/captain_srv_in" ,1, &RosInterFace::ros_callback_service, this);

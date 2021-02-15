@@ -12,6 +12,7 @@
 
 //Ros messages
 #include <std_msgs/String.h>
+#include <std_msgs/Float32.h>
 #include <std_msgs/Float64.h>
 #include <std_msgs/Empty.h>
 #include <std_msgs/Header.h>
@@ -180,11 +181,11 @@ struct RosInterFace {
   void ros_callback_yaw(const std_msgs::Float64::ConstPtr &_msg);
   void ros_callback_yawrate(const std_msgs::Float64::ConstPtr &_msg);
   void ros_callback_pitch(const std_msgs::Float64::ConstPtr &_msg);
-  void ros_callback_rpm(const std_msgs::Float64::ConstPtr &_msg);
-  void ros_callback_rudder(const std_msgs::Float64::ConstPtr &_msg);
-  void ros_callback_elevator(const std_msgs::Float64::ConstPtr &_msg);
-  void ros_callback_thrusterPort(const std_msgs::Float64::ConstPtr &_msg);
-  void ros_callback_thrusterStrb(const std_msgs::Float64::ConstPtr &_msg);
+  void ros_callback_rpm(const smarc_msgs::ThrusterRPM::ConstPtr &_msg);
+  void ros_callback_rudder(const std_msgs::Float32::ConstPtr &_msg);
+  void ros_callback_elevator(const std_msgs::Float32::ConstPtr &_msg);
+  void ros_callback_thrusterPort(const smarc_msgs::ThrusterRPM::ConstPtr &_msg);
+  void ros_callback_thrusterStrb(const smarc_msgs::ThrusterRPM::ConstPtr &_msg);
   void ros_callback_service(const lolo_msgs::CaptainService::ConstPtr &_msg);
   void ros_callback_menu(const std_msgs::String::ConstPtr &_msg);
 

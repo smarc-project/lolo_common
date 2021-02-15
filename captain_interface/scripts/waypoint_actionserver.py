@@ -21,7 +21,7 @@ class GotoWaypointAction(object):
         self._as.start()
 
         self.waypoint_pub = rospy.Publisher("ctrl/waypoint_setpoint_utm", Point, queue_size=1)
-        self.rpm_pub = rospy.Publisher("ctrl/rpm_setpoint", Float64, queue_size=1)
+        self.rpm_pub = rospy.Publisher("ctrl/rpm_setpoint", smarc_msgs.msg.ThrusterRPM, queue_size=1)
         self.speed_pub = rospy.Publisher("ctrl/speed_setpoint", Float64, queue_size=1)
         self.depth_pub = rospy.Publisher("ctrl/depth_setpoint", Float64, queue_size=1)
         #TODO:
@@ -93,17 +93,23 @@ class GotoWaypointAction(object):
                 self.depth_pub.publish(-30)
             
             if(goal.speed_control_mode == goal.SPEED_CONTROL_RPM):
-                self.rpm_pub.publish(goal.travel_rpm)
+                msg = smarc_msgs.msg.ThrusterRPM
+                msg.rpm = goal.travel_rpm
+                self.rpm_pub.publish(msg)
             elif(goal.speed_control_mode == goal.SPEED_CONTROL_SPEED):
                 self.speed_pub.publish(goal.travel_speed)
             else:
-                self.rpm_pub.publish(goal.travel_rpm)
+                msg = smarc_msgs.msg.ThrusterRPM
+                msg.rpm = goal.travel_rpm
+                self.rpm_pub.publish(msg)
             
         
         print("Send 0 rpm to lolo") #TODO remove this once the timeout is implemented on lolo
         #self.waypoint_pub.publish(target)
         self.depth_pub.publish(-30)
-        self.rpm_pub.publish(0)
+        msg = smarc_msgs.msg.ThrusterRPM
+        msg.rpm = 0
+        self.rpm_pub.publish(msg)
           
         if success:
             self._result.reached_waypoint = True
