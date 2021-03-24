@@ -462,6 +462,7 @@ void RosInterFace::captain_callback_PRESSURE() {
   uint32_t sequence     = captain->parse_long();
   float pressure        = captain->parse_float();
   float variance        = captain->parse_float();
+  float temperature     = captain->parse_float();
 
   sensor_msgs::FluidPressure msg;
   msg.header.stamp = ros::Time(sec,usec*1000);
@@ -470,6 +471,13 @@ void RosInterFace::captain_callback_PRESSURE() {
   msg.fluid_pressure = pressure;
   msg.variance = variance;
   pressure_pub.publish(msg);
+
+  sensor_msgs::Temperature temp_msg;
+  temp_msg.header.stamp = ros::Time(sec,usec*1000);
+  temp_msg.header.seq = sequence;
+  temp_msg.header.frame_id = "lolo/pressure_link";
+  temp_msg.temperature = temperature;
+  watertemp_pub.publish(temp_msg);
 }
 
 void RosInterFace::captain_callback_VBS() {

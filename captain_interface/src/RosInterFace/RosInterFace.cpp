@@ -78,6 +78,7 @@ void RosInterFace::init(ros::NodeHandle* nh, CaptainInterFace* cap) {
   dvl_pub           = n->advertise<smarc_msgs::DVL>("/lolo/core/dvl", 10);
   gps_pub           = n->advertise<sensor_msgs::NavSatFix>("/lolo/core/gps", 10);
   pressure_pub      = n->advertise<sensor_msgs::FluidPressure>("/lolo/core/pressure", 10);
+  watertemp_pub     = n->advertise<sensor_msgs::Temperature>("/lolo/core/temperature",10);
   fls_pub           = n->advertise<smarc_msgs::FloatStamped>("/lolo/core/fls", 10);
 
   //Sensor status

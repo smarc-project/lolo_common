@@ -24,6 +24,7 @@
 #include <sensor_msgs/MagneticField.h>
 #include <sensor_msgs/Imu.h>
 #include <sensor_msgs/NavSatFix.h>
+#include <sensor_msgs/Temperature.h>
 #include <geographic_msgs/GeoPoint.h>
 #include <geographic_msgs/GeoPointStamped.h>
 #include <nav_msgs/Odometry.h>
@@ -122,6 +123,7 @@ struct RosInterFace {
   ros::Publisher imu_pub;
   ros::Publisher magnetometer_pub;
   ros::Publisher pressure_pub;
+  ros::Publisher watertemp_pub;
   ros::Publisher dvl_pub;
   ros::Publisher gps_pub;
   ros::Publisher fls_pub;
