@@ -1,4 +1,5 @@
 #include "captain_interface/RosInterFace/RosInterFace.h"
+#include <limits.h>
 
 void RosInterFace::captain_callback_LEAK() {
   smarc_msgs::Leak msg;
@@ -244,30 +245,32 @@ void RosInterFace::captain_callback_BATTERY() {
   float voltage = captain->parse_float();
   float current = captain->parse_float();
   float energy = captain->parse_float();
-  uint8_t Batterypacks = captain->parse_float();
+  uint8_t batterypacks = captain->parse_byte();
 
-  /* TODO do something with this data
-  struct tempData {
-    uint64_t ts = 0;
-    float temp1 = 0.0;
-    float temp2 = 0.0;
-    float temp3 = 0.0;
-    float temp4 = 0.0; 
-  }
+  //TODO parse data from battery packs
 
-  tempData temp[Batterypacks]{
-    temp[1],
-    temp[2]
-  };
+  sensor_msgs::BatteryState msg;
+  msg.header.stamp = ros::Time(sec,usec*1000);
+  msg.header.seq = sequence;
+  msg.voltage = voltage;                                  // Voltage in Volts (Mandatory)
+  //msg.temperature = NaN;                                // Temperature in Degrees Celsius (If unmeasured NaN)
+  msg.current = -current;                                 // Negative when discharging (A)  (If unmeasured NaN)
+  msg.charge = std::numeric_limits<float>::quiet_NaN();  // Current charge in Ah  (If unmeasured NaN)
+  msg.capacity = 2.0 * 5.0*12.0;                          // Capacity in Ah (last full capacity)  (If unmeasured NaN)
+  msg.design_capacity = 2.0 * 5.0*12.0;                   // Capacity in Ah (design capacity)  (If unmeasured NaN)
+  msg.percentage = (42.0-36.0) / (voltage - 36.0);        // Charge percentage on 0 to 1 range  (If unmeasured NaN)
+  msg.power_supply_status = msg.POWER_SUPPLY_STATUS_DISCHARGING;
+  msg.power_supply_health = msg.POWER_SUPPLY_HEALTH_UNKNOWN;
+  msg.power_supply_technology = msg.POWER_SUPPLY_TECHNOLOGY_LIPO;
+  msg.present = true;
 
-  for (int i = 0; i<Batterypacks; i++){
-    temp[i].ts = captain->parse_llong();
-    temp[i].temp1 = captain->parse_float();
-    temp[i].temp2 = captain->parse_float();
-    temp[i].temp3 = captain->parse_float();
-    temp[i].temp4 = captain->parse_float():
-  }
-  */
+  //msg.cell_voltage   # An array of individual cell voltages for each cell in the pack
+  //                        # If individual voltages unknown but number of cells known set each to NaN
+  //msg.cell_temperature  # An array of individual cell temperatures for each cell in the pack
+  //                            # If individual temperatures unknown but number of cells known set each to NaN
+  //msg.location          # The location into which the battery is inserted. (slot number or plug)
+  //msg.serial_number     # The best approximation of the battery serial number
+  battery_pub.publish(msg);
 }
 
 void RosInterFace::captain_callback_DVL() {
@@ -463,6 +466,7 @@ void RosInterFace::captain_callback_PRESSURE() {
   float pressure        = captain->parse_float();
   float variance        = captain->parse_float();
   float temperature     = captain->parse_float();
+  float temperature_var = captain->parse_float();
 
   sensor_msgs::FluidPressure msg;
   msg.header.stamp = ros::Time(sec,usec*1000);
@@ -477,6 +481,7 @@ void RosInterFace::captain_callback_PRESSURE() {
   temp_msg.header.seq = sequence;
   temp_msg.header.frame_id = "lolo/pressure_link";
   temp_msg.temperature = temperature;
+  temp_msg.variance = temperature_var;
   watertemp_pub.publish(temp_msg);
 }
 

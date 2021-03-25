@@ -25,6 +25,7 @@
 #include <sensor_msgs/Imu.h>
 #include <sensor_msgs/NavSatFix.h>
 #include <sensor_msgs/Temperature.h>
+#include <sensor_msgs/BatteryState.h>
 #include <geographic_msgs/GeoPoint.h>
 #include <geographic_msgs/GeoPointStamped.h>
 #include <nav_msgs/Odometry.h>
@@ -115,6 +116,9 @@ struct RosInterFace {
   ros::Publisher VBS_aft_tank_pub;
   ros::Publisher VBS_valves_pub;
   ros::Publisher VBS_motor_pub;
+
+  //Battery
+  ros::Publisher battery_pub;
 
   //Leak sensors
   ros::Publisher leak_dome;

@@ -68,6 +68,9 @@ void RosInterFace::init(ros::NodeHandle* nh, CaptainInterFace* cap) {
   VBS_motor_pub = n->advertise<smarc_msgs::ThrusterFeedback>("/lolo/core/VBS/motor_fb", 10);
   */
 
+  //Battery
+  battery_pub = n->advertise<sensor_msgs::BatteryState>("/lolo/core/battery",10);
+
   //Leak sensors
   leak_dome   = n->advertise<smarc_msgs::Leak>("/lolo/core/leak", 10);
 
