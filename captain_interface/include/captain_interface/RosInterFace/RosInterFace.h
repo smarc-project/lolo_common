@@ -12,6 +12,7 @@
 
 //Ros messages
 #include <std_msgs/String.h>
+#include <std_msgs/Int32.h>
 #include <std_msgs/Float32.h>
 #include <std_msgs/Float64.h>
 #include <std_msgs/Empty.h>
@@ -42,7 +43,8 @@
 #include <smarc_msgs/ControllerStatus.h>
 #include <smarc_msgs/SensorStatus.h>
 //#include <lolo_msgs/VbsValves.h>
-//#include <lolo_msgs/VbsTank.h>
+#include <lolo_msgs/VbsTank.h>
+#include <lolo_msgs/VbsMode.h>
 
 struct RosInterFace {
 
@@ -116,6 +118,7 @@ struct RosInterFace {
   ros::Publisher VBS_aft_tank_pub;
   ros::Publisher VBS_valves_pub;
   ros::Publisher VBS_motor_pub;
+  ros::Publisher VBS_mode_pub;
 
   //Battery
   ros::Publisher battery_pub;

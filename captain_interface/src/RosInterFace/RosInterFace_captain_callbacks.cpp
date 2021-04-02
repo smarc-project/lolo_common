@@ -486,7 +486,12 @@ void RosInterFace::captain_callback_PRESSURE() {
 }
 
 void RosInterFace::captain_callback_VBS() {
-  /*
+
+  //TODO add another message for this and add real data.
+  lolo_msgs::VbsMode mode_msg;
+  mode_msg.current_mode = lolo_msgs::VbsMode::VBS_MODE_AUTO;
+  VBS_mode_pub.publish(mode_msg);
+  
   //Front tank
   int newData_front = captain->parse_byte();
   uint64_t timestamp_front_tank = captain->parse_llong();            //timestamp from ISB
@@ -500,9 +505,9 @@ void RosInterFace::captain_callback_VBS() {
   if(newData_front) {
     lolo_msgs::VbsTank msg;
     msg.header.stamp = ros::Time(front_tank_sec,front_tank_usec*1000);
-    msg.header.frame_id = "VBS";
-    msg.precent_current = vbs_front_tank_percent_current;
-    msg.precent_target = vbs_front_tank_percent_target;
+    msg.header.frame_id = "/lolo/vbs_front_link";
+    msg.percent_current = vbs_front_tank_percent_current;
+    msg.percent_target = vbs_front_tank_percent_target;
     msg.pressure = vbs_front_tank_pressure;
     msg.volume = vbs_front_tank_volume;
     VBS_front_tank_pub.publish(msg);
@@ -521,13 +526,12 @@ void RosInterFace::captain_callback_VBS() {
   if(newData_aft) {
     lolo_msgs::VbsTank msg;
     msg.header.stamp = ros::Time(aft_tank_sec,aft_tank_usec*1000);
-    msg.header.frame_id = "VBS";
-    msg.precent_current = vbs_aft_tank_percent_current;
-    msg.precent_target = vbs_aft_tank_percent_target;
+    msg.header.frame_id = "/lolo/vbs_aft_link";
+    msg.percent_current = vbs_aft_tank_percent_current;
+    msg.percent_target = vbs_aft_tank_percent_target;
     msg.pressure = vbs_aft_tank_pressure;
     msg.volume = vbs_aft_tank_volume;
     VBS_aft_tank_pub.publish(msg);
-    
   }
   
   //Valve stuff
@@ -552,10 +556,8 @@ void RosInterFace::captain_callback_VBS() {
     msg.rpm.rpm = vbs_motor_rpm;
     msg.current = vbs_motor_current;
     msg.torque = vbs_motor_torque;
-
     VBS_motor_pub.publish(msg);
   }
-  */
 };
 
 void RosInterFace::captain_callback_POSITION() {
@@ -624,12 +626,21 @@ void RosInterFace::captain_callback_POSITION() {
 
   smarc_msgs::LatLonToUTMOdometry srv;
   //TODO header
+  //srv.request.lat_lon_odom.header.stamp = ros::Time(sec,usec*1000);
+  //srv.request.lat_lon_odom.header.seq = sequence;
+  //srv.request.lat_lon_odom.header.frame_id = "lolo/base_link";
   srv.request.lat_lon_odom.lat_lon_pose.position = pos_msg;
   srv.request.lat_lon_odom.lat_lon_pose.orientation = orientation_msg;
   srv.request.lat_lon_odom.twist = twist_msg.twist;
   
   if (odom_client.call(srv)) {
     //ROS_INFO("Call to service sucsessfull");
+    //Add header
+    srv.response.odom.header.stamp = ros::Time(sec,usec*1000);
+    srv.response.odom.header.seq = sequence;
+    srv.response.odom.header.frame_id = "lolo/base_link";
+    //Add depth
+    srv.response.odom.pose.pose.position.z = -depth;
     odom_pub.publish(srv.response.odom);
   }
   else

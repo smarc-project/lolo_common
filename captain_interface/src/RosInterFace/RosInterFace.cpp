@@ -60,13 +60,29 @@ void RosInterFace::init(ros::NodeHandle* nh, CaptainInterFace* cap) {
   elevon_port_angle_pub   = n->advertise<smarc_msgs::FloatStamped>("/lolo/core/elevon_port_fb", 10);
   elevon_strb_angle_pub   = n->advertise<smarc_msgs::FloatStamped>("/lolo/core/elevon_strb_fb", 10);
 
-  //VBS
-  /*
+  // VBS Topics
+  // High level (handled by another node that republishes percents for the tanks)
+  //   /lolo/core/vbs_cmd
+  //   /lolo/core/vbs_fb
+  //   /lolo/core/lcg_cmd
+  //   /lolo/core/lcg_fb
+
+  // Medium level
+  //   /lolo/strl/vbs_mode_cmd [AUTO / MANUAL / EMPTY / LIGHT / NEUTRAL / HEAVY]
+  //   /lolo/strl/vbs_mode_fb  [AUTO / MANUAL / EMPTY / LIGHT / NEUTRAL / HEAVY]
+  VBS_mode_pub = n->advertise<lolo_msgs::VbsMode>("/lolo/core/vbs_mode_fb",10);
+
+  // Low level
+  //   /lolo/core/vbs/front_tank_cmd
+  //   /lolo/core/vbs/front_tank_fb
+  //   /lolo/core/vbs/aft_tank_cmd
+  //   /lolo/core/vbs/aft_tank_fb
+  //   /lolo/core/vbs/motor_fb
+  //   /lolo/core/vbs/valve_fb
   VBS_front_tank_pub = n->advertise<lolo_msgs::VbsTank>("/lolo/core/vbs/front_tank_fb", 10);
   VBS_aft_tank_pub = n->advertise<lolo_msgs::VbsTank>("/lolo/core/vbs/aft_tank_fb", 10);
-  VBS_valves_pub = n->advertise<lolo_msgs::VbsValves>("/lolo/core/vbs/valves_fb", 10);
-  VBS_motor_pub = n->advertise<smarc_msgs::ThrusterFeedback>("/lolo/core/VBS/motor_fb", 10);
-  */
+  //VBS_valves_pub = n->advertise<std_msgs::Int32>("/lolo/core/vbs/valve_fb", 10);
+  VBS_motor_pub = n->advertise<smarc_msgs::ThrusterFeedback>("/lolo/core/vbs/motor_fb", 10);
 
   //Battery
   battery_pub = n->advertise<sensor_msgs::BatteryState>("/lolo/core/battery",10);

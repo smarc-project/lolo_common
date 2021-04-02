@@ -93,13 +93,13 @@ class GotoWaypointAction(object):
                 self.depth_pub.publish(-30)
             
             if(goal.speed_control_mode == goal.SPEED_CONTROL_RPM):
-                msg = smarc_msgs.msg.ThrusterRPM
+                msg = smarc_msgs.msg.ThrusterRPM()
                 msg.rpm = goal.travel_rpm
                 self.rpm_pub.publish(msg)
             elif(goal.speed_control_mode == goal.SPEED_CONTROL_SPEED):
                 self.speed_pub.publish(goal.travel_speed)
             else:
-                msg = smarc_msgs.msg.ThrusterRPM
+                msg = smarc_msgs.msg.ThrusterRPM()
                 msg.rpm = goal.travel_rpm
                 self.rpm_pub.publish(msg)
             
@@ -107,8 +107,7 @@ class GotoWaypointAction(object):
         print("Send 0 rpm to lolo") #TODO remove this once the timeout is implemented on lolo
         #self.waypoint_pub.publish(target)
         self.depth_pub.publish(-30)
-        msg = smarc_msgs.msg.ThrusterRPM
-        msg.rpm = 0
+        msg = smarc_msgs.msg.ThrusterRPM()
         self.rpm_pub.publish(msg)
           
         if success:
