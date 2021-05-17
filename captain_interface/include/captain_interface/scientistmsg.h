@@ -23,10 +23,14 @@
 #define CS_VBS              23
 #define CS_POSITION         24
 #define CS_FLS              25
+#define CS_CTRL_STATUS      26
+#define CS_SENSOR_STATUS    27
 #define CS_TEXT             40
 #define CS_MENUSTREAM       50
+#define CS_REQUEST_OUT      100
 
 //SCIENTIST -> CAPTAIN
+#define SC_REQUEST_IN            101
 #define SC_HEARTBEAT             150
 #define SC_ABORT                 151
 #define SC_DONE                  152
@@ -43,5 +47,20 @@
 #define SC_SET_TARGET_ALTITUDE   171
 #define SC_SET_TARGET_WAYPOINT   172
 #define SC_MENUSTREAM            200
+
+//Service ID:s
+#define SERVICE_CONTROLLER_WAYPOINT  210
+#define SERVICE_CONTROLLER_PITCH     211
+#define SERVICE_CONTROLLER_ROLL      212
+#define SERVICE_CONTROLLER_YAW       213
+#define SERVICE_CONTROLLER_YAWRATE   214
+#define SERVICE_CONTROLLER_DEPTH     215
+#define SERVICE_CONTROLLER_ALTITUDE  216
+#define SERVICE_CONTROLLER_SPEED     217
+
+#define SERVICE_ACTION_FAIL     0
+#define SERVICE_ACTION_SUCCESS  1
+#define SERVICE_ACTION_DISABLE  0
+#define SERVICE_ACTION_ENABLE   1
 
 #endif

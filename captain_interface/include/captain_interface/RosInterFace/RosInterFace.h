@@ -12,6 +12,8 @@
 
 //Ros messages
 #include <std_msgs/String.h>
+#include <std_msgs/Int32.h>
+#include <std_msgs/Float32.h>
 #include <std_msgs/Float64.h>
 #include <std_msgs/Empty.h>
 #include <std_msgs/Header.h>
@@ -23,6 +25,8 @@
 #include <sensor_msgs/MagneticField.h>
 #include <sensor_msgs/Imu.h>
 #include <sensor_msgs/NavSatFix.h>
+#include <sensor_msgs/Temperature.h>
+#include <sensor_msgs/BatteryState.h>
 #include <geographic_msgs/GeoPoint.h>
 #include <geographic_msgs/GeoPointStamped.h>
 #include <nav_msgs/Odometry.h>
@@ -35,8 +39,12 @@
 #include <smarc_msgs/ThrusterFeedback.h>
 #include <smarc_msgs/Leak.h>
 #include <lolo_msgs/CaptainStatus.h>
+#include <lolo_msgs/CaptainService.h>
+#include <smarc_msgs/ControllerStatus.h>
+#include <smarc_msgs/SensorStatus.h>
 //#include <lolo_msgs/VbsValves.h>
-//#include <lolo_msgs/VbsTank.h>
+#include <lolo_msgs/VbsTank.h>
+#include <lolo_msgs/VbsMode.h>
 
 struct RosInterFace {
 
@@ -86,6 +94,9 @@ struct RosInterFace {
   ros::Subscriber rudder_sub;
   ros::Subscriber elevator_sub;
 
+  //"Service"
+  ros::Subscriber service_sub;
+
   //Lolo onboard console
   ros::Subscriber menu_sub;
 
@@ -107,6 +118,10 @@ struct RosInterFace {
   ros::Publisher VBS_aft_tank_pub;
   ros::Publisher VBS_valves_pub;
   ros::Publisher VBS_motor_pub;
+  ros::Publisher VBS_mode_pub;
+
+  //Battery
+  ros::Publisher battery_pub;
 
   //Leak sensors
   ros::Publisher leak_dome;
@@ -115,9 +130,13 @@ struct RosInterFace {
   ros::Publisher imu_pub;
   ros::Publisher magnetometer_pub;
   ros::Publisher pressure_pub;
+  ros::Publisher watertemp_pub;
   ros::Publisher dvl_pub;
   ros::Publisher gps_pub;
   ros::Publisher fls_pub;
+
+  //Sensor status
+  ros::Publisher dvl_status_pub;
 
   //control / status
   ros::Publisher status_orientation_pub;
@@ -132,12 +151,29 @@ struct RosInterFace {
   ros::Publisher control_status_pub;
   ros::Publisher vehiclestate_pub;
 
+  //"Service"
+  ros::Publisher service_pub;
 
   //General purpose text output
   ros::Publisher text_pub;
 
   //Lolo onboard console
   ros::Publisher menu_pub;
+
+  //Controller status publishers
+  ros::Publisher ctrl_status_waypoint_pub;
+  ros::Publisher ctrl_status_yaw_pub;
+  ros::Publisher ctrl_status_yawrate_pub;
+  ros::Publisher ctrl_status_depth_pub;
+  ros::Publisher ctrl_status_altitude_pub;
+  ros::Publisher ctrl_status_pitch_pub;
+  ros::Publisher ctrl_status_speed_pub;
+  ros::Publisher ctrl_status_rpm_pub;
+  ros::Publisher ctrl_status_rpm_strb_pub;
+  ros::Publisher ctrl_status_rpm_port_pub;
+  ros::Publisher ctrl_status_elevator_pub;
+  ros::Publisher ctrl_status_rudder_pub;
+  ros::Publisher ctrl_status_VBS_pub;
 
   //======================================================//
   //=================== ROS callbacks ====================//
@@ -154,11 +190,12 @@ struct RosInterFace {
   void ros_callback_yaw(const std_msgs::Float64::ConstPtr &_msg);
   void ros_callback_yawrate(const std_msgs::Float64::ConstPtr &_msg);
   void ros_callback_pitch(const std_msgs::Float64::ConstPtr &_msg);
-  void ros_callback_rpm(const std_msgs::Float64::ConstPtr &_msg);
-  void ros_callback_rudder(const std_msgs::Float64::ConstPtr &_msg);
-  void ros_callback_elevator(const std_msgs::Float64::ConstPtr &_msg);
-  void ros_callback_thrusterPort(const std_msgs::Float64::ConstPtr &_msg);
-  void ros_callback_thrusterStrb(const std_msgs::Float64::ConstPtr &_msg);
+  void ros_callback_rpm(const smarc_msgs::ThrusterRPM::ConstPtr &_msg);
+  void ros_callback_rudder(const std_msgs::Float32::ConstPtr &_msg);
+  void ros_callback_elevator(const std_msgs::Float32::ConstPtr &_msg);
+  void ros_callback_thrusterPort(const smarc_msgs::ThrusterRPM::ConstPtr &_msg);
+  void ros_callback_thrusterStrb(const smarc_msgs::ThrusterRPM::ConstPtr &_msg);
+  void ros_callback_service(const lolo_msgs::CaptainService::ConstPtr &_msg);
   void ros_callback_menu(const std_msgs::String::ConstPtr &_msg);
 
   //======================================================//
@@ -183,6 +220,9 @@ struct RosInterFace {
   void captain_callback_VBS();
   void captain_callback_POSITION();
   void captain_callback_FLS();
+  void captain_callback_SERVICE();
+  void captain_callback_SENSOR_STATUS();
+  void captain_callback_CTRL_STATUS();
   void captain_callback_TEXT();
   void captain_callback_MENUSTREAM();
 
@@ -207,7 +247,10 @@ struct RosInterFace {
       case CS_VBS: {          captain_callback_VBS(); } break; //VBS
       case CS_POSITION: {     captain_callback_POSITION(); } break; //Position
       case CS_FLS: {          captain_callback_FLS(); } break; //FLS
+      case CS_SENSOR_STATUS: {captain_callback_SENSOR_STATUS(); } break; //Sensor status
+      case CS_CTRL_STATUS: {  captain_callback_CTRL_STATUS(); } break; //Sensor status
       case CS_TEXT: {         captain_callback_TEXT(); } break;  //General purpose text message
+      case CS_REQUEST_OUT:{   captain_callback_SERVICE(); } break; //"service call"
       case CS_MENUSTREAM: {   captain_callback_MENUSTREAM(); } break; //Menu stream data
     };
   };
