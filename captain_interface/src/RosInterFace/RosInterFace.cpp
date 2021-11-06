@@ -100,6 +100,10 @@ void RosInterFace::init(ros::NodeHandle* nh, CaptainInterFace* cap) {
   watertemp_pub     = n->advertise<sensor_msgs::Temperature>("/lolo/core/temperature",10);
   fls_pub           = n->advertise<smarc_msgs::FloatStamped>("/lolo/core/fls", 10);
 
+  dvl_PD0_Fixedleader_pub     = n->advertise<lolo_msgs::PD0_Fixedleader>("/lolo/core/dvl_pd0/fixedleader",10);
+  dvl_PD0_Varaibleleader_pub  = n->advertise<lolo_msgs::PD0_Variableleader>("/lolo/core/dvl_pd0/variableleader",10);
+  dvl_PD0_Bottomtrack_pub     = n->advertise<lolo_msgs::PD0_Bottomtrack>("/lolo/core/dvl_pd0/bottomtrack",10);
+
   //Sensor status
   dvl_status_pub   = n->advertise<smarc_msgs::SensorStatus>("/lolo/core/dvl_status",10);
 

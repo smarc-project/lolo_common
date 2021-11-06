@@ -18,6 +18,9 @@ add_message_files(
   CaptainService.msg
   VbsTank.msg
   VbsMode.msg
+  PD0_Fixedleader.msg
+  PD0_Variableleader.msg
+  PD0_Bottomtrack.msg
 )
 
 ## Generate added messages and services with any dependencies listed here

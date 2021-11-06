@@ -321,6 +321,126 @@ void RosInterFace::captain_callback_DVL() {
   //TODO add DVLbeam
 }
 
+
+void RosInterFace::captain_callback_DVL_FIXED() {
+  lolo_msgs::PD0_Fixedleader msg;
+  msg.timeStamp  = captain->parse_llong();
+  msg.CPU_VER  = captain->parse_byte();
+  msg.CPU_REV  = captain->parse_byte();
+  msg.SYSTEM_CONFIG  = captain->parse_int();
+  msg.REAL_FLAG  = captain->parse_byte();
+  msg.LAG_LENGTH = captain->parse_byte();
+  msg.NR_BEAMS = captain->parse_byte();
+  msg.NR_CELLS = captain->parse_byte();
+  msg.PINGS_PER_ENSEMBLE = captain->parse_int();
+  msg.DEPTH_CELL_LENGTH  = captain->parse_int();
+  msg.BLANK_AFTER_TRANSMIT = captain->parse_int();
+  msg.PROFILING_MODE = captain->parse_byte();
+  msg.LOW_CORR_THRESHOLD = captain->parse_byte();
+  msg.NO_CODE_REPS = captain->parse_byte();
+  msg.ERROR_VEL_MAXIMUM  = captain->parse_int();
+  msg.TPP_MINUTES  = captain->parse_byte();
+  msg.TPP_SECONDS  = captain->parse_byte();
+  msg.TPP_HUDREDTHS  = captain->parse_byte();
+  msg.COORDINATE_TRANSFORM = captain->parse_byte();
+  msg.HEADLING_ALIGNMENT = captain->parse_int();
+  msg.HEADLING_BIAS  = captain->parse_int();
+  msg.SENSOR_SOURCE  = captain->parse_byte();
+  msg.SENSOR_AVAILABLE = captain->parse_byte();
+  msg.BIN1_DISTANCE  = captain->parse_int();
+  msg.XMIT_PULSE_LENGTH  = captain->parse_int();
+  msg.FALSE_TARGET_THRESHOLD = captain->parse_byte();
+  msg.TRANSMIT_LAG_DISTANCE  = captain->parse_int();
+  msg.SYSTEM_BANDWIDTH = captain->parse_int();
+  msg.SYSTEM_SERAL_NUMBER  = captain->parse_long();
+  dvl_PD0_Fixedleader_pub.publish(msg);
+}
+
+void RosInterFace::captain_callback_DVL_VARIABLE() {
+  lolo_msgs::PD0_Variableleader msg;
+  msg.timeStamp                 = captain->parse_llong();
+  msg.ENSEMBLE_NUMBER           = captain->parse_int();
+  msg.BIT_RESULT                = captain->parse_int();
+  msg.SPEED_OF_SOUND            = captain->parse_int();
+  msg.DEPTH_OF_TRANSDUCER       = captain->parse_int();
+  msg.HEADING                   = captain->parse_int();
+  msg.PITCH                     = captain->parse_int();
+  msg.ROLL                      = captain->parse_int();
+  msg.SAILINITY                 = captain->parse_int();
+  msg.TEMPERATURE               = captain->parse_int();
+  msg.MPT_MINUTES               = captain->parse_byte();
+  msg.MPT_SECONDS               = captain->parse_byte();
+  msg.MPT_HUNDREDTHS            = captain->parse_byte();
+  msg.HD_STD_DEV                = captain->parse_byte();
+  msg.PITCH_STD_DEV             = captain->parse_byte();
+  msg.ROLL_STD_DEV              = captain->parse_byte();
+  msg.ADC_CHANNEL_0             = captain->parse_byte();
+  msg.ADC_CHANNEL_1             = captain->parse_byte();
+  msg.ADC_CHANNEL_2             = captain->parse_byte();
+  msg.ADC_CHANNEL_3             = captain->parse_byte();
+  msg.ADC_CHANNEL_4             = captain->parse_byte();
+  msg.ADC_CHANNEL_5             = captain->parse_byte();
+  msg.ADC_CHANNEL_6             = captain->parse_byte();
+  msg.ADC_CHANNEL_7             = captain->parse_byte();
+  msg.ERROR_STATUS_WORD         = captain->parse_long();
+  msg.PRESSURE                  = captain->parse_long();
+  msg.PRESSURE_SENSOR_VARIANCE  = captain->parse_long();
+  msg.LEAK_STATUS               = captain->parse_byte();
+  msg.LEAK_A_COUNT              = captain->parse_int();
+  msg.LEAK_B_COUNT              = captain->parse_int();
+  msg.TX_VOLTAGE                = captain->parse_int();
+  msg.TX_CURRENT                = captain->parse_int();
+  msg.TRANCDUCER_IMPEDANCE      = captain->parse_int();      
+  dvl_PD0_Varaibleleader_pub.publish(msg);
+}
+void RosInterFace::captain_callback_DVL_BOTTOMTRACK() {
+  lolo_msgs::PD0_Bottomtrack msg;
+  msg.timeStamp             = captain->parse_llong();
+  msg.BEAM_1_BT_VEL         = captain->parse_float();
+  msg.BEAM_1_BT_RANGE       = captain->parse_float();
+  msg.BEAM_1_REF_LAYER_VEL  = captain->parse_float();
+  msg.BEAM_1_EVAL_AMP       = captain->parse_byte();
+  msg.BEAM_1_BT_CORR        = captain->parse_byte();
+  msg.BM_1_REF_CORR         = captain->parse_byte();
+  msg.BM_1_REF_INT          = captain->parse_byte();
+  msg.BM_1_PERCENT_GOOD     = captain->parse_byte();
+  msg.BM_1_RSSI_AMP         = captain->parse_byte();
+  msg.BEAM_2_BT_VEL         = captain->parse_float();
+  msg.BEAM_2_BT_RANGE       = captain->parse_float();
+  msg.BEAM_2_REF_LAYER_VEL  = captain->parse_float();
+  msg.BEAM_2_EVAL_AMP       = captain->parse_byte();
+  msg.BEAM_2_BT_CORR        = captain->parse_byte();
+  msg.BM_2_REF_CORR         = captain->parse_byte();
+  msg.BM_2_REF_INT          = captain->parse_byte();
+  msg.BM_2_PERCENT_GOOD     = captain->parse_byte();
+  msg.BM_2_RSSI_AMP         = captain->parse_byte();
+  msg.BEAM_3_BT_VEL         = captain->parse_float();
+  msg.BEAM_3_BT_RANGE       = captain->parse_float();
+  msg.BEAM_3_REF_LAYER_VEL  = captain->parse_float();
+  msg.BEAM_3_EVAL_AMP       = captain->parse_byte();
+  msg.BEAM_3_BT_CORR        = captain->parse_byte();
+  msg.BM_3_REF_CORR         = captain->parse_byte();
+  msg.BM_3_REF_INT          = captain->parse_byte();
+  msg.BM_3_PERCENT_GOOD     = captain->parse_byte();
+  msg.BM_3_RSSI_AMP         = captain->parse_byte();
+  msg.BEAM_4_BT_VEL         = captain->parse_float();
+  msg.BEAM_4_BT_RANGE       = captain->parse_float();
+  msg.BEAM_4_REF_LAYER_VEL  = captain->parse_float();
+  msg.BEAM_4_EVAL_AMP       = captain->parse_byte();
+  msg.BEAM_4_BT_CORR        = captain->parse_byte();
+  msg.BM_4_REF_CORR         = captain->parse_byte();
+  msg.BM_4_REF_INT          = captain->parse_byte();
+  msg.BM_4_PERCENT_GOOD     = captain->parse_byte();
+  msg.BM_4_RSSI_AMP         = captain->parse_byte();
+  msg.PINGS_PER_ENSEMBLE    = captain->parse_int();
+  msg.BT_MAX_DEPTH          = captain->parse_int();
+  msg.REF_LAYER_MIN         = captain->parse_int();
+  msg.REF_LAYER_NEAR        = captain->parse_int();
+  msg.REF_LAYER_FAR         = captain->parse_int();
+  msg.GAIN                  = captain->parse_byte();
+  dvl_PD0_Bottomtrack_pub.publish(msg);
+}
+
 void RosInterFace::captain_callback_GPS() {
   uint64_t timestamp    = captain->parse_llong();
   uint64_t sec = timestamp / 1000000;
@@ -358,9 +478,6 @@ void RosInterFace::captain_callback_IMU() {
   float accX            = captain->parse_float();
   float accY            = captain->parse_float();
   float accZ            = captain->parse_float();
-  float LAccX           = captain->parse_float();
-  float LAccY           = captain->parse_float();
-  float LAccZ           = captain->parse_float();
 
   float rotX            = captain->parse_float();
   float rotY            = captain->parse_float();
