@@ -86,37 +86,49 @@ void RosInterFace::ros_callback_pitch(const std_msgs::Float64::ConstPtr &_msg) {
   captain->send_package();
 };
 
-void RosInterFace::ros_callback_rpm(const std_msgs::Float64::ConstPtr &_msg) {
-  float targetRPM = _msg->data;
+void RosInterFace::ros_callback_rpm(const smarc_msgs::ThrusterRPM::ConstPtr &_msg) {
+  float targetRPM = _msg->rpm;
   captain->new_package(SC_SET_TARGET_RPM);
   captain->add_float(targetRPM);
   captain->send_package();
 };
 
 
-void RosInterFace::ros_callback_rudder(const std_msgs::Float64::ConstPtr &_msg) {
+void RosInterFace::ros_callback_rudder(const std_msgs::Float32::ConstPtr &_msg) {
   float angle = _msg->data;
   captain->new_package(SC_SET_RUDDER);
   captain->add_float(angle);
   captain->send_package();
 };
 
-void RosInterFace::ros_callback_elevator(const std_msgs::Float64::ConstPtr &_msg) {
+void RosInterFace::ros_callback_elevator(const std_msgs::Float32::ConstPtr &_msg) {
   float angle = _msg->data;
   captain->new_package(SC_SET_ELEVATOR);
   captain->add_float(angle);
   captain->send_package();
 };
 
-void RosInterFace::ros_callback_thrusterPort(const std_msgs::Float64::ConstPtr &_msg) {
+void RosInterFace::ros_callback_thrusterPort(const smarc_msgs::ThrusterRPM::ConstPtr &_msg) {
   captain->new_package(SC_SET_THRUSTER_PORT);
-  captain->add_float(_msg->data);
+  captain->add_float(_msg->rpm);
   captain->send_package();
 };
 
-void RosInterFace::ros_callback_thrusterStrb(const std_msgs::Float64::ConstPtr &_msg) {
+void RosInterFace::ros_callback_thrusterStrb(const smarc_msgs::ThrusterRPM::ConstPtr &_msg) {
   captain->new_package(SC_SET_THRUSTER_STRB);
-  captain->add_float(_msg->data);
+  captain->add_float(_msg->rpm);
+  captain->send_package();
+};
+
+void RosInterFace::ros_callback_service(const lolo_msgs::CaptainService::ConstPtr &_msg) {
+  std::cout << "Send service request to captain" << std::endl;
+  captain->new_package(SC_REQUEST_IN);
+  captain->add_int(_msg->ref);
+  captain->add_byte(_msg->id);
+  captain->add_byte(_msg->action);
+  //for(int i=0; i< _msg->data.size() && i < 200; i++) {
+  //  captain->add_byte(data[i]);
+  //}
   captain->send_package();
 };
 

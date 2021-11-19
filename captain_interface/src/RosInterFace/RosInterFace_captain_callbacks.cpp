@@ -1,4 +1,5 @@
 #include "captain_interface/RosInterFace/RosInterFace.h"
+#include <limits.h>
 
 void RosInterFace::captain_callback_LEAK() {
   smarc_msgs::Leak msg;
@@ -244,30 +245,32 @@ void RosInterFace::captain_callback_BATTERY() {
   float voltage = captain->parse_float();
   float current = captain->parse_float();
   float energy = captain->parse_float();
-  uint8_t Batterypacks = captain->parse_float();
+  uint8_t batterypacks = captain->parse_byte();
 
-  /* TODO do something with this data
-  struct tempData {
-    uint64_t ts = 0;
-    float temp1 = 0.0;
-    float temp2 = 0.0;
-    float temp3 = 0.0;
-    float temp4 = 0.0; 
-  }
+  //TODO parse data from battery packs
 
-  tempData temp[Batterypacks]{
-    temp[1],
-    temp[2]
-  };
+  sensor_msgs::BatteryState msg;
+  msg.header.stamp = ros::Time(sec,usec*1000);
+  msg.header.seq = sequence;
+  msg.voltage = voltage;                                  // Voltage in Volts (Mandatory)
+  //msg.temperature = NaN;                                // Temperature in Degrees Celsius (If unmeasured NaN)
+  msg.current = -current;                                 // Negative when discharging (A)  (If unmeasured NaN)
+  msg.charge = std::numeric_limits<float>::quiet_NaN();  // Current charge in Ah  (If unmeasured NaN)
+  msg.capacity = 2.0 * 5.0*12.0;                          // Capacity in Ah (last full capacity)  (If unmeasured NaN)
+  msg.design_capacity = 2.0 * 5.0*12.0;                   // Capacity in Ah (design capacity)  (If unmeasured NaN)
+  msg.percentage = (42.0-36.0) / (voltage - 36.0);        // Charge percentage on 0 to 1 range  (If unmeasured NaN)
+  msg.power_supply_status = msg.POWER_SUPPLY_STATUS_DISCHARGING;
+  msg.power_supply_health = msg.POWER_SUPPLY_HEALTH_UNKNOWN;
+  msg.power_supply_technology = msg.POWER_SUPPLY_TECHNOLOGY_LIPO;
+  msg.present = true;
 
-  for (int i = 0; i<Batterypacks; i++){
-    temp[i].ts = captain->parse_llong();
-    temp[i].temp1 = captain->parse_float();
-    temp[i].temp2 = captain->parse_float();
-    temp[i].temp3 = captain->parse_float();
-    temp[i].temp4 = captain->parse_float():
-  }
-  */
+  //msg.cell_voltage   # An array of individual cell voltages for each cell in the pack
+  //                        # If individual voltages unknown but number of cells known set each to NaN
+  //msg.cell_temperature  # An array of individual cell temperatures for each cell in the pack
+  //                            # If individual temperatures unknown but number of cells known set each to NaN
+  //msg.location          # The location into which the battery is inserted. (slot number or plug)
+  //msg.serial_number     # The best approximation of the battery serial number
+  battery_pub.publish(msg);
 }
 
 void RosInterFace::captain_callback_DVL() {
@@ -462,6 +465,8 @@ void RosInterFace::captain_callback_PRESSURE() {
   uint32_t sequence     = captain->parse_long();
   float pressure        = captain->parse_float();
   float variance        = captain->parse_float();
+  float temperature     = captain->parse_float();
+  float temperature_var = captain->parse_float();
 
   sensor_msgs::FluidPressure msg;
   msg.header.stamp = ros::Time(sec,usec*1000);
@@ -470,10 +475,23 @@ void RosInterFace::captain_callback_PRESSURE() {
   msg.fluid_pressure = pressure;
   msg.variance = variance;
   pressure_pub.publish(msg);
+
+  sensor_msgs::Temperature temp_msg;
+  temp_msg.header.stamp = ros::Time(sec,usec*1000);
+  temp_msg.header.seq = sequence;
+  temp_msg.header.frame_id = "lolo/pressure_link";
+  temp_msg.temperature = temperature;
+  temp_msg.variance = temperature_var;
+  watertemp_pub.publish(temp_msg);
 }
 
 void RosInterFace::captain_callback_VBS() {
-  /*
+
+  //TODO add another message for this and add real data.
+  lolo_msgs::VbsMode mode_msg;
+  mode_msg.current_mode = lolo_msgs::VbsMode::VBS_MODE_AUTO;
+  VBS_mode_pub.publish(mode_msg);
+  
   //Front tank
   int newData_front = captain->parse_byte();
   uint64_t timestamp_front_tank = captain->parse_llong();            //timestamp from ISB
@@ -487,9 +505,9 @@ void RosInterFace::captain_callback_VBS() {
   if(newData_front) {
     lolo_msgs::VbsTank msg;
     msg.header.stamp = ros::Time(front_tank_sec,front_tank_usec*1000);
-    msg.header.frame_id = "VBS";
-    msg.precent_current = vbs_front_tank_percent_current;
-    msg.precent_target = vbs_front_tank_percent_target;
+    msg.header.frame_id = "/lolo/vbs_front_link";
+    msg.percent_current = vbs_front_tank_percent_current;
+    msg.percent_target = vbs_front_tank_percent_target;
     msg.pressure = vbs_front_tank_pressure;
     msg.volume = vbs_front_tank_volume;
     VBS_front_tank_pub.publish(msg);
@@ -508,13 +526,12 @@ void RosInterFace::captain_callback_VBS() {
   if(newData_aft) {
     lolo_msgs::VbsTank msg;
     msg.header.stamp = ros::Time(aft_tank_sec,aft_tank_usec*1000);
-    msg.header.frame_id = "VBS";
-    msg.precent_current = vbs_aft_tank_percent_current;
-    msg.precent_target = vbs_aft_tank_percent_target;
+    msg.header.frame_id = "/lolo/vbs_aft_link";
+    msg.percent_current = vbs_aft_tank_percent_current;
+    msg.percent_target = vbs_aft_tank_percent_target;
     msg.pressure = vbs_aft_tank_pressure;
     msg.volume = vbs_aft_tank_volume;
     VBS_aft_tank_pub.publish(msg);
-    
   }
   
   //Valve stuff
@@ -539,10 +556,8 @@ void RosInterFace::captain_callback_VBS() {
     msg.rpm.rpm = vbs_motor_rpm;
     msg.current = vbs_motor_current;
     msg.torque = vbs_motor_torque;
-
     VBS_motor_pub.publish(msg);
   }
-  */
 };
 
 void RosInterFace::captain_callback_POSITION() {
@@ -611,12 +626,21 @@ void RosInterFace::captain_callback_POSITION() {
 
   smarc_msgs::LatLonToUTMOdometry srv;
   //TODO header
+  //srv.request.lat_lon_odom.header.stamp = ros::Time(sec,usec*1000);
+  //srv.request.lat_lon_odom.header.seq = sequence;
+  //srv.request.lat_lon_odom.header.frame_id = "lolo/base_link";
   srv.request.lat_lon_odom.lat_lon_pose.position = pos_msg;
   srv.request.lat_lon_odom.lat_lon_pose.orientation = orientation_msg;
   srv.request.lat_lon_odom.twist = twist_msg.twist;
   
   if (odom_client.call(srv)) {
     //ROS_INFO("Call to service sucsessfull");
+    //Add header
+    srv.response.odom.header.stamp = ros::Time(sec,usec*1000);
+    srv.response.odom.header.seq = sequence;
+    srv.response.odom.header.frame_id = "lolo/base_link";
+    //Add depth
+    srv.response.odom.pose.pose.position.z = -depth;
     odom_pub.publish(srv.response.odom);
   }
   else
@@ -645,6 +669,76 @@ void RosInterFace::captain_callback_FLS() {
     fls_pub.publish(fls_msg);  
   }
 };
+
+void RosInterFace::captain_callback_SENSOR_STATUS() {
+  bool DVL_OK = captain->parse_byte();
+
+  smarc_msgs::SensorStatus dvl_msg;
+  dvl_msg.sensor_status = DVL_OK;
+  dvl_msg.service_name = "/lolo/core/toggle_dvl";
+  dvl_status_pub.publish(dvl_msg);
+};
+
+void RosInterFace::captain_callback_CTRL_STATUS() {
+  bool scientistinterface_enable_waypoint = captain->parse_byte();
+  bool scientistinterface_enable_yaw      = captain->parse_byte();
+  bool scientistinterface_enable_yawrate  = captain->parse_byte();
+  bool scientistinterface_enable_depth    = captain->parse_byte();
+  bool scientistinterface_enable_altitude = captain->parse_byte();
+  bool scientistinterface_enable_pitch    = captain->parse_byte();
+  bool scientistinterface_enable_speed    = captain->parse_byte();
+  bool scientistinterface_enable_rpm      = captain->parse_byte();
+  bool scientistinterface_enable_rpm_strb = captain->parse_byte();
+  bool scientistinterface_enable_rpm_port = captain->parse_byte();
+  bool scientistinterface_enable_elevator = captain->parse_byte();
+  bool scientistinterface_enable_rudder   = captain->parse_byte();
+  bool scientistinterface_enable_VBS      = captain->parse_byte();
+
+  smarc_msgs::ControllerStatus msg_waypoint;
+  msg_waypoint.control_status = scientistinterface_enable_waypoint;
+  msg_waypoint.service_name = "/lolo/ctrl/toggle_onboard_waypoint_ctrl";
+  ctrl_status_waypoint_pub.publish(msg_waypoint);
+
+  smarc_msgs::ControllerStatus msg_yaw;
+  msg_yaw.control_status = scientistinterface_enable_yaw;
+  msg_yaw.service_name = "/lolo/ctrl/toggle_onboard_yaw_ctrl";
+  ctrl_status_yaw_pub.publish(msg_waypoint);
+
+  smarc_msgs::ControllerStatus msg_yawrate;
+  msg_yawrate.control_status = scientistinterface_enable_yawrate;
+  msg_yawrate.service_name = "/lolo/ctrl/toggle_onboard_yawrate_ctrl";
+  ctrl_status_yawrate_pub.publish(msg_yawrate);
+
+  smarc_msgs::ControllerStatus msg_depth;
+  msg_depth.control_status = scientistinterface_enable_depth;
+  msg_depth.service_name = "/lolo/ctrl/toggle_onboard_depth_ctrl";
+  ctrl_status_depth_pub.publish(msg_depth);
+
+  smarc_msgs::ControllerStatus msg_altitude;
+  msg_altitude.control_status = scientistinterface_enable_altitude;
+  msg_altitude.service_name = "/lolo/ctrl/toggle_onboard_altitude_ctrl";
+  ctrl_status_altitude_pub.publish(msg_altitude);
+
+  smarc_msgs::ControllerStatus msg_pitch;
+  msg_pitch.control_status = scientistinterface_enable_pitch;
+  msg_pitch.service_name = "/lolo/ctrl/toggle_onboard_pitch_ctrl";
+  ctrl_status_pitch_pub.publish(msg_pitch);
+
+  smarc_msgs::ControllerStatus msg_speed;
+  msg_speed.control_status = scientistinterface_enable_speed;
+  msg_speed.service_name = "/lolo/ctrl/toggle_onboard_speed_ctrl";
+  ctrl_status_speed_pub.publish(msg_speed);
+};
+
+
+void RosInterFace::captain_callback_SERVICE() {
+  std::cout << "Received service response from captain" << std::endl;
+  lolo_msgs::CaptainService msg;
+  msg.ref = captain->parse_int();
+  msg.reply = captain->parse_byte();
+  //TODO Add data to array if it ever gets used
+  service_pub.publish(msg);
+}
 
 void RosInterFace::captain_callback_TEXT() {
   int length = captain->parse_byte();

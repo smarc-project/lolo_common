@@ -3,6 +3,7 @@
 <arg name="robot_name" default="lolo"/>
 <arg name="utm_zone" default="34"/>
 <arg name="utm_band" default="V"/>
+<arg name="captain_ip" default="192.168.1.90" />
 
 <param name="utm_zone" type="int" value="$(arg utm_zone)"/>
 <param name="utm_band" type="string" value="$(arg utm_band)"/> 
@@ -22,6 +23,8 @@
 -->
 <!-- <node pkg="captain_interface" type="interface" name="captain_interface" output="screen" ns="$(arg robot_name)"/> -->
 
-<include file="$(find captain_interface)/launch/interface.launch" ns="$(arg robot_name)"/>
+<include file="$(find captain_interface)/launch/interface.launch" ns="$(arg robot_name)">
+    <arg name="captain_ip" value="$(arg captain_ip)"/>
+</include>
 
 </launch>

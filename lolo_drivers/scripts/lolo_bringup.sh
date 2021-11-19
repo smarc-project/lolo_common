@@ -12,6 +12,9 @@ UTM_BAND=V
 #UTM_ZONE=33
 #UTM_BAND=V
 
+#Ip adress of the captain
+CAPTAIN_IP=192.168.1.90
+
 # IP Addresses to connect to neptus
 # The IP of the computer running neptus
 NEPTUS_IP=10.8.0.58 # Yi's computer
@@ -33,7 +36,7 @@ tmux send-keys "roscore" C-m
 # start the gui and new_gui in one launch file 
 
 tmux select-window -t $SESSION:1
-tmux send-keys "roslaunch lolo_drivers lolo_core.launch utm_zone:=$UTM_ZONE utm_band:=$UTM_BAND"
+tmux send-keys "roslaunch lolo_drivers lolo_core.launch utm_zone:=$UTM_ZONE utm_band:=$UTM_BAND captain_ip:=$CAPTAIN_IP"
 
 tmux select-window -t $SESSION:2
 tmux send-keys "roslaunch bt_mission mission.launch waypoint_tolerance:=5 neptus_addr:=$NEPTUS_IP bridge_addr:=$LOLO_IP bridge_port:=$BRIDGE_PORT robot_name:=lolo imc_id:=6 imc_system_name:=lolo"
