@@ -289,7 +289,15 @@ void RosInterFace::captain_callback_DVL() {
   float range2         = captain->parse_float();
   float range3         = captain->parse_float();
   float range4         = captain->parse_float();
-  float range = 0.25*(range1+range2+range3+range4);
+
+  int beams=0;
+  float beams_sum = 0;
+  if(range1 != 0) {beams++; beams_sum+=range1;};
+  if(range2 != 0) {beams++; beams_sum+=range2;};
+  if(range3 != 0) {beams++; beams_sum+=range3;};
+  if(range4 != 0) {beams++; beams_sum+=range4;};
+
+  float range = beams_sum / (beams*10);
 
   //Covariance
   float c00            = captain->parse_float();
