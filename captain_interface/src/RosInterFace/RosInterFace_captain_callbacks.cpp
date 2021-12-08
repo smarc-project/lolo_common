@@ -709,6 +709,11 @@ void RosInterFace::captain_callback_POSITION() {
   float q3          = captain->parse_float();
   float q4          = captain->parse_float();
 
+  float position_cov_xx = captain->parse_float();
+  float position_cov_yy = captain->parse_float();
+  float position_cov_xy = captain->parse_float();
+
+
   //publish position (lat lon)
   geographic_msgs::GeoPoint pos_msg;
 
@@ -766,6 +771,12 @@ void RosInterFace::captain_callback_POSITION() {
     srv.response.odom.header.frame_id = "lolo/base_link";
     //Add depth
     srv.response.odom.pose.pose.position.z = -depth;
+
+    srv.response.odom.pose.covariance[0] = position_cov_xx;
+    srv.response.odom.pose.covariance[1] = position_cov_xy;
+    srv.response.odom.pose.covariance[6] = position_cov_xy;
+    srv.response.odom.pose.covariance[7] = position_cov_yy;
+
     odom_pub.publish(srv.response.odom);
   }
   else
