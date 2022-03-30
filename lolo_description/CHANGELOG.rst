@@ -2,8 +2,8 @@
 Changelog for package lolo_description
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.0.1 (2022-03-30)
+------------------
 * Switched from xacro.py to xacro
 * Added some run dependencies
 * Merge pull request `#13 <https://github.com/smarc-project/lolo_common/issues/13>`_ from smarc-project/install_rules

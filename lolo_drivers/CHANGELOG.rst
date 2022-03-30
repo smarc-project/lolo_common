@@ -2,8 +2,8 @@
 Changelog for package lolo_drivers
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.0.1 (2022-03-30)
+------------------
 * Merge pull request `#16 <https://github.com/smarc-project/lolo_common/issues/16>`_ from NiklasRolleberg/noetic-devel
   Noetic devel
 * Added the service node to the interface launchfile and added captain ip as a variable in lolo_bringup
