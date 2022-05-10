@@ -67,9 +67,12 @@ tmux select-window -t $SESSION:7
 tmux send-keys "sleep 5; roslaunch r2sonic_mbes r2sonic_bathy.launch"
 
 tmux select-window -t $SESSION:8
-tmux send-keys "sleep 5; roslaunch unetstack_interface simulation.launch " C-m
+tmux send-keys "sleep 5; rosrun r2sonic_mbes image_array_node" C-m
 
 tmux select-window -t $SESSION:9
+tmux send-keys "sleep 5; roslaunch unetstack_interface simulation.launch " C-m
+
+tmux select-window -t $SESSION:10
 tmux send-keys "sleep 5; rosrun lolo_drivers odom_to_angles.py " C-m
 
 # Set default window
