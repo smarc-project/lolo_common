@@ -777,6 +777,14 @@ void RosInterFace::captain_callback_POSITION() {
     srv.response.odom.pose.covariance[6] = position_cov_xy;
     srv.response.odom.pose.covariance[7] = position_cov_yy;
 
+    //Add twist
+    srv.response.odom.twist.twist.linear.x = SOGX;
+    srv.response.odom.twist.twist.linear.y = SOGY;
+    srv.response.odom.twist.twist.linear.z = SOGZ;
+    srv.response.odom.twist.twist.angular.x = ROTX;
+    srv.response.odom.twist.twist.angular.y = ROTY;
+    srv.response.odom.twist.twist.angular.z = ROTZ;
+
     odom_pub.publish(srv.response.odom);
   }
   else
