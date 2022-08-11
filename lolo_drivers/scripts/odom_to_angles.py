@@ -61,8 +61,10 @@ def odom_callback(data):
 
 
 def main():
-    rospy.init_node("odom_to_angles_sim")
+    rospy.init_node("odom_to_angles")
+    # Assuming that the odom will be published only on one topic
     rospy.Subscriber('lolo/sim/odom', Odometry, odom_callback)
+    rospy.Subscriber('lolo/dr/odom', Odometry, odom_callback)
 
     while not rospy.is_shutdown():
         rospy.spin()
