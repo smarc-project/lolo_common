@@ -140,4 +140,9 @@ void RosInterFace::init(ros::NodeHandle* nh, CaptainInterFace* cap) {
 
   //Lolo console menu
   menu_pub  = n->advertise<std_msgs::String>("/lolo/console_out", 10);
+
+  //Log publishers
+  missonlog_pub = n->advertise<std_msgs::String>("/lolo/log/mission", 1);
+  datalog_pub = n->advertise<std_msgs::String>("/lolo/log/data", 1);
+
 };

@@ -900,3 +900,22 @@ void RosInterFace::captain_callback_MENUSTREAM() {
   msg.data = text.c_str();
   menu_pub.publish(msg);
 }
+
+void RosInterFace::captain_callback_MISSIONLOG() {
+  int length = captain->parse_byte();
+  std::string text = captain->parse_string(length);
+  //printf("%s\n",text.c_str());
+  std_msgs::String msg;
+  msg.data = text.c_str();
+  missonlog_pub.publish(msg);
+}
+
+void RosInterFace::captain_callback_DATALOG() {
+  int length = captain->parse_byte();
+  std::string text = captain->parse_string(length);
+  //printf("%s\n",text.c_str());
+  std_msgs::String msg;
+  msg.data = text.c_str();
+  datalog_pub.publish(msg);
+}
+

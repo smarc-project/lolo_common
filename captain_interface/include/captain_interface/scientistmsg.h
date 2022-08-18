@@ -34,6 +34,8 @@
 #define CS_SENSOR_STATUS    27
 #define CS_TEXT             40
 #define CS_MENUSTREAM       50
+#define CS_MISSIONLOG       51
+#define CS_DATALOG          52
 #define CS_REQUEST_OUT      100
 #define CS_DVL_PD0_FIXED         28
 #define CS_DVL_PD0_VARIABLE      29

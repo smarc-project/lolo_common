@@ -183,6 +183,10 @@ struct RosInterFace {
   ros::Publisher ctrl_status_rudder_pub;
   ros::Publisher ctrl_status_VBS_pub;
 
+  //Log publishers
+  ros::Publisher missonlog_pub;
+  ros::Publisher datalog_pub;
+
   //======================================================//
   //=================== ROS callbacks ====================//
   //======================================================//
@@ -236,6 +240,8 @@ struct RosInterFace {
   void captain_callback_CTRL_STATUS();
   void captain_callback_TEXT();
   void captain_callback_MENUSTREAM();
+  void captain_callback_MISSIONLOG();
+  void captain_callback_DATALOG();
 
   void captain_callback() {
     int msgID = captain->messageID();
@@ -266,6 +272,8 @@ struct RosInterFace {
       case CS_TEXT: {         captain_callback_TEXT(); } break;  //General purpose text message
       case CS_REQUEST_OUT:{   captain_callback_SERVICE(); } break; //"service call"
       case CS_MENUSTREAM: {   captain_callback_MENUSTREAM(); } break; //Menu stream data
+      case CS_MISSIONLOG: {   captain_callback_MISSIONLOG(); } break; //Mission log stream data}
+      case CS_DATALOG: {      captain_callback_DATALOG(); } break; //Data log stream data}
     };
   };
 };

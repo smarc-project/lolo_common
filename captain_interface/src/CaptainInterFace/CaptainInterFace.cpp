@@ -34,7 +34,7 @@ bool CaptainInterFace::parse_package() {
 
   uint8_t checksum = 0;
   for (int ii = length-1; ii >0 ; ii--) { checksum = checksum ^ receive_buffer.get(ii); } // XOR
-  if(checksum != CS) { return false; }; //CS does not match
+  if(checksum != CS) { printf("Checksum error: message length: %d\n", length); return false; }; //CS does not match
 
   unpack_index = length-2;
   package_available = true;
