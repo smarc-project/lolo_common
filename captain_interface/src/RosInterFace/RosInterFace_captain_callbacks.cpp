@@ -713,6 +713,10 @@ void RosInterFace::captain_callback_POSITION() {
   float position_cov_yy = captain->parse_float();
   float position_cov_xy = captain->parse_float();
 
+  //make invalid speed NaN instead
+  if(SOGX < -30 ) SOGX = sqrt(-30); //This is supposed to be NaN
+  if(SOGY < -30 ) SOGX = sqrt(-30); //This is supposed to be NaN
+  if(SOGZ < -30 ) SOGX = sqrt(-30); //This is supposed to be NaN
 
   //publish position (lat lon)
   geographic_msgs::GeoPoint pos_msg;
