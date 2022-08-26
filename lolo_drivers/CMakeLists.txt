@@ -166,6 +166,7 @@ include_directories(
 # )
 install(PROGRAMS
   scripts/lolo_bringup.sh
+  scripts/odom_to_angles.py
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
 
