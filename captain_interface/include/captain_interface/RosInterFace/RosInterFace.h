@@ -40,6 +40,9 @@
 #include <smarc_msgs/Leak.h>
 #include <lolo_msgs/CaptainStatus.h>
 #include <lolo_msgs/CaptainService.h>
+#include <lolo_msgs/PD0_Fixedleader.h>
+#include <lolo_msgs/PD0_Variableleader.h>
+#include <lolo_msgs/PD0_Bottomtrack.h>
 #include <smarc_msgs/ControllerStatus.h>
 #include <smarc_msgs/SensorStatus.h>
 //#include <lolo_msgs/VbsValves.h>
@@ -135,6 +138,11 @@ struct RosInterFace {
   ros::Publisher gps_pub;
   ros::Publisher fls_pub;
 
+  //dvl PD0
+  ros::Publisher dvl_PD0_Fixedleader_pub;
+  ros::Publisher dvl_PD0_Varaibleleader_pub;
+  ros::Publisher dvl_PD0_Bottomtrack_pub;
+
   //Sensor status
   ros::Publisher dvl_status_pub;
 
@@ -175,6 +183,10 @@ struct RosInterFace {
   ros::Publisher ctrl_status_rudder_pub;
   ros::Publisher ctrl_status_VBS_pub;
 
+  //Log publishers
+  ros::Publisher missonlog_pub;
+  ros::Publisher datalog_pub;
+
   //======================================================//
   //=================== ROS callbacks ====================//
   //======================================================//
@@ -213,6 +225,9 @@ struct RosInterFace {
   void captain_callback_THRUSTER_STRB();
   void captain_callback_BATTERY();
   void captain_callback_DVL();
+  void captain_callback_DVL_FIXED();
+  void captain_callback_DVL_VARIABLE();
+  void captain_callback_DVL_BOTTOMTRACK();
   void captain_callback_GPS();
   void captain_callback_IMU();
   void captain_callback_MAG();
@@ -225,6 +240,8 @@ struct RosInterFace {
   void captain_callback_CTRL_STATUS();
   void captain_callback_TEXT();
   void captain_callback_MENUSTREAM();
+  void captain_callback_MISSIONLOG();
+  void captain_callback_DATALOG();
 
   void captain_callback() {
     int msgID = captain->messageID();
@@ -240,6 +257,9 @@ struct RosInterFace {
       case CS_THRUSTER_STRB: {captain_callback_THRUSTER_STRB(); } break; //strb thruster
       case CS_BATTERY: {      captain_callback_BATTERY(); } break; //battery
       case CS_DVL: {          captain_callback_DVL(); } break; //DVL
+      case CS_DVL_PD0_FIXED: {        captain_callback_DVL_FIXED(); } break; //DVL
+      case CS_DVL_PD0_VARIABLE: {     captain_callback_DVL_VARIABLE(); } break; //DVL
+      case CS_DVL_PD0_BOTTOMTRACK: {  captain_callback_DVL_BOTTOMTRACK(); } break; //DVL
       case CS_GPS: {          captain_callback_GPS(); } break; //GPS
       case CS_IMU: {          captain_callback_IMU(); } break; //IMU
       case CS_MAG: {          captain_callback_MAG(); } break; //MAG
@@ -252,6 +272,8 @@ struct RosInterFace {
       case CS_TEXT: {         captain_callback_TEXT(); } break;  //General purpose text message
       case CS_REQUEST_OUT:{   captain_callback_SERVICE(); } break; //"service call"
       case CS_MENUSTREAM: {   captain_callback_MENUSTREAM(); } break; //Menu stream data
+      case CS_MISSIONLOG: {   captain_callback_MISSIONLOG(); } break; //Mission log stream data}
+      case CS_DATALOG: {      captain_callback_DATALOG(); } break; //Data log stream data}
     };
   };
 };

@@ -27,15 +27,15 @@ class GotoWaypointAction(object):
         #TODO:
         # speed
         # altude
-      
+
     def execute_cb(self, goal):
         # helper variables
         r = rospy.Rate(1)
         success = True
-        
+
         # publish info to the console for the user
         print("Lolo waypoint actionserver started")
-        
+
         # start executing the action
         while not rospy.is_shutdown():
             # this step is not necessary, the sequence is computed at 1 Hz for demonstration purposes
@@ -49,7 +49,7 @@ class GotoWaypointAction(object):
                 break
 
             try:
-                (trans,rot) = listener.lookupTransform('utm', 'lolo/base_link', rospy.Time(0))
+                (trans,rot) = listener.lookupTransform('utm', '/lolo/base_link', rospy.Time(0))
                 print("lolo position: " + str(trans))
             except (tf.LookupException, tf.ConnectivityException, tf.ExtrapolationException):
                 print("tranform error")
@@ -65,24 +65,24 @@ class GotoWaypointAction(object):
             print("dy : " + str(dy))
             print("distance to target: " + str(dist))
 
-            
+
             # publish feedback
             self._feedback.ETA = rospy.get_rostime() + rospy.Duration((dist / 0.6)) #TOTO change 0.6 for actual speed
             self._as.publish_feedback(self._feedback)
-            
+
             #Check if distance to goal < tolerance
             if(dist < goal.goal_tolerance):
                 print("Goal reached")
                 break; #Goal reached
 
-            
+
             print("Send setpoints to lolo")
             #send setpoints to lolo
             target = goal.waypoint_pose.pose.position
             print("target:")
             print(target)
             self.waypoint_pub.publish(target)
-            
+
             if(goal.z_control_mode == goal.Z_CONTROL_DEPTH):
                 self.depth_pub.publish(goal.travel_depth)
             elif(goal.z_control_mode == goal.Z_CONTROL_ALTITUDE):
@@ -91,7 +91,7 @@ class GotoWaypointAction(object):
             else:
                 print("Depth control mode not set. staying at the surface")
                 self.depth_pub.publish(-30)
-            
+
             if(goal.speed_control_mode == goal.SPEED_CONTROL_RPM):
                 msg = smarc_msgs.msg.ThrusterRPM()
                 msg.rpm = goal.travel_rpm
@@ -102,20 +102,20 @@ class GotoWaypointAction(object):
                 msg = smarc_msgs.msg.ThrusterRPM()
                 msg.rpm = goal.travel_rpm
                 self.rpm_pub.publish(msg)
-            
-        
+
+
         print("Send 0 rpm to lolo") #TODO remove this once the timeout is implemented on lolo
         #self.waypoint_pub.publish(target)
         self.depth_pub.publish(-30)
         msg = smarc_msgs.msg.ThrusterRPM()
         self.rpm_pub.publish(msg)
-          
+
         if success:
             self._result.reached_waypoint = True
             rospy.loginfo('%s: Waypoint reached' % self._action_name)
             self._as.set_succeeded(self._result)
 
-        
+
 if __name__ == '__main__':
     rospy.init_node('lolo_waypoint_action')
     listener = tf.TransformListener()

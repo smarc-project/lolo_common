@@ -1,8 +1,15 @@
+/*! \file scientistmsg.h
+    \brief Constants for scientist interface
+    
+    This file contains constants for the scientist interface.
+    The constants are used to identify the messages between the scientist and the captain
+*/
+
 #ifndef captainscientistmessages
 #define captainscientistmessages
 
-//V1.0
-//2019 03 25
+//V1.1
+//2021 11 06
 
 //CAPTAIN -> SCIENTIST
 #define CS_LEAK             7
@@ -27,7 +34,12 @@
 #define CS_SENSOR_STATUS    27
 #define CS_TEXT             40
 #define CS_MENUSTREAM       50
+#define CS_MISSIONLOG       51
+#define CS_DATALOG          52
 #define CS_REQUEST_OUT      100
+#define CS_DVL_PD0_FIXED         28
+#define CS_DVL_PD0_VARIABLE      29
+#define CS_DVL_PD0_BOTTOMTRACK   30
 
 //SCIENTIST -> CAPTAIN
 #define SC_REQUEST_IN            101
