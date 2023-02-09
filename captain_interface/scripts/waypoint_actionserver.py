@@ -57,9 +57,10 @@ class GotoWaypointAction(object):
                 success = False
                 break;
 
+            #print(goal)
             #Calculate the distance to target
-            dx = goal.waypoint_pose.pose.position.x - trans[0]
-            dy = goal.waypoint_pose.pose.position.y - trans[1]
+            dx = goal.waypoint.pose.pose.position.x - trans[0]
+            dy = goal.waypoint.pose.pose.position.y - trans[1]
             dist = math.sqrt(dx*dx + dy*dy)
             print("dx : " + str(dx))
             print("dy : " + str(dy))
@@ -71,36 +72,36 @@ class GotoWaypointAction(object):
             self._as.publish_feedback(self._feedback)
 
             #Check if distance to goal < tolerance
-            if(dist < goal.goal_tolerance):
+            if(dist < goal.waypoint.goal_tolerance):
                 print("Goal reached")
                 break; #Goal reached
 
 
             print("Send setpoints to lolo")
             #send setpoints to lolo
-            target = goal.waypoint_pose.pose.position
+            target = goal.waypoint.pose.pose.position
             print("target:")
             print(target)
             self.waypoint_pub.publish(target)
 
-            if(goal.z_control_mode == goal.Z_CONTROL_DEPTH):
-                self.depth_pub.publish(goal.travel_depth)
-            elif(goal.z_control_mode == goal.Z_CONTROL_ALTITUDE):
+            if(goal.waypoint.z_control_mode == goal.waypoint.Z_CONTROL_DEPTH):
+                self.depth_pub.publish(goal.waypoint.travel_depth)
+            elif(goal.waypoint.z_control_mode == goal.waypoint.Z_CONTROL_ALTITUDE):
                 print("No altitude following yet :)")
                 self.depth_pub.publish(-30)
             else:
                 print("Depth control mode not set. staying at the surface")
                 self.depth_pub.publish(-30)
 
-            if(goal.speed_control_mode == goal.SPEED_CONTROL_RPM):
+            if(goal.waypoint.speed_control_mode == goal.waypoint.SPEED_CONTROL_RPM):
                 msg = smarc_msgs.msg.ThrusterRPM()
-                msg.rpm = goal.travel_rpm
+                msg.rpm = int(goal.waypoint.travel_rpm)
                 self.rpm_pub.publish(msg)
-            elif(goal.speed_control_mode == goal.SPEED_CONTROL_SPEED):
-                self.speed_pub.publish(goal.travel_speed)
+            elif(goal.waypoint.speed_control_mode == goal.waypoint.SPEED_CONTROL_SPEED):
+                self.speed_pub.publish(goal.waypoint.travel_speed)
             else:
                 msg = smarc_msgs.msg.ThrusterRPM()
-                msg.rpm = goal.travel_rpm
+                msg.rpm = int(goal.waypoint.travel_rpm)
                 self.rpm_pub.publish(msg)
 
 
