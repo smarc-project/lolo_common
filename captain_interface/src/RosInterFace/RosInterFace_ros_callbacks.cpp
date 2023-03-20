@@ -10,30 +10,12 @@ void RosInterFace::ros_callback_abort(const std_msgs::Empty::ConstPtr &_msg) {
   captain->send_package();
 };
 
-
+/*
 void RosInterFace::ros_callback_done(const std_msgs::Empty::ConstPtr &_msg) {
   captain->new_package(SC_DONE); // Tell captain that scientist is done
   captain->send_package();
 };
-
-void RosInterFace::ros_callback_waypoint_utm(const geometry_msgs::Point::ConstPtr &_msg) {
-  //TODO use service to get lat lon from the utm point
-  smarc_msgs::UTMToLatLon srv;
-  srv.request.utm_point = *_msg;
-  if (utm_to_latlon_client.call(srv))
-  {
-    ROS_INFO("Call to service sucsessfull");
-    boost::shared_ptr<geographic_msgs::GeoPoint> latlonmsg(new geographic_msgs::GeoPoint());
-    latlonmsg->latitude = srv.response.lat_lon_point.latitude;
-    latlonmsg->longitude = srv.response.lat_lon_point.longitude;
-    latlonmsg->altitude = srv.response.lat_lon_point.altitude;
-    ros_callback_waypoint(latlonmsg);
-  }
-  else
-  {
-    ROS_ERROR("Failed to call service to convert utm to latlon. waypoint not sent to the captain");
-  }
-}
+*/
 
 void RosInterFace::ros_callback_waypoint(const geographic_msgs::GeoPoint::ConstPtr &_msg) {
   double lat = _msg->latitude;

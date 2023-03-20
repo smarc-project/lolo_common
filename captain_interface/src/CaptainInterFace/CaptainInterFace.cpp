@@ -52,6 +52,11 @@ bool CaptainInterFace::parse_package() {
 void CaptainInterFace::clear_package() {
   unpack_index = 0;
   package_available = false;
+
+  for(int i=0;i<255;i++) {
+    receive_buffer.put(0);
+  }
+
 }
 
 
