@@ -14,6 +14,7 @@ find_package(catkin REQUIRED COMPONENTS
   smarc_msgs
   geographic_msgs
   ixblue_ins_msgs
+  sensor_msgs
 )
 
 ## System dependencies are found with CMake's conventions
@@ -170,6 +171,7 @@ install(PROGRAMS
   scripts/lolo_bringup.sh
   scripts/odom_to_angles.py
   scripts/ins_to_dr.py
+  scripts/dvl_to_altitude.py
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
 

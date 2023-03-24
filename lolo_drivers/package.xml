@@ -63,6 +63,7 @@
   <exec_depend>smarc_msgs</exec_depend>
   <depend>ixblue_ins_msgs</depend>
   <depend>geographic_msgs</depend>
+  <depend>sensor_msgs</depend>
 
 
 
