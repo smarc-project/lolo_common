@@ -10,7 +10,7 @@ publish in SAM:
         dr/lat_lon
     for nodered, in addition to BT stuff above:
         dr/
-            altitude
+            depth
             roll
             pitch
             yaw
@@ -44,7 +44,7 @@ but who publishes dr/odom in the new lolo?
 import rospy
 # dr/lat_lon
 from geographic_msgs.msg import GeoPoint
-# dr/altitude, roll, pitch, yaw
+# dr/depth, roll, pitch, yaw
 from std_msgs.msg import Float64
 # core/ins
 from ixblue_ins_msgs.msg import Ins
@@ -62,7 +62,7 @@ class INSDr(object):
 
         topic_root = "/"+robot_name+"/dr/"
         self.latlon_pub = rospy.Publisher(topic_root+"lat_lon", GeoPoint, queue_size=1)
-        self.altitude_pub = rospy.Publisher(topic_root+"altitude", Float64, queue_size=1)
+        self.depth_pub = rospy.Publisher(topic_root+"depth", Float64, queue_size=1)
         self.roll_pub = rospy.Publisher(topic_root+"roll", Float64, queue_size=1)
         self.pitch_pub = rospy.Publisher(topic_root+"pitch", Float64, queue_size=1)
         self.yaw_pub = rospy.Publisher(topic_root+"yaw", Float64, queue_size=1)
@@ -73,7 +73,7 @@ class INSDr(object):
         ll.latitude = msg.latitude
         ll.longitude = msg.longitude
         self.latlon_pub.publish(ll)
-        self.altitude_pub.publish(msg.altitude)
+        self.depth_pub.publish(-msg.altitude)
         self.roll_pub.publish(msg.roll)
         self.pitch_pub.publish(msg.pitch)
         self.yaw_pub.publish(msg.heading)
