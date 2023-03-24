@@ -61,6 +61,9 @@
   <exec_depend>lolo_description</exec_depend>
   <exec_depend>lolo_msgs</exec_depend>
   <exec_depend>smarc_msgs</exec_depend>
+  <depend>ixblue_ins_msgs</depend>
+  <depend>geographic_msgs</depend>
+
 
 
   <!-- The export tag contains other, unspecified, tags -->
