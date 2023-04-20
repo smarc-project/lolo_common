@@ -41,19 +41,23 @@ but who publishes dr/odom in the new lolo?
 # float64[9] speed_vessel_frame_covariance
 """
 
-import rospy
+import rospy, tf
 # dr/lat_lon
 from geographic_msgs.msg import GeoPoint
 # dr/depth, roll, pitch, yaw
 from std_msgs.msg import Float64
 # core/ins
 from ixblue_ins_msgs.msg import Ins
+from geometry_msgs.msg import PoseStamped
 
+from smarc_msgs.srv import LatLonToUTM
 
 class INSDr(object):
     def __init__(self,
                  ins_topic = "core/ins",
-                 robot_name = "lolo"):
+                 robot_name = "lolo",
+                 latlontoutm_service_name = "lat_lon_to_utm"):
+        self.robot_name = robot_name
         self.ins_sub = rospy.Subscriber("/"+robot_name+"/"+ins_topic,
                                         Ins,
                                         self.ins_cb,
@@ -67,16 +71,62 @@ class INSDr(object):
         self.pitch_pub = rospy.Publisher(topic_root+"pitch", Float64, queue_size=1)
         self.yaw_pub = rospy.Publisher(topic_root+"yaw", Float64, queue_size=1)
 
+        latlontoutm_service_name = topic_root + latlontoutm_service_name
+        while not rospy.is_shutdown():
+            try:
+                rospy.loginfo("Waiting for {} service...".format(latlontoutm_service_name))
+                rospy.wait_for_service(latlontoutm_service_name, timeout=5)
+                rospy.loginfo("Got it.")
+                break
+            except:
+                rospy.loginfo("{} service not found, will keep waiting.".format(latlontoutm_service_name))
+
+        self.ll2utm_service = rospy.ServiceProxy(latlontoutm_service_name,
+                                                 LatLonToUTM)
+        self.tfcaster = tf.TransformBroadcaster()
+        self.tflistener = tf.TransformListener()
+
 
     def ins_cb(self, msg):
         ll = GeoPoint()
         ll.latitude = msg.latitude
         ll.longitude = msg.longitude
+        ll.altitude = msg.altitude
         self.latlon_pub.publish(ll)
         self.depth_pub.publish(-msg.altitude)
         self.roll_pub.publish(msg.roll)
         self.pitch_pub.publish(msg.pitch)
         self.yaw_pub.publish(msg.heading)
+
+        # okay, now publish the same thing, as part of TF
+        utm_res = self.ll2utm_service(ll)
+        # we could have published utm->base link, but we should probably do world_ned->baselink instead
+        # so gotta transform this utm point to a world_ned point first
+        ps = PoseStamped()
+        ps.header.frame_id = "utm"
+        ps.pose.position.x = utm_res.utm_point.x
+        ps.pose.position.y = utm_res.utm_point.y
+        ps.pose.position.z = utm_res.utm_point.z
+        quat = tf.transformations.quaternion_from_euler(msg.roll, msg.pitch, msg.heading)
+        ps.pose.orientation.x = quat[0]
+        ps.pose.orientation.y = quat[1]
+        ps.pose.orientation.z = quat[2]
+        ps.pose.orientation.w = quat[3]
+
+        # now we publish the world_ned version of this utm pose
+        world_ned_ps = self.tflistener.transformPose("world_ned", ps)
+        self.tfcaster.sendTransform((world_ned_ps.pose.position.x,
+                                     world_ned_ps.pose.position.y,
+                                     world_ned_ps.pose.position.z),
+                                    (world_ned_ps.pose.orientation.x,
+                                     world_ned_ps.pose.orientation.y,
+                                     world_ned_ps.pose.orientation.z,
+                                     world_ned_ps.pose.orientation.w),
+                                    rospy.Time.now(),
+                                    self.robot_name+"/base_link",
+                                    "world_ned")
+
+
 
 
 
