@@ -35,7 +35,7 @@ tmux new-window -n 'core'
 tmux send-keys "sleep 5; roslaunch lolo_drivers lolo_core.launch utm_zone:=$UTM_ZONE utm_band:=$UTM_BAND captain_ip:=$CAPTAIN_IP" C-m
 
 tmux new-window -n 'bt'
-tmux send-keys "sleep 5; roslaunch bt_mission mission.launch waypoint_tolerance:=5 neptus_addr:=$NEPTUS_IP bridge_addr:=$LOLO_IP bridge_port:=$BRIDGE_PORT robot_name:=lolo imc_id:=6 imc_system_name:=lolo" C-m
+tmux send-keys "sleep 5; roslaunch smarc_bt mission.launch waypoint_tolerance:=5 neptus_addr:=$NEPTUS_IP bridge_addr:=$LOLO_IP bridge_port:=$BRIDGE_PORT robot_name:=lolo imc_id:=6 imc_system_name:=lolo" C-m
 
 tmux new-window -n 'sidescan'
 tmux send-keys "sleep 5; roslaunch lolo_sidescan real.launch" C-m

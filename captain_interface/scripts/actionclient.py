@@ -4,16 +4,16 @@ import rospy
 
 # Brings in the SimpleActionClient
 import actionlib
-import smarc_msgs.msg
+import smarc_bt.msg
 
 def client():
-    client = actionlib.SimpleActionClient('lolo_waypoint_action', smarc_msgs.msg.GotoWaypointAction)
+    client = actionlib.SimpleActionClient('lolo_waypoint_action', smarc_bt.msg.GotoWaypointAction)
 
     print("Waiting for server")
     client.wait_for_server()
 
     print("Create goal")
-    goal = smarc_msgs.msg.GotoWaypointGoal()
+    goal = smarc_bt.msg.GotoWaypointGoal()
     goal.travel_rpm = 200
     goal.travel_rpm = 200
     

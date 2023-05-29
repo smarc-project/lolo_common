@@ -5,19 +5,20 @@ import rospy
 import actionlib
 import math
 import smarc_msgs.msg
+import smarc_bt.msg
 from std_msgs.msg import Float64
 import tf
 from geometry_msgs.msg import Point
 
 class GotoWaypointAction(object):
     # create messages that are used to publish feedback/result
-    _feedback = smarc_msgs.msg.GotoWaypointFeedback()
-    _result = smarc_msgs.msg.GotoWaypointResult()
+    _feedback = smarc_bt.msg.GotoWaypointFeedback()
+    _result = smarc_bt.msg.GotoWaypointResult()
 
     def __init__(self, name, _tf_listener):
         self.tf_listerner = _tf_listener
         self._action_name = name
-        self._as = actionlib.SimpleActionServer(self._action_name, smarc_msgs.msg.GotoWaypointAction, execute_cb=self.execute_cb, auto_start = False)
+        self._as = actionlib.SimpleActionServer(self._action_name, smarc_bt.msg.GotoWaypointAction, execute_cb=self.execute_cb, auto_start = False)
         self._as.start()
 
         self.waypoint_pub = rospy.Publisher("ctrl/waypoint_setpoint_utm", Point, queue_size=1)
