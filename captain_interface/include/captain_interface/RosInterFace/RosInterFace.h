@@ -42,6 +42,7 @@
 #include <lolo_msgs/CaptainService.h>
 #include <smarc_msgs/ControllerStatus.h>
 #include <smarc_msgs/SensorStatus.h>
+#include <ixblue_ins_msgs/Ins.h>
 
 struct RosInterFace {
 
@@ -63,6 +64,9 @@ struct RosInterFace {
 
   //TODO
   // USBL/RF/etc
+
+  //Navigation data
+  ros::Subscriber ins_sub;
 
   //information / other things
   ros::Subscriber heartbeat_sub;        //heartbeat message
@@ -176,6 +180,7 @@ struct RosInterFace {
   void ros_callback_thrusterStrb(const smarc_msgs::ThrusterRPM::ConstPtr &_msg);
   void ros_callback_service(const lolo_msgs::CaptainService::ConstPtr &_msg);
   void ros_callback_menu(const std_msgs::String::ConstPtr &_msg);
+  void ros_callback_ins(const ixblue_ins_msgs::Ins::ConstPtr & msg);
 
   //======================================================//
   //================= Captain callbacks ==================//

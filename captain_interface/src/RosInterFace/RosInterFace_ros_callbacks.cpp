@@ -17,6 +17,22 @@ void RosInterFace::ros_callback_done(const std_msgs::Empty::ConstPtr &_msg) {
 };
 */
 
+void RosInterFace::ros_callback_ins(const ixblue_ins_msgs::Ins::ConstPtr & msg) {
+  captain->add_double(msg->latitude);
+  captain->add_double(msg->longitude);
+  float depth = -1.0*msg->altitude;
+  captain->add_float(depth);
+
+  captain->add_float(msg->pitch);
+  captain->add_float(msg->pitch);
+  captain->add_float(msg->pitch);
+
+  captain->add_float(msg->speed_vessel_frame.x);
+  captain->add_float(msg->speed_vessel_frame.y);
+  captain->add_float(msg->speed_vessel_frame.z);
+  captain->send_package();
+}
+
 void RosInterFace::ros_callback_waypoint(const geographic_msgs::GeoPoint::ConstPtr &_msg) {
   double lat = _msg->latitude;
   double lon = _msg->longitude;
