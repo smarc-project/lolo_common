@@ -18,14 +18,16 @@ void RosInterFace::ros_callback_done(const std_msgs::Empty::ConstPtr &_msg) {
 */
 
 void RosInterFace::ros_callback_ins(const ixblue_ins_msgs::Ins::ConstPtr & msg) {
+
+  captain->new_package(SC_NAV_DATA); // INS data
   captain->add_double(msg->latitude);
   captain->add_double(msg->longitude);
   float depth = -1.0*msg->altitude;
   captain->add_float(depth);
 
   captain->add_float(msg->pitch);
-  captain->add_float(msg->pitch);
-  captain->add_float(msg->pitch);
+  captain->add_float(msg->roll);
+  captain->add_float(msg->heading);
 
   captain->add_float(msg->speed_vessel_frame.x);
   captain->add_float(msg->speed_vessel_frame.y);
