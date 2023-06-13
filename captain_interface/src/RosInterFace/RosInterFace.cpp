@@ -15,6 +15,9 @@ void RosInterFace::init(ros::NodeHandle* nh, CaptainInterFace* cap) {
   //ins
   ins_sub = n->subscribe<ixblue_ins_msgs::Ins>("/ixblue_ins_driver/ix/ins", 1, &RosInterFace::ros_callback_ins, this);
 
+  //USBL
+  usbl_sub = n->subscribe<std_msgs::Char>("/lolo/core/usbl_transmit", 1, &RosInterFace::ros_callback_usbl_transmit, this);
+
   //Control commands: High level
   waypoint_sub  = n->subscribe<geographic_msgs::GeoPoint>("/lolo/ctrl/waypoint_setpoint"  ,1, &RosInterFace::ros_callback_waypoint, this);
   speed_sub     = n->subscribe<std_msgs::Float64>("/lolo/ctrl/speed_setpoint"       ,1, &RosInterFace::ros_callback_speed,this);
@@ -45,6 +48,10 @@ void RosInterFace::init(ros::NodeHandle* nh, CaptainInterFace* cap) {
   //==================================//
   //=========== Publishers ===========//
   //==================================//
+
+  //USBL
+  usbl_pub             = n->advertise<std_msgs::Char>("lolo/core/usbl_received", 10);
+
   // --- Thrusters --- //
   thrusterPort_pub     = n->advertise<smarc_msgs::ThrusterFeedback>("/lolo/core/thruster1_fb", 10);
   thrusterStrb_pub     = n->advertise<smarc_msgs::ThrusterFeedback>("/lolo/core/thruster2_fb", 10);

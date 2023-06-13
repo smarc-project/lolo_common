@@ -223,3 +223,12 @@ void RosInterFace::captain_callback_DATALOG() {
   datalog_pub.publish(msg);
 }
 
+void RosInterFace::captain_callback_USBL_RECEIVED() {
+  int length = captain->parse_byte();
+  std::cout << "USBL data received. length " << length << std::endl;
+  //std::string text = captain->parse_string(length);
+  //std_msgs::String msg;
+  //msg.data = text.c_str();
+  //USBL_out_pub.publish(msg);
+}
+

@@ -25,13 +25,20 @@ void RosInterFace::ros_callback_ins(const ixblue_ins_msgs::Ins::ConstPtr & msg) 
   float depth = -1.0*msg->altitude;
   captain->add_float(depth);
 
-  captain->add_float(msg->pitch);
-  captain->add_float(msg->roll);
-  captain->add_float(msg->heading);
+  captain->add_float((-3.1415/180.0) * msg->pitch);
+  captain->add_float((3.1415/180.0) * msg->roll);
+  captain->add_float((3.1415/180.0) * msg->heading);
 
   captain->add_float(msg->speed_vessel_frame.x);
   captain->add_float(msg->speed_vessel_frame.y);
   captain->add_float(msg->speed_vessel_frame.z);
+  captain->send_package();
+}
+
+void RosInterFace::ros_callback_usbl_transmit(const std_msgs::Char::ConstPtr& msg) {
+  captain->new_package(SC_USBL_TRANSMIT);
+  captain->add_byte(1);
+  captain->add_byte(msg->data);
   captain->send_package();
 }
 

@@ -17,6 +17,7 @@
 #include <std_msgs/Float64.h>
 #include <std_msgs/Empty.h>
 #include <std_msgs/Header.h>
+#include <std_msgs/Char.h>
 #include <geometry_msgs/PoseWithCovarianceStamped.h>
 #include <geometry_msgs/TwistWithCovarianceStamped.h>
 #include <geometry_msgs/Point.h>
@@ -68,6 +69,9 @@ struct RosInterFace {
   //Navigation data
   ros::Subscriber ins_sub;
 
+  //usbl
+  ros::Subscriber usbl_sub;
+
   //information / other things
   ros::Subscriber heartbeat_sub;        //heartbeat message
   ros::Subscriber done_sub;             //scientist mission completed
@@ -103,6 +107,10 @@ struct RosInterFace {
   //======================================================//
   //=================== ROS pubishers ====================//
   //======================================================//
+
+  //usbl
+  ros::Publisher usbl_pub;
+
   //thrusters
   ros::Publisher thrusterPort_pub;
   ros::Publisher thrusterStrb_pub;
@@ -181,6 +189,7 @@ struct RosInterFace {
   void ros_callback_service(const lolo_msgs::CaptainService::ConstPtr &_msg);
   void ros_callback_menu(const std_msgs::String::ConstPtr &_msg);
   void ros_callback_ins(const ixblue_ins_msgs::Ins::ConstPtr & msg);
+  void ros_callback_usbl_transmit(const std_msgs::Char::ConstPtr& msg);
 
   //======================================================//
   //================= Captain callbacks ==================//
@@ -201,6 +210,7 @@ struct RosInterFace {
   void captain_callback_MENUSTREAM();
   void captain_callback_MISSIONLOG();
   void captain_callback_DATALOG();
+  void captain_callback_USBL_RECEIVED();
 
   void captain_callback() {
     int msgID = captain->messageID();
@@ -208,7 +218,7 @@ struct RosInterFace {
       case CS_LEAK: {         captain_callback_LEAK(); }; break; //Leak
       case CS_CONTROL: {      captain_callback_CONTROL(); } break; //control
       case CS_RUDDER: {       captain_callback_RUDDER(); } break; // rudder
-      case CS_ELEVATOR: {     captain_callback_ELEVATOR(); } break; //elevator
+      //case CS_ELEVATOR: {     captain_callback_ELEVATOR(); } break; //elevator
       case CS_ELEVON_PORT: {  captain_callback_ELEVON_PORT(); } break; //Port elevon
       case CS_ELEVON_STRB: {  captain_callback_ELEVON_STRB(); } break; //Strb elevon
       case CS_THRUSTER_PORT: {captain_callback_THRUSTER_PORT(); } break; //port thruster
@@ -219,6 +229,7 @@ struct RosInterFace {
       case CS_MENUSTREAM: {   captain_callback_MENUSTREAM(); } break; //Menu stream data
       case CS_MISSIONLOG: {   captain_callback_MISSIONLOG(); } break; //Mission log stream data}
       case CS_DATALOG: {      captain_callback_DATALOG(); } break; //Data log stream data}
+      case CS_USBL_RECEIVED: {captain_callback_DATALOG(); } break; //USBL received}
     };
   };
 };
