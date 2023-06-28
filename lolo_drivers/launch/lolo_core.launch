@@ -12,9 +12,9 @@
     <arg name="namespace" value="$(arg robot_name)"/>
 </include>
 
-<include file="$(find tf_lat_lon)/launch/odom_tf.launch" ns="$(arg robot_name)">
+<!-- <include file="$(find tf_lat_lon)/launch/odom_tf.launch" ns="$(arg robot_name)">
     <arg name="robot_name" value="$(arg robot_name)"/>
-</include>
+</include> -->
 
 <!--
 <node pkg="lolo_drivers" type="old_pose_converter.py" name="old_pose_converter" output="screen" ns="$(arg robot_name)">
@@ -26,5 +26,23 @@
 <include file="$(find captain_interface)/launch/interface.launch" ns="$(arg robot_name)">
     <arg name="captain_ip" value="$(arg captain_ip)"/>
 </include>
+
+
+<group ns="dr">
+    <include file="$(find tf_lat_lon)/launch/tf_lat_lon.launch">
+        <arg name="frame" value="$(arg robot_name)/base_link"/>
+        <arg name="lat_lon_topic" value="lat_lon"/>
+    </include>
+</group>
+
+<node name="ins_to_dr" type="ins_to_dr.py" pkg="lolo_drivers" output="screen"/>
+<node name="dvl_to_altitude" type="dvl_to_altitude.py" pkg="lolo_drivers" output="screen"/>
+
+    <include file= "$(find smarc_acomms_nm3)/launch/full_acomms_stack.launch">
+        <arg name="robot_name" value="$(arg robot_name)"/>
+        <arg name="driver_port" value="/dev/ttyUSB3"/>
+    </include>
+
+    <node name="acomms_dr_publish" type="publish_dr.py" pkg="smarc_acomms" output="screen"/>
 
 </launch>
