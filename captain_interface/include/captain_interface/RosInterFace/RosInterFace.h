@@ -229,7 +229,7 @@ struct RosInterFace {
       case CS_MENUSTREAM: {   captain_callback_MENUSTREAM(); } break; //Menu stream data
       case CS_MISSIONLOG: {   captain_callback_MISSIONLOG(); } break; //Mission log stream data}
       case CS_DATALOG: {      captain_callback_DATALOG(); } break; //Data log stream data}
-      case CS_USBL_RECEIVED: {captain_callback_DATALOG(); } break; //USBL received}
+      case CS_USBL_RECEIVED: {captain_callback_USBL_RECEIVED(); } break; //USBL received}
     };
   };
 };
