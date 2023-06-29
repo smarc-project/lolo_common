@@ -23,6 +23,12 @@ tmux send-keys "roscore" C-m
 tmux new-window -n 'core'
 tmux send-keys "sleep 5; roslaunch lolo_drivers lolo_core.launch utm_zone:=$UTM_ZONE utm_band:=$UTM_BAND captain_ip:=$CAPTAIN_IP" C-m
 
+tmux new-window -n 'action'
+tmux send-keys "sleep 5; roslaunch lolo_action_servers lolo_actions.launch robot_name:=lolo" C-m
+
+tmux new-window -n 'ins_driver'
+tmux send-keys "sleep 1; roslaunch ixblue_ins_driver ixblue_ins_driver.launch" C-m
+
 tmux new-window -n 'bt'
 tmux send-keys "sleep 8; roslaunch smarc_bt mission.launch robot_name:=lolo" C-m
 
@@ -41,8 +47,8 @@ tmux send-keys "sleep 5; roslaunch r2sonic_mbes r2sonic_bathy.launch"
 tmux new-window -n 'bathy_node'
 tmux send-keys "sleep 5; rosrun r2sonic_mbes image_array_node" C-m
 
-tmux new-window -n 'odom_to_angles'
-tmux send-keys "sleep 5; rosrun lolo_drivers odom_to_angles.py " C-m
+#tmux new-window -n 'odom_to_angles'
+#tmux send-keys "sleep 5; rosrun lolo_drivers odom_to_angles.py " C-m
 
 tmux new-window -n 'logging'
 tmux send-keys "cd /xavier_ssd/LOGS/" C-m

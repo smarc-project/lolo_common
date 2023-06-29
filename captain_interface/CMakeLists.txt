@@ -19,6 +19,7 @@ find_package(catkin REQUIRED COMPONENTS
   smarc_msgs
   geographic_msgs
   genmsg
+  ixblue_ins_msgs
 )
 
 ## Messages

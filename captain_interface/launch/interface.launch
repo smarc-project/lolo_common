@@ -12,6 +12,6 @@
     <node pkg="captain_interface" type="captain_services.py" name="captain_toggle_services" output="screen"/>
 
     <!-- Waypoint actionserver -->
-    <node pkg="captain_interface" type="waypoint_actionserver.py" name="waypoint_action_server" output="screen"/>
+    <!-- <node pkg="captain_interface" type="waypoint_actionserver.py" name="waypoint_action_server" output="screen"/> -->
 
 </launch>

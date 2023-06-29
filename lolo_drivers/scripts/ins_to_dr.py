@@ -88,6 +88,12 @@ class INSDr(object):
 
 
     def ins_cb(self, msg):
+
+        msg.roll = msg.roll*3.1415/180
+        msg.pitch = msg.pitch*3.1415/180
+        msg.heading = (90-msg.heading)%360
+        msg.heading = msg.heading*3.1415/180
+
         ll = GeoPoint()
         ll.latitude = msg.latitude
         ll.longitude = msg.longitude
