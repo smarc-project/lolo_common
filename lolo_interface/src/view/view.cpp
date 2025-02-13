@@ -97,7 +97,7 @@ void View::lolo_callback_STATUS() {
     status_msg.rc_signal     =    lolo->parse_byte();
     status_msg.voltage       =    lolo->parse_float();    //voltage 
     status_msg.current       =    lolo->parse_float();    //current
-    status_msg.leak          =    lolo->parse_byte();     //leak sensor
+    status_msg.captain_leak  =    lolo->parse_byte();     //leak sensor
     status_msg.esc_leak      =    lolo->parse_byte();     //esc leak sensor
     status_msg.prevco_leak   =    lolo->parse_byte();     //Prevco leak sensor
     status_msg.edw_leak      =    lolo->parse_byte();     //edw leak sensor
