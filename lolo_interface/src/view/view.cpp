@@ -123,6 +123,63 @@ void View::lolo_callback_STATUS() {
     status_msg.lumen_output   = lolo->parse_byte();
     status_msg.mbes_output    = lolo->parse_byte();
 
+    //Emergency state
+    switch (lolo->parse_byte())
+    {
+      case 0:
+        status_msg.emergency_status = "NO EMERGENCY";
+        break;
+      case 1:
+        status_msg.emergency_status = "LOW EMERGENCY";
+        break;
+      case 2:
+        status_msg.emergency_status = "HIGH EMERGENCY";
+        break;
+    }
+
+    //Control mode
+    switch (lolo->parse_byte())
+    {
+      case 0:
+        status_msg.control_mode = "STANDBY";
+        break;
+      case 1:
+        status_msg.control_mode = "DISARMED";
+        break;
+      case 2:
+        status_msg.control_mode = "ARMED";
+        break;
+    }
+
+    //Control source
+    switch (lolo->parse_byte())
+    {
+      case 0:
+        status_msg.control_source = "NONE";
+        break;
+      case 1:
+        status_msg.control_source = "MANUAL_CONTROL";
+        break;
+      case 2:
+        status_msg.control_source = "ONBOARD_CONTROL";
+        break;
+      case 3:
+        status_msg.control_source = "EXTERNAL_CONTROL";
+        break;
+      case 4:
+        status_msg.control_source = "EMERGENCY_CONTROL";
+        break;
+    }
+
+    //enabled / disabled thrusters
+    status_msg.thrusters_enabled = lolo->parse_byte();
+    status_msg.vertical_thrusters_enabled = lolo->parse_byte();
+
+    //EDW
+    status_msg.edw_armed = lolo->parse_byte();
+    status_msg.edw_timer_armed = lolo->parse_byte();
+    status_msg.edw_timer_time_left = lolo->parse_long();
+
     status_pub->publish(status_msg);
 }
 
