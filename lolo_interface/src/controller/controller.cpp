@@ -181,10 +181,10 @@ void Controller::settings_callback(const diagnostic_msgs::msg::KeyValue::SharedP
             lolo->add_byte(SC_SETTINGS_CONTROL_SOURCE_ONBOARD_CONTROL);
             lolo->send_package();
         }
-        else if(_msg->value.compare("EXTENRAL_CONRTOL") == 0) {
+        else if(_msg->value.compare("EXTERNAL_CONRTOL") == 0) {
             std::printf("Setting control source to external control\r\n");
             lolo->new_package(SC_SETTINGS);
-            lolo->add_byte(SC_SETTINGS_CONTROL_SOURCE_EXTENRAL_CONRTOL);
+            lolo->add_byte(SC_SETTINGS_CONTROL_SOURCE_EXTERNAL_CONRTOL);
             lolo->send_package();
         }
         else if(_msg->value.compare("EMERGENCY_CONTROL") == 0) {
