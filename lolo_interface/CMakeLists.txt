@@ -13,6 +13,7 @@ find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(std_msgs REQUIRED)
 find_package(lolo_msgs REQUIRED)
+find_package(diagnostic_msgs REQUIRED)
 
 
 include_directories(
@@ -32,7 +33,8 @@ add_executable(lolo_interface
 ament_target_dependencies(lolo_interface 
   rclcpp 
   std_msgs
-  lolo_msgs)
+  lolo_msgs
+  diagnostic_msgs)
 
 
 install(TARGETS

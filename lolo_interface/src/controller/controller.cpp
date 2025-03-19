@@ -36,6 +36,8 @@ void Controller::setup() {
     usbl_sub = rcl_node->create_subscription<std_msgs::msg::String>("topic", 1, std::bind(&Controller::usbl_callback, this, std::placeholders::_1));
     
     satelite_sub = rcl_node->create_subscription<std_msgs::msg::String>("topic", 1, std::bind(&Controller::satelite_callback, this, std::placeholders::_1));
+
+    settings_sub = rcl_node->create_subscription<diagnostic_msgs::msg::KeyValue>(lolo_msgs::msg::Topics::EXTENDED_SETTINGS_TOPIC, 10, std::bind(&Controller::settings_callback, this, std::placeholders::_1));
 }
 
 void Controller::send_discovery() {
@@ -158,4 +160,84 @@ void Controller::satelite_callback(const std_msgs::msg::String::SharedPtr _msg) 
       lolo->add_byte(s[i]);
     }
     lolo->send_package();
+}
+
+void Controller::settings_callback(const diagnostic_msgs::msg::KeyValue::SharedPtr _msg) {
+    //TODO settings stuff
+    std::printf("Received change settings message. Key=%s, value=%s\r\n", _msg->key.c_str(), _msg->value.c_str());
+
+    //Check what the key corresponds to
+    if(_msg->key.compare("control_source") == 0) {
+        std::printf("Key is control source\n");
+        if(_msg->value.compare("MANUAL_CONTROL") == 0) {
+            std::printf("Setting control source to manual control\r\n");
+            lolo->new_package(SC_SETTINGS);
+            lolo->add_byte(SC_SETTINGS_CONTROL_SOURCE_MANUAL_CONTROL);
+            lolo->send_package();
+        }
+        else if(_msg->value.compare("ONBOARD_CONTROL") == 0) {
+            std::printf("Setting control source to onboard control\r\n");
+            lolo->new_package(SC_SETTINGS);
+            lolo->add_byte(SC_SETTINGS_CONTROL_SOURCE_ONBOARD_CONTROL);
+            lolo->send_package();
+        }
+        else if(_msg->value.compare("EXTENRAL_CONRTOL") == 0) {
+            std::printf("Setting control source to external control\r\n");
+            lolo->new_package(SC_SETTINGS);
+            lolo->add_byte(SC_SETTINGS_CONTROL_SOURCE_EXTENRAL_CONRTOL);
+            lolo->send_package();
+        }
+        else if(_msg->value.compare("EMERGENCY_CONTROL") == 0) {
+            std::printf("Setting control source to emergency control\r\n");
+            lolo->new_package(SC_SETTINGS);
+            lolo->add_byte(SC_SETTINGS_CONTROL_SOURCE_EMERGENCY_CONTROL);
+            lolo->send_package();
+        }
+        else {
+            std::printf("Unknown control source\r\n");
+        }
+    }
+    else if(_msg->key.compare("control_mode") == 0) {
+        std::printf("Key is control mode\n");
+        if(_msg->value.compare("STANDBY") == 0) {
+            std::printf("Setting control mode to standby\r\n");
+            lolo->new_package(SC_SETTINGS);
+            lolo->add_byte(SC_SETTINGS_CONTROL_MODE_STANDBY);
+            lolo->send_package();
+        }
+        else if(_msg->value.compare("DISARMED") == 0) {
+            std::printf("Setting control mode to disarmed\r\n");
+            lolo->new_package(SC_SETTINGS);
+            lolo->add_byte(SC_SETTINGS_CONTROL_MODE_DISARMED);
+            lolo->send_package();
+        }
+        else if(_msg->value.compare("ARMED") == 0) {
+            std::printf("Setting control mode to armed\r\n");
+            lolo->new_package(SC_SETTINGS);
+            lolo->add_byte(SC_SETTINGS_CONTROL_MODE_ARMED);
+            lolo->send_package();
+        }
+        else {
+            std::printf("Unknown control mode\r\n");
+        }
+    }
+    else if(_msg->key.compare("thrusters_enabled") == 0) {
+        std::printf("Key is thrusters\n");
+        if(_msg->value.compare("0") == 0) {
+            std::printf("Disabling thrusters\r\n");
+            lolo->new_package(SC_SETTINGS);
+            lolo->add_byte(SC_SETTINGS_THRUSTERS_DISABLED);
+            lolo->send_package();
+        }
+        if(_msg->value.compare("1") == 0) {
+            std::printf("Enabling thrusters\r\n");
+            lolo->new_package(SC_SETTINGS);
+            lolo->add_byte(SC_SETTINGS_THRUSTERS_ENABLED);
+            lolo->send_package();
+        }
+    }
+    else if(_msg->key.compare("vertical_thrusters_enabled") == 0) {
+        std::printf("Key is vertical thrusters\n");
+    }
+
 }

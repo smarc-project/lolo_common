@@ -7,6 +7,7 @@
 #include "std_msgs/msg/empty.hpp"
 #include "std_msgs/msg/string.hpp"
 #include "std_msgs/msg/float32.hpp"
+#include "diagnostic_msgs/msg/key_value.hpp"
 
 //Controller class sends ros2 commands to lolo
 class Controller {
@@ -43,6 +44,9 @@ private:
     rclcpp::Subscription<std_msgs::msg::String>::SharedPtr usbl_sub;
     rclcpp::Subscription<std_msgs::msg::String>::SharedPtr satelite_sub;
 
+    //Settings Subscriber
+    rclcpp::Subscription<diagnostic_msgs::msg::KeyValue>::SharedPtr settings_sub;
+
     //INS / position?
     
     //Callback functions
@@ -67,6 +71,8 @@ private:
     void usbl_callback(const std_msgs::msg::String::SharedPtr msg);
 
     void satelite_callback(const std_msgs::msg::String::SharedPtr msg);
+
+    void settings_callback(const diagnostic_msgs::msg::KeyValue::SharedPtr msg);
     
     
 };
