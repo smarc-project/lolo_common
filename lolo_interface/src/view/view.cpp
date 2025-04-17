@@ -351,9 +351,9 @@ void View::lolo_callback_VERTICAL_THRUSTER(int thruster_id) {
   switch (thruster_id)
   {
     case CS_VTHRUSTER_1: vertical_thruster_1_pub->publish(vesc_feedback_msg); break;
-    case CS_VTHRUSTER_2: vertical_thruster_1_pub->publish(vesc_feedback_msg); break;
-    case CS_VTHRUSTER_3: vertical_thruster_1_pub->publish(vesc_feedback_msg); break;
-    case CS_VTHRUSTER_4: vertical_thruster_1_pub->publish(vesc_feedback_msg); break;  
+    case CS_VTHRUSTER_2: vertical_thruster_2_pub->publish(vesc_feedback_msg); break;
+    case CS_VTHRUSTER_3: vertical_thruster_3_pub->publish(vesc_feedback_msg); break;
+    case CS_VTHRUSTER_4: vertical_thruster_4_pub->publish(vesc_feedback_msg); break;  
   default:
     break;
   }
