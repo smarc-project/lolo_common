@@ -1,0 +1,20 @@
+<launch>
+    <group>
+
+        <push-ros-namespace namespace="lolo"/>
+        
+        <node name="lolo_hardware_interface" pkg="lolo_interface" exec="lolo_interface" respawn="true" output="screen" >
+        </node>
+
+        <node name="lolo_settings" pkg="lolo_settings" exec="lolo_settings_node" respawn="true" output="screen" >
+        </node>
+
+        <node name="lolo_extended_interface_translator" pkg="lolo_extended_interface_translator" exec="lolo_extended_translator_node" respawn="true" output="screen" >
+        </node>
+        <!--
+        <node name="lolo_local_mqtt_translator" pkg="lolo_local_mqtt_translator" exec="lolo_local_translator_node" respawn="true" output="screen" >
+        </node>
+        -->
+    </group>
+</launch>
+

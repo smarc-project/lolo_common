@@ -52,61 +52,61 @@ class Translator_node(Node):
         fb_angle = Float32()
         fb_angle.data = msg.angle
         self.pub_elevon_port_fb.publish(fb_angle)
-        print(str(msg))
+        #print(str(msg))
 
     def callback_elevon_strb_fb(self, msg):
         fb_angle = Float32()
         fb_angle.data = msg.angle
         self.pub_elevon_strb_fb.publish(fb_angle)
-        print(str(msg))
+        #print(str(msg))
     
     def callback_elevator_fb(self, msg):
         fb_angle = Float32()
         fb_angle.data = msg.angle
         self.pub_elevator_fb.publish(fb_angle)
-        print(str(msg))
+        #print(str(msg))
 
     def callback_rudder_fb(self, msg):
         fb_angle = Float32()
         fb_angle.data = msg.angle
         self.pub_rudder_fb.publish(fb_angle)
-        print(str(msg))
+        #print(str(msg))
 
     def callback_thruster_port_fb(self, msg):
         fb_rpm = Float32()
         fb_rpm.data = msg.rpm
         self.pub_thruster_port_fb.publish(fb_rpm)
-        print(str(msg))
+        #rint(str(msg))
 
     def callback_thruster_strb_fb(self, msg):
         fb_rpm = Float32()
         fb_rpm.data = msg.rpm
         self.pub_thruster_strb_fb.publish(fb_rpm)
-        print(str(msg))
+        #print(str(msg))
 
     def callback_vertical_thruster_1_fb(self,msg):
         fb_rpm = Float32()
         fb_rpm.data = msg.rpm
         self.pub_vertical_thruster_1_fb.publish(fb_rpm)
-        print(str(msg))
+        #print(str(msg))
 
     def callback_vertical_thruster_2_fb(self,msg):
         fb_rpm = Float32()
         fb_rpm.data = msg.rpm
         self.pub_vertical_thruster_2_fb.publish(fb_rpm)
-        print(str(msg))
+        #print(str(msg))
 
     def callback_vertical_thruster_3_fb(self,msg):
         fb_rpm = Float32()
         fb_rpm.data = msg.rpm
         self.pub_vertical_thruster_3_fb.publish(fb_rpm)
-        print(str(msg))
+        #print(str(msg))
 
     def callback_vertical_thruster_4_fb(self,msg):
         fb_rpm = Float32()
         fb_rpm.data = msg.rpm
         self.pub_vertical_thruster_4_fb.publish(fb_rpm)
-        print(str(msg))
+        #print(str(msg))
 
 
 
