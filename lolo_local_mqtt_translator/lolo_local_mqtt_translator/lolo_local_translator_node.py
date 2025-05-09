@@ -1,6 +1,6 @@
 import rclpy
 from rclpy.node import Node
-
+from rclpy.executors import MultiThreadedExecutor
 from std_msgs.msg import String
 from lolo_msgs.msg import Status
 from lolo_msgs.msg import Pressures
@@ -80,7 +80,10 @@ def main(args=None):
     mqttc.connect("192.168.1.100", 1883, 60)
     mqttc.loop_start()
 
-    rclpy.spin(translator)
+    executor = MultiThreadedExecutor()
+    executor.add_node(translator)
+    executor.spin()
+    #rclpy.spin(translator)
 
     translator.destroy_node()
     mqttc.loop_stop()
