@@ -37,15 +37,15 @@ class Translator_node(Node):
         self.sub_thruster_strb_fb = self.create_subscription(VescFeedback,Topics.EXTENDED_STRB_THRUSTER_FB_TOPIC,self.callback_thruster_strb_fb,1)
 
         #Vertical thrusters
-        self.pub_vertical_thruster_1_fb = self.create_publisher(Float32, Topics.VERTICAL_THRUSTER_1_FB, 2)
-        self.pub_vertical_thruster_2_fb = self.create_publisher(Float32, Topics.VERTICAL_THRUSTER_2_FB, 2)
-        self.pub_vertical_thruster_3_fb = self.create_publisher(Float32, Topics.VERTICAL_THRUSTER_3_FB, 2)
-        self.pub_vertical_thruster_4_fb = self.create_publisher(Float32, Topics.VERTICAL_THRUSTER_4_FB, 2)
+        self.pub_vertical_thruster_1_fb = self.create_publisher(Float32, Topics.VERTICAL_THRUSTER_FRONT_PORT_FB, 2)
+        self.pub_vertical_thruster_2_fb = self.create_publisher(Float32, Topics.VERTICAL_THRUSTER_FRONT_STRB_FB, 2)
+        self.pub_vertical_thruster_3_fb = self.create_publisher(Float32, Topics.VERTICAL_THRUSTER_BACK_PORT_FB, 2)
+        self.pub_vertical_thruster_4_fb = self.create_publisher(Float32, Topics.VERTICAL_THRUSTER_BACK_STRB_FB, 2)
 
-        self.sub_vertical_thruster_1_fb = self.create_subscription(VescFeedback,Topics.EXTENDED_VERTICAL_THRUSTER_1_FB_TOPIC,self.callback_vertical_thruster_1_fb,1)
-        self.sub_vertical_thruster_2_fb = self.create_subscription(VescFeedback,Topics.EXTENDED_VERTICAL_THRUSTER_2_FB_TOPIC,self.callback_vertical_thruster_2_fb,1)
-        self.sub_vertical_thruster_3_fb = self.create_subscription(VescFeedback,Topics.EXTENDED_VERTICAL_THRUSTER_3_FB_TOPIC,self.callback_vertical_thruster_3_fb,1)
-        self.sub_vertical_thruster_4_fb = self.create_subscription(VescFeedback,Topics.EXTENDED_VERTICAL_THRUSTER_4_FB_TOPIC,self.callback_vertical_thruster_4_fb,1)
+        self.sub_vertical_thruster_1_fb = self.create_subscription(VescFeedback,Topics.EXTENDED_VERTICAL_THRUSTER_FRONT_PORT_FB_TOPIC,self.callback_vertical_thruster_1_fb,1)
+        self.sub_vertical_thruster_2_fb = self.create_subscription(VescFeedback,Topics.EXTENDED_VERTICAL_THRUSTER_FRONT_STRB_FB_TOPIC,self.callback_vertical_thruster_2_fb,1)
+        self.sub_vertical_thruster_3_fb = self.create_subscription(VescFeedback,Topics.EXTENDED_VERTICAL_THRUSTER_BACK_PORT_FB_TOPIC,self.callback_vertical_thruster_3_fb,1)
+        self.sub_vertical_thruster_4_fb = self.create_subscription(VescFeedback,Topics.EXTENDED_VERTICAL_THRUSTER_BACK_STRB_FB_TOPIC,self.callback_vertical_thruster_4_fb,1)
 
 
     def callback_elevon_port_fb(self, msg):

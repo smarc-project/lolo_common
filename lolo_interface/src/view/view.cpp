@@ -35,10 +35,10 @@ void View::setup()
     //Thrusters
     thruster_port_pub = rcl_node->create_publisher<lolo_msgs::msg::VescFeedback>(lolo_msgs::msg::Topics::EXTENDED_PORT_THRUSTER_FB_TOPIC, 1);
     thruster_strb_pub = rcl_node->create_publisher<lolo_msgs::msg::VescFeedback>(lolo_msgs::msg::Topics::EXTENDED_STRB_THRUSTER_FB_TOPIC, 1);
-    vertical_thruster_1_pub = rcl_node->create_publisher<lolo_msgs::msg::VescFeedback>(lolo_msgs::msg::Topics::EXTENDED_VERTICAL_THRUSTER_1_FB_TOPIC, 1);
-    vertical_thruster_2_pub = rcl_node->create_publisher<lolo_msgs::msg::VescFeedback>(lolo_msgs::msg::Topics::EXTENDED_VERTICAL_THRUSTER_2_FB_TOPIC, 1);
-    vertical_thruster_3_pub = rcl_node->create_publisher<lolo_msgs::msg::VescFeedback>(lolo_msgs::msg::Topics::EXTENDED_VERTICAL_THRUSTER_3_FB_TOPIC, 1);
-    vertical_thruster_4_pub = rcl_node->create_publisher<lolo_msgs::msg::VescFeedback>(lolo_msgs::msg::Topics::EXTENDED_VERTICAL_THRUSTER_4_FB_TOPIC, 1);
+    vertical_thruster_1_pub = rcl_node->create_publisher<lolo_msgs::msg::VescFeedback>(lolo_msgs::msg::Topics::EXTENDED_VERTICAL_THRUSTER_FRONT_PORT_FB_TOPIC, 1);
+    vertical_thruster_2_pub = rcl_node->create_publisher<lolo_msgs::msg::VescFeedback>(lolo_msgs::msg::Topics::EXTENDED_VERTICAL_THRUSTER_FRONT_STRB_FB_TOPIC, 1);
+    vertical_thruster_3_pub = rcl_node->create_publisher<lolo_msgs::msg::VescFeedback>(lolo_msgs::msg::Topics::EXTENDED_VERTICAL_THRUSTER_BACK_PORT_FB_TOPIC, 1);
+    vertical_thruster_4_pub = rcl_node->create_publisher<lolo_msgs::msg::VescFeedback>(lolo_msgs::msg::Topics::EXTENDED_VERTICAL_THRUSTER_BACK_STRB_FB_TOPIC, 1);
     
     //Batteries
     battery1_pub = rcl_node->create_publisher<sensor_msgs::msg::BatteryState>(lolo_msgs::msg::Topics::BATTERY_1_TOPIC, 1);

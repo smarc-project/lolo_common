@@ -26,10 +26,10 @@ void Controller::setup() {
     
     thruster_port_cmd_sub = rcl_node->create_subscription<std_msgs::msg::Float32>(lolo_msgs::msg::Topics::THRUSTER_PORT_CMD, 1, std::bind(&Controller::thruster_port_callback, this, std::placeholders::_1));
     thruster_strb_cmd_sub = rcl_node->create_subscription<std_msgs::msg::Float32>(lolo_msgs::msg::Topics::THRUSTER_STRB_CMD, 1, std::bind(&Controller::thruster_strb_callback, this, std::placeholders::_1));
-    vertical_thruster_1_cmd_sub = rcl_node->create_subscription<std_msgs::msg::Float32>(lolo_msgs::msg::Topics::VERTICAL_THRUSTER_1_CMD, 1, std::bind(&Controller::vertical_thruster_1_callback, this, std::placeholders::_1));
-    vertical_thruster_2_cmd_sub = rcl_node->create_subscription<std_msgs::msg::Float32>(lolo_msgs::msg::Topics::VERTICAL_THRUSTER_2_CMD, 1, std::bind(&Controller::vertical_thruster_2_callback, this, std::placeholders::_1));
-    vertical_thruster_3_cmd_sub = rcl_node->create_subscription<std_msgs::msg::Float32>(lolo_msgs::msg::Topics::VERTICAL_THRUSTER_3_CMD, 1, std::bind(&Controller::vertical_thruster_3_callback, this, std::placeholders::_1));
-    vertical_thruster_4_cmd_sub = rcl_node->create_subscription<std_msgs::msg::Float32>(lolo_msgs::msg::Topics::VERTICAL_THRUSTER_4_CMD, 1, std::bind(&Controller::vertical_thruster_4_callback, this, std::placeholders::_1));
+    vertical_thruster_1_cmd_sub = rcl_node->create_subscription<std_msgs::msg::Float32>(lolo_msgs::msg::Topics::VERTICAL_THRUSTER_FRONT_PORT_CMD, 1, std::bind(&Controller::vertical_thruster_1_callback, this, std::placeholders::_1));
+    vertical_thruster_2_cmd_sub = rcl_node->create_subscription<std_msgs::msg::Float32>(lolo_msgs::msg::Topics::VERTICAL_THRUSTER_FRONT_STRB_CMD, 1, std::bind(&Controller::vertical_thruster_2_callback, this, std::placeholders::_1));
+    vertical_thruster_3_cmd_sub = rcl_node->create_subscription<std_msgs::msg::Float32>(lolo_msgs::msg::Topics::VERTICAL_THRUSTER_BACK_PORT_CMD, 1, std::bind(&Controller::vertical_thruster_3_callback, this, std::placeholders::_1));
+    vertical_thruster_4_cmd_sub = rcl_node->create_subscription<std_msgs::msg::Float32>(lolo_msgs::msg::Topics::VERTICAL_THRUSTER_BACK_STRB_CMD, 1, std::bind(&Controller::vertical_thruster_4_callback, this, std::placeholders::_1));
     
     menu_sub = rcl_node->create_subscription<std_msgs::msg::String>("debug/menu_in", 1, std::bind(&Controller::menu_callback, this, std::placeholders::_1));
     
