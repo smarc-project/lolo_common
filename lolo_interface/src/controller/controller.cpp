@@ -4,6 +4,7 @@
 #include "../lolo_message_id.h"
 
 #include "lolo_msgs/msg/topics.hpp"
+#include "smarc_msgs/msg/topics.hpp"
 
 using namespace std::chrono_literals;
 
@@ -17,7 +18,7 @@ void Controller::setup() {
 
     //Create subscriptions
     heartbeat_sub = rcl_node->create_subscription<std_msgs::msg::Empty>(lolo_msgs::msg::Topics::HEARTBEAT_TOPIC, 1, std::bind(&Controller::heartbeat_callback, this, std::placeholders::_1));
-    abort_sub = rcl_node->create_subscription<std_msgs::msg::Empty>(lolo_msgs::msg::Topics::LOLO_ABORT_TOPIC, 1, std::bind(&Controller::abort_callback, this, std::placeholders::_1));
+    abort_sub = rcl_node->create_subscription<std_msgs::msg::Empty>(smarc_msgs::msg::Topics::ABORT_TOPIC, 1, std::bind(&Controller::abort_callback, this, std::placeholders::_1));
     
     rudder_cmd_sub = rcl_node->create_subscription<std_msgs::msg::Float32>(lolo_msgs::msg::Topics::RUDDER_CMD, 1, std::bind(&Controller::rudder_callback, this, std::placeholders::_1));
     elevator_cmd_sub = rcl_node->create_subscription<std_msgs::msg::Float32>(lolo_msgs::msg::Topics::ELEVATOR_CMD, 1, std::bind(&Controller::elevator_callback, this, std::placeholders::_1));
