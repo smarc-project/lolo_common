@@ -16,7 +16,7 @@ setup(
         (os.path.join('share', package_name, 'rviz'), glob('rviz/*.rviz')),
         (os.path.join('share', package_name, 'config'), glob('config/*.yaml')),
     ],
-    install_requires=['setuptools'],
+    install_requires=['setuptools', 'utm'],
     zip_safe=True,
     maintainer='Julian Valdez',
     maintainer_email='jvaldez@gkth.com',

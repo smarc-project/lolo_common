@@ -21,5 +21,5 @@ To install manually: apt install ros-humble-geodesy
 ...
 
 ## Launch file
-- The launch file is now xml, and sim time is enabled
+- 
 

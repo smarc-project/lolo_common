@@ -13,21 +13,34 @@ from ixblue_ins_msgs.msg import Ins
 # ROS2 Topics
 from lolo_msgs.msg import Topics as loloTopics
 
+
 class MapOdomInitializer(Node):
     """
     Initializes the TF tree and use the initial GPS position from the INS to define the "odom" frame.
+
+    Static transforms are republished at the specified rate.
+
+    base_transform: "utm_{zone}_{band}" -> "utm"
+    odom_transform: "utm" -> "odom"
 
     Conventions used:
     "utm_{zone}_{band}" -> "utm" -> "odom"
 
     """
+
     def __init__(self):
         super().__init__('map_odom_initializer')
         self._log(f'map -> odom initialization')
         self._log(f'Waiting for initial Lat/Lon coordinates')
 
+        self.declare_parameter('update_rate', 1.0)
+        self.update_rate = self.get_parameter('update_rate').value
+
         self.declare_parameter("verbose", False)
         self.verbose = self.get_parameter("verbose").value
+
+        self.base_transform = None
+        self.odom_transform = None
 
         self.subscription = self.create_subscription(
             msg_type=Ins,
@@ -38,6 +51,8 @@ class MapOdomInitializer(Node):
 
         self.static_broadcaster = StaticTransformBroadcaster(self)
         self.origin_set = False
+
+        self.create_timer(timer_period_sec=float(1.0 / self.update_rate), callback=self.transform_timer)
 
     def ins_callback(self, msg: Ins):
         if self.origin_set:
@@ -56,38 +71,44 @@ class MapOdomInitializer(Node):
         now = self.get_clock().now().to_msg()
 
         # Define utm root (includes zone and band) to utm transform
-        tf_msg = TransformStamped()
-        tf_msg.header.stamp = now
-        tf_msg.header.frame_id = f'utm_{zone}_{letter}'
-        tf_msg.child_frame_id = 'utm'
-        tf_msg.transform.translation.x = 0.0
-        tf_msg.transform.translation.y = 0.0
-        tf_msg.transform.translation.z = 0.0
-        tf_msg.transform.rotation.w = 1.0  # Identity rotation
-
-        self.static_broadcaster.sendTransform(tf_msg)
+        self.base_transform = TransformStamped()
+        self.base_transform.header.stamp = now
+        self.base_transform.header.frame_id = f'utm_{zone}_{letter}'
+        self.base_transform.child_frame_id = 'utm'
+        self.base_transform.transform.translation.x = 0.0
+        self.base_transform.transform.translation.y = 0.0
+        self.base_transform.transform.translation.z = 0.0
+        self.base_transform.transform.rotation.w = 1.0  # Identity rotation
 
         # Define utm to odom transform, based on initial lat/lon from INS
-        tf_msg = TransformStamped()
-        tf_msg.header.stamp = self.get_clock().now().to_msg()
-        tf_msg.header.frame_id = f'utm'
-        tf_msg.child_frame_id = 'odom'
-        tf_msg.transform.translation.x = easting
-        tf_msg.transform.translation.y = northing
-        tf_msg.transform.translation.z = altitude
-        tf_msg.transform.rotation.w = 1.0  # Identity rotation
+        self.odom_transform = TransformStamped()
+        self.odom_transform.header.stamp = now
+        self.odom_transform.header.frame_id = f'utm'
+        self.odom_transform.child_frame_id = 'odom'
+        self.odom_transform.transform.translation.x = easting
+        self.odom_transform.transform.translation.y = northing
+        self.odom_transform.transform.translation.z = altitude
+        self.odom_transform.transform.rotation.w = 1.0  # Identity rotation
 
-        self.static_broadcaster.sendTransform(tf_msg)
         self.origin_set = True
 
         self._log(f"Set static transform map → odom at UTM ({easting:.2f}, {northing:.2f})")
-        self._log("Shutting down node after publishing transform.")
 
-        # Optional: exit after sending the transform
-        rclpy.shutdown()
+    def transform_timer(self):
+        if not self.origin_set:
+            return
+
+        if self.base_transform is None or self.odom_transform is None:
+            self._log(f"Invalid base or odom transform")
+            return
+
+        if self.verbose:
+            self._log("Broadcasting base and odom transforms")
+        self.static_broadcaster.sendTransform([self.base_transform, self.odom_transform])
 
     def _log(self, message):
         self.get_logger().info(message)
+
 
 def main(args=None):
     rclpy.init(args=args)
