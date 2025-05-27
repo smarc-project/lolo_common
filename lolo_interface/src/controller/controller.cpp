@@ -4,6 +4,7 @@
 #include "../lolo_message_id.h"
 
 #include "lolo_msgs/msg/topics.hpp"
+#include "smarc_msgs/msg/topics.hpp"
 
 using namespace std::chrono_literals;
 
@@ -17,7 +18,7 @@ void Controller::setup() {
 
     //Create subscriptions
     heartbeat_sub = rcl_node->create_subscription<std_msgs::msg::Empty>(lolo_msgs::msg::Topics::HEARTBEAT_TOPIC, 1, std::bind(&Controller::heartbeat_callback, this, std::placeholders::_1));
-    abort_sub = rcl_node->create_subscription<std_msgs::msg::Empty>(lolo_msgs::msg::Topics::LOLO_ABORT_TOPIC, 1, std::bind(&Controller::abort_callback, this, std::placeholders::_1));
+    abort_sub = rcl_node->create_subscription<std_msgs::msg::Empty>(smarc_msgs::msg::Topics::ABORT_TOPIC, 1, std::bind(&Controller::abort_callback, this, std::placeholders::_1));
     
     rudder_cmd_sub = rcl_node->create_subscription<std_msgs::msg::Float32>(lolo_msgs::msg::Topics::RUDDER_CMD, 1, std::bind(&Controller::rudder_callback, this, std::placeholders::_1));
     elevator_cmd_sub = rcl_node->create_subscription<std_msgs::msg::Float32>(lolo_msgs::msg::Topics::ELEVATOR_CMD, 1, std::bind(&Controller::elevator_callback, this, std::placeholders::_1));
@@ -26,16 +27,16 @@ void Controller::setup() {
     
     thruster_port_cmd_sub = rcl_node->create_subscription<std_msgs::msg::Float32>(lolo_msgs::msg::Topics::THRUSTER_PORT_CMD, 1, std::bind(&Controller::thruster_port_callback, this, std::placeholders::_1));
     thruster_strb_cmd_sub = rcl_node->create_subscription<std_msgs::msg::Float32>(lolo_msgs::msg::Topics::THRUSTER_STRB_CMD, 1, std::bind(&Controller::thruster_strb_callback, this, std::placeholders::_1));
-    vertical_thruster_1_cmd_sub = rcl_node->create_subscription<std_msgs::msg::Float32>(lolo_msgs::msg::Topics::VERTICAL_THRUSTER_1_CMD, 1, std::bind(&Controller::vertical_thruster_1_callback, this, std::placeholders::_1));
-    vertical_thruster_2_cmd_sub = rcl_node->create_subscription<std_msgs::msg::Float32>(lolo_msgs::msg::Topics::VERTICAL_THRUSTER_2_CMD, 1, std::bind(&Controller::vertical_thruster_2_callback, this, std::placeholders::_1));
-    vertical_thruster_3_cmd_sub = rcl_node->create_subscription<std_msgs::msg::Float32>(lolo_msgs::msg::Topics::VERTICAL_THRUSTER_3_CMD, 1, std::bind(&Controller::vertical_thruster_3_callback, this, std::placeholders::_1));
-    vertical_thruster_4_cmd_sub = rcl_node->create_subscription<std_msgs::msg::Float32>(lolo_msgs::msg::Topics::VERTICAL_THRUSTER_4_CMD, 1, std::bind(&Controller::vertical_thruster_4_callback, this, std::placeholders::_1));
+    vertical_thruster_1_cmd_sub = rcl_node->create_subscription<std_msgs::msg::Float32>(lolo_msgs::msg::Topics::VERTICAL_THRUSTER_FRONT_PORT_CMD, 1, std::bind(&Controller::vertical_thruster_1_callback, this, std::placeholders::_1));
+    vertical_thruster_2_cmd_sub = rcl_node->create_subscription<std_msgs::msg::Float32>(lolo_msgs::msg::Topics::VERTICAL_THRUSTER_FRONT_STRB_CMD, 1, std::bind(&Controller::vertical_thruster_2_callback, this, std::placeholders::_1));
+    vertical_thruster_3_cmd_sub = rcl_node->create_subscription<std_msgs::msg::Float32>(lolo_msgs::msg::Topics::VERTICAL_THRUSTER_BACK_PORT_CMD, 1, std::bind(&Controller::vertical_thruster_3_callback, this, std::placeholders::_1));
+    vertical_thruster_4_cmd_sub = rcl_node->create_subscription<std_msgs::msg::Float32>(lolo_msgs::msg::Topics::VERTICAL_THRUSTER_BACK_STRB_CMD, 1, std::bind(&Controller::vertical_thruster_4_callback, this, std::placeholders::_1));
     
-    menu_sub = rcl_node->create_subscription<std_msgs::msg::String>("topic", 1, std::bind(&Controller::menu_callback, this, std::placeholders::_1));
+    menu_sub = rcl_node->create_subscription<std_msgs::msg::String>("debug/menu_in", 1, std::bind(&Controller::menu_callback, this, std::placeholders::_1));
     
-    usbl_sub = rcl_node->create_subscription<std_msgs::msg::String>("topic", 1, std::bind(&Controller::usbl_callback, this, std::placeholders::_1));
+    usbl_sub = rcl_node->create_subscription<std_msgs::msg::String>("usbl", 1, std::bind(&Controller::usbl_callback, this, std::placeholders::_1));
     
-    satelite_sub = rcl_node->create_subscription<std_msgs::msg::String>("topic", 1, std::bind(&Controller::satelite_callback, this, std::placeholders::_1));
+    satelite_sub = rcl_node->create_subscription<std_msgs::msg::String>("satelite", 1, std::bind(&Controller::satelite_callback, this, std::placeholders::_1));
 
     settings_sub = rcl_node->create_subscription<diagnostic_msgs::msg::KeyValue>(lolo_msgs::msg::Topics::EXTENDED_SETTINGS_TOPIC, 10, std::bind(&Controller::settings_callback, this, std::placeholders::_1));
 }
@@ -52,17 +53,20 @@ void Controller::send_discovery() {
 void Controller::abort_callback(const std_msgs::msg::Empty::SharedPtr _msg) {
     lolo->new_package(SC_ABORT); // Tell captain to go into emergency mode
     lolo->send_package();
+    std::cout << _msg << std::endl;
 }
 
 void Controller::heartbeat_callback(const std_msgs::msg::Empty::SharedPtr _msg) {
     lolo->new_package(SC_HEARTBEAT); // Heartbeat message
     lolo->send_package();
+    std::cout << _msg << std::endl;
 }
 
 void Controller::drop_weight_callback(const std_msgs::msg::Empty::SharedPtr _msg) {
     lolo->new_package(SC_DROP_WEIGHT); // Tell captain to go into emergency mode
     lolo->add_byte(1);
     lolo->send_package();
+    std::cout << _msg << std::endl;
 }
 
 void Controller::rudder_callback(const std_msgs::msg::Float32::SharedPtr _msg) {

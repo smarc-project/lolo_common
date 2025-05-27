@@ -13,6 +13,7 @@ find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(std_msgs REQUIRED)
 find_package(lolo_msgs REQUIRED)
+find_package(smarc_msgs REQUIRED)
 find_package(diagnostic_msgs REQUIRED)
 
 
@@ -34,6 +35,7 @@ ament_target_dependencies(lolo_interface
   rclcpp 
   std_msgs
   lolo_msgs
+  smarc_msgs
   diagnostic_msgs)
 
 

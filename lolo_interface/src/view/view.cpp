@@ -35,10 +35,10 @@ void View::setup()
     //Thrusters
     thruster_port_pub = rcl_node->create_publisher<lolo_msgs::msg::VescFeedback>(lolo_msgs::msg::Topics::EXTENDED_PORT_THRUSTER_FB_TOPIC, 1);
     thruster_strb_pub = rcl_node->create_publisher<lolo_msgs::msg::VescFeedback>(lolo_msgs::msg::Topics::EXTENDED_STRB_THRUSTER_FB_TOPIC, 1);
-    vertical_thruster_1_pub = rcl_node->create_publisher<lolo_msgs::msg::VescFeedback>(lolo_msgs::msg::Topics::EXTENDED_VERTICAL_THRUSTER_1_FB_TOPIC, 1);
-    vertical_thruster_2_pub = rcl_node->create_publisher<lolo_msgs::msg::VescFeedback>(lolo_msgs::msg::Topics::EXTENDED_VERTICAL_THRUSTER_2_FB_TOPIC, 1);
-    vertical_thruster_3_pub = rcl_node->create_publisher<lolo_msgs::msg::VescFeedback>(lolo_msgs::msg::Topics::EXTENDED_VERTICAL_THRUSTER_3_FB_TOPIC, 1);
-    vertical_thruster_4_pub = rcl_node->create_publisher<lolo_msgs::msg::VescFeedback>(lolo_msgs::msg::Topics::EXTENDED_VERTICAL_THRUSTER_4_FB_TOPIC, 1);
+    vertical_thruster_1_pub = rcl_node->create_publisher<lolo_msgs::msg::VescFeedback>(lolo_msgs::msg::Topics::EXTENDED_VERTICAL_THRUSTER_FRONT_PORT_FB_TOPIC, 1);
+    vertical_thruster_2_pub = rcl_node->create_publisher<lolo_msgs::msg::VescFeedback>(lolo_msgs::msg::Topics::EXTENDED_VERTICAL_THRUSTER_FRONT_STRB_FB_TOPIC, 1);
+    vertical_thruster_3_pub = rcl_node->create_publisher<lolo_msgs::msg::VescFeedback>(lolo_msgs::msg::Topics::EXTENDED_VERTICAL_THRUSTER_BACK_PORT_FB_TOPIC, 1);
+    vertical_thruster_4_pub = rcl_node->create_publisher<lolo_msgs::msg::VescFeedback>(lolo_msgs::msg::Topics::EXTENDED_VERTICAL_THRUSTER_BACK_STRB_FB_TOPIC, 1);
     
     //Batteries
     battery1_pub = rcl_node->create_publisher<sensor_msgs::msg::BatteryState>(lolo_msgs::msg::Topics::BATTERY_1_TOPIC, 1);
@@ -184,15 +184,17 @@ void View::lolo_callback_STATUS() {
 }
 
 void View::lolo_callback_RUDDER() {
-    uint64_t timestamp    = lolo->parse_llong(); // timestamp from ISB
+    //uint64_t timestamp    = lolo->parse_llong(); // timestamp from ISB
     //uint64_t sec = timestamp / 1000000;
     //uint64_t usec = timestamp % 1000000;
+    lolo->parse_llong(); // Read timstamp and don't do anytihing with it
 
     float target = lolo->parse_float();               // actuator target in radians
     float angle = lolo->parse_float();                // actuator angle in radians
     float voltage = lolo->parse_float();              // voltage
     float current = lolo->parse_float();              // current
-    float humidity = lolo->parse_float();             // humidity (Does not exist)
+    //float humidity = lolo->parse_float();             // humidity (Does not exist)
+    lolo->parse_float();             // humidity (Does not exist)
     float pcbtemp = lolo->parse_float();              // pcbtemp
     float motortemp = lolo->parse_float();            // motortemp
 
@@ -208,15 +210,16 @@ void View::lolo_callback_RUDDER() {
 }
 
 void View::lolo_callback_ELEVATOR() {
-  uint64_t timestamp    = lolo->parse_llong(); // timestamp from ISB
+  //uint64_t timestamp    = lolo->parse_llong(); // timestamp from ISB
   //uint64_t sec = timestamp / 1000000;
   //uint64_t usec = timestamp % 1000000;
-
+  lolo->parse_llong(); // Read timstamp and don't do anytihing with it
   float target = lolo->parse_float();               // actuator target in radians
   float angle = lolo->parse_float();                // actuator angle in radians
   float voltage = lolo->parse_float();              // voltage
   float current = lolo->parse_float();              // current
-  float humidity = lolo->parse_float();             // humidity
+  //float humidity = lolo->parse_float();             // humidity
+  lolo->parse_float();             // humidity (Does not exist)
   float pcbtemp = lolo->parse_float();              // pcbtemp
   float motortemp = lolo->parse_float();            // motortemp
 
@@ -233,15 +236,16 @@ void View::lolo_callback_ELEVATOR() {
 }
 
 void View::lolo_callback_ELEVON_PORT() {
-  uint64_t timestamp    = lolo->parse_llong(); // timestamp from ISB
+  //uint64_t timestamp    = lolo->parse_llong(); // timestamp from ISB
   //uint64_t sec = timestamp / 1000000;
   //uint64_t usec = timestamp % 1000000;
-
+  lolo->parse_llong(); // Read timstamp and don't do anytihing with it
   float target = lolo->parse_float();               // actuator target in radians
   float angle = lolo->parse_float();                // actuator angle in radians
   float voltage = lolo->parse_float();              // voltage
   float current = lolo->parse_float();              // current
-  float humidity = lolo->parse_float();             // humidity
+  //float humidity = lolo->parse_float();             // humidity
+  lolo->parse_float();             // humidity (Does not exist)
   float pcbtemp = lolo->parse_float();              // pcbtemp
   float motortemp = lolo->parse_float();            // motortemp
 
@@ -258,15 +262,16 @@ void View::lolo_callback_ELEVON_PORT() {
 }
 
 void View::lolo_callback_ELEVON_STRB() {
-  uint64_t timestamp    = lolo->parse_llong(); // timestamp from ISB
+  //uint64_t timestamp    = lolo->parse_llong(); // timestamp from ISB
   //uint64_t sec = timestamp / 1000000;
   //uint64_t usec = timestamp % 1000000;
-
+  lolo->parse_llong(); // Read timstamp and don't do anytihing with it
   float target = lolo->parse_float();               // actuator target in radians
   float angle = lolo->parse_float();                // actuator angle in radians
   float voltage = lolo->parse_float();              // voltage
   float current = lolo->parse_float();              // current
-  float humidity = lolo->parse_float();             // humidity
+  //float humidity = lolo->parse_float();             // humidity
+  lolo->parse_float();             // humidity (Does not exist)
   float pcbtemp = lolo->parse_float();              // pcbtemp
   float motortemp = lolo->parse_float();            // motortemp
 
@@ -283,9 +288,10 @@ void View::lolo_callback_ELEVON_STRB() {
 }
 
 void View::lolo_callback_THRUSTER_PORT() {
-  uint64_t timestamp    = lolo->parse_llong(); //timestamp from ISB
-  uint32_t sequence     = lolo->parse_long();  //sequence of this message
-      
+  //uint64_t timestamp    = lolo->parse_llong(); //timestamp from ISB
+  //uint32_t sequence     = lolo->parse_long();  //sequence of this message
+  lolo->parse_llong(); // Read timstamp and don't do anytihing with it
+  lolo->parse_long();    
   float target          = lolo->parse_float();
   float rpm             = lolo->parse_float();
   float input_current   = lolo->parse_float();
@@ -308,9 +314,10 @@ void View::lolo_callback_THRUSTER_PORT() {
 }
 
 void View::lolo_callback_THRUSTER_STRB() {
-  uint64_t timestamp    = lolo->parse_llong(); //timestamp from ISB
-  uint32_t sequence     = lolo->parse_long();  //sequence of this message
-      
+  //uint64_t timestamp    = lolo->parse_llong(); //timestamp from ISB
+  //uint32_t sequence     = lolo->parse_long();  //sequence of this message
+  lolo->parse_llong(); // Read timstamp and don't do anytihing with it
+  lolo->parse_long();      
   float target          = lolo->parse_float();
   float rpm             = lolo->parse_float();
   float input_current   = lolo->parse_float();
@@ -333,7 +340,8 @@ void View::lolo_callback_THRUSTER_STRB() {
 }
 
 void View::lolo_callback_VERTICAL_THRUSTER(int thruster_id) {
-  uint64_t timestamp    = lolo->parse_llong(); //timestamp from ISB    
+  //uint64_t timestamp    = lolo->parse_llong(); //timestamp from ISB    
+  lolo->parse_llong(); // Read timstamp and don't do anytihing with it
   float target          = lolo->parse_float();
   float rpm             = lolo->parse_float();
   float input_current   = lolo->parse_float();
@@ -351,9 +359,9 @@ void View::lolo_callback_VERTICAL_THRUSTER(int thruster_id) {
   switch (thruster_id)
   {
     case CS_VTHRUSTER_1: vertical_thruster_1_pub->publish(vesc_feedback_msg); break;
-    case CS_VTHRUSTER_2: vertical_thruster_1_pub->publish(vesc_feedback_msg); break;
-    case CS_VTHRUSTER_3: vertical_thruster_1_pub->publish(vesc_feedback_msg); break;
-    case CS_VTHRUSTER_4: vertical_thruster_1_pub->publish(vesc_feedback_msg); break;  
+    case CS_VTHRUSTER_2: vertical_thruster_2_pub->publish(vesc_feedback_msg); break;
+    case CS_VTHRUSTER_3: vertical_thruster_3_pub->publish(vesc_feedback_msg); break;
+    case CS_VTHRUSTER_4: vertical_thruster_4_pub->publish(vesc_feedback_msg); break;  
   default:
     break;
   }
@@ -375,11 +383,11 @@ void View::lolo_callback_BATTERY(int id) {
   float CellVoltage_7   = lolo->parse_float();
   float CellVoltage_8   = lolo->parse_float();
   float CellVoltage_9   = lolo->parse_float();
-  float temp1           = lolo->parse_float();
-  float temp2           = lolo->parse_float();
-  float temp3           = lolo->parse_float();
-  float temp4           = lolo->parse_float();
-  float temp5           = lolo->parse_float();
+  ///float temp1           = lolo->parse_float();
+  ///float temp2           = lolo->parse_float();
+  ///float temp3           = lolo->parse_float();
+  ///float temp4           = lolo->parse_float();
+  ///float temp5           = lolo->parse_float();
 
   sensor_msgs::msg::BatteryState battery_msg;  
   //std_msgs/Header header

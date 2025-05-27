@@ -1,0 +1,9 @@
+<launch>
+  <arg name="robot_name" default="lolo" />
+
+
+  <node pkg="lolo_dr" exec="ins_2_control_node" name="ins_2_control_node" output="screen" namespace="$(var robot_name)">
+    <param name="output_rate" value="10.0" />
+  </node>
+
+</launch>
