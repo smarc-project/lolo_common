@@ -52,6 +52,8 @@ class MapOdomInitializer(Node):
         self.static_broadcaster = StaticTransformBroadcaster(self)
         self.origin_set = False
 
+        # Timer for republishing static transforms, This can be done at a pretty slow rate
+        # The purpose of republishing is to account for situations in which the ros bag is split
         self.create_timer(timer_period_sec=float(1.0 / self.update_rate), callback=self.transform_timer)
 
     def ins_callback(self, msg: Ins):
@@ -90,11 +92,14 @@ class MapOdomInitializer(Node):
         self.odom_transform.transform.translation.z = altitude
         self.odom_transform.transform.rotation.w = 1.0  # Identity rotation
 
+        # Publish the transforms immediately once they are determined
+        self._log(f"Set static transform map → odom at UTM ({easting:.2f}, {northing:.2f})")
+        self.static_broadcaster.sendTransform([self.base_transform, self.odom_transform])
+
         self.origin_set = True
 
-        self._log(f"Set static transform map → odom at UTM ({easting:.2f}, {northing:.2f})")
-
     def transform_timer(self):
+        # Republish transform using a timer
         if not self.origin_set:
             return
 
@@ -104,6 +109,7 @@ class MapOdomInitializer(Node):
 
         if self.verbose:
             self._log("Broadcasting base and odom transforms")
+
         self.static_broadcaster.sendTransform([self.base_transform, self.odom_transform])
 
     def _log(self, message):
@@ -113,4 +119,16 @@ class MapOdomInitializer(Node):
 def main(args=None):
     rclpy.init(args=args)
     node = MapOdomInitializer()
-    rclpy.spin(node)
+
+    try:
+        rclpy.spin(node)
+    except KeyboardInterrupt:
+        node.get_logger().info("Shutting down")
+    finally:
+        node.destroy_node()
+        # rclpy.shutdown()
+
+
+if __name__ == "__main__":
+    default_namespace = "lolo"
+    main(namespace=default_namespace)

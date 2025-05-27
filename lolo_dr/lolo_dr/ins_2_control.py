@@ -1,20 +1,21 @@
 #!/usr/bin/python
 
 # General
-import yaml
 import math
 
 # ROS
 import rclpy
 from rclpy.node import Node
-from rclpy.time import Time
 from rclpy.qos import QoSProfile
+from rclpy.time import Time
 from rclpy import time
 import tf_transformations
 
-# Messages
+# Messages (Standard)
 from std_msgs.msg import Float32
 from sensor_msgs.msg import Imu
+
+# Messages (Specific)
 from ixblue_ins_msgs.msg import Ins
 
 # SMaRC Topics
@@ -22,8 +23,10 @@ from lolo_msgs.msg import Topics as LoloTopics
 
 try:
     from .helpers.ros_helpers import rcl_time_to_secs
+    from .helpers.spatial_helpers import heading_to_yaw
 except ImportError:
     from helpers.ros_helpers import rcl_time_to_secs
+    from helpers.spatial_helpers import heading_to_yaw
 
 
 class Ins2Control(Node):
@@ -40,30 +43,29 @@ class Ins2Control(Node):
         self.declare_node_parameters()
 
         # ===== Get parameters =====
-        # Note: All parameters must be declared first! see self.declare_parameters
-        # Example: self.map_frame = self.get_parameter("map_frame").value
-
         # Input topic names
         self.input_ins_topic = self.get_parameter("input_ins_topic").value
         self.input_imu_topic = self.get_parameter("input_imu_topic").value
 
-        self.output_rate = self.get_parameter("output_rate").value
-        self.timeout =self.get_parameter("timeout").value
+        # Node parameters
+        self.convert_to_yaw = self.get_parameter("convert_to_yaw").value
+        self.output_degrees = self.get_parameter("output_degrees").value
 
-        # Node behaviour parameters
+        # TODO - Remove timer based publishing
+        self.output_rate = self.get_parameter("output_rate").value
+        self.timeout = self.get_parameter("timeout").value
+
         self.verbose = self.get_parameter("verbose").value
 
         # Data
         self.current_ins = None
+        self.current_ins_time = None
         self.current_imu = None
         self.current_imu_time = None
 
         # Subscribers
         # IND data subscription (ins_sub):
-
-        # TF Messages subscription (frame_sub):
-        # This sub is used to determine the utm zone that we are working in.
-        # Once determined we will remove this sub
+        # IMU dat subscription (imu_sub):
 
         self.ins_sub = self.create_subscription(msg_type=Ins, topic=self.input_ins_topic,
                                                 callback=self.ins_callback,
@@ -72,7 +74,6 @@ class Ins2Control(Node):
         self.imu_sub = self.create_subscription(msg_type=Imu, topic=self.input_imu_topic,
                                                 callback=self.imu_callback,
                                                 qos_profile=QoSProfile(depth=1))
-
 
         # Publishers
         # These are hard coded for now
@@ -113,10 +114,9 @@ class Ins2Control(Node):
                                                     topic=LoloTopics.CONTROL_DEPTH_TOPIC,
                                                     qos_profile=QoSProfile(depth=1))
 
-
-        # Timer for actual publishing
-        self.create_timer(timer_period_sec=float(1.0/self.output_rate),
-                          callback=self.publisher_callback)
+        # Timer for actual time_out timer
+        # self.create_timer(timer_period_sec=float(1.0 / self.output_rate),
+        #                   callback=self.publisher_callback)
 
     def _log(self, message):
         self.get_logger().info(message)
@@ -129,7 +129,13 @@ class Ins2Control(Node):
         self.declare_parameter("input_ins_topic", LoloTopics.INS_RAW_TOPIC)
         self.declare_parameter("input_imu_topic", "/standard/imu")
 
-        self.declare_parameter("output_rate", 10.0)
+        # Conversion parameters
+        self.declare_parameter("convert_to_yaw", True)
+        self.declare_parameter("output_degrees", True)
+
+        # Behavior parameters
+        # if output rate is set to 0, messages will be published and the relevant topics are received.
+        self.declare_parameter("output_rate", 0.0)
         self.declare_parameter("timeout", 1.0)
 
         # Verbose output
@@ -137,84 +143,104 @@ class Ins2Control(Node):
 
     # Callbacks
     def ins_callback(self, ins_msg):
+        """
+        The callback from the INS ROS topic (ixblue_ins_msgs.msg.Ins) is used to publishing the following:
+        - yaw
+        - pitch
+        - roll
+        - altitude
+        """
         # Record message
         self.current_ins = ins_msg
+        self.current_ins_time = self.get_clock().now()
+
+        # === Orientations ===
+        # Roll
+        roll_msg = Float32()
+        roll_msg.data = ins_msg.roll
+        self.ctrl_roll_pub.publish(roll_msg)
+
+        # Pitch
+        pitch_msg = Float32()
+        pitch_msg.data = ins_msg.pitch
+        self.ctrl_pitch_pub.publish(pitch_msg)
+
+        # Yaw
+        # Compute yaw from heading
+        if self.convert_to_yaw:
+            value_rad = heading_to_yaw(ins_msg.heading)
+        else:
+            value_rad = math.radians(ins_msg.heading)
+
+        # Convert to degrees
+        if self.output_degrees:
+            value = math.degrees(value_rad)
+        else:
+            value = value_rad
+
+        yaw_msg = Float32()
+        yaw_msg.data = value
+        self.ctrl_yaw_pub.publish(yaw_msg)
+
+        # Check that the INS is set to use the correct alltitude reference
+        # 0: geoid -> equivalent to mean sea level <-- Correct for our purposes
+        # 1: ellipsoid -> WGS84
+        if ins_msg.altitude_ref == 0:
+            altitude_msg = Float32()
+            altitude_msg.data = ins_msg.altitude
+            self.ctrl_depth_pub.publish(altitude_msg)
 
     def imu_callback(self, imu_msg):
         self.current_imu = imu_msg
         self.current_imu_time = self.get_clock().now()
 
-    def publisher_callback(self):
-        # IMU
-        if self.current_imu is not None and self.current_imu_time is not None:
-            if self.verbose:
-                self._log(f"IMU received")
-        else:
-            return
-
-        last_time = self.current_imu_time.nanoseconds / 1e9
-        now_time = self.get_clock().now().nanoseconds/ 1e9
-
-
-
-        if (now_time - last_time) > self.timeout:
-            if self.verbose:
-                self._log(f"Imu timeout!")
-            return
-
-        if 'ned' in self.current_imu.header.frame_id:
-            is_ned = True
-        else:
-            is_ned = False
-
-        orientation_q = self.current_imu.orientation
-        orientation_rpy = tf_transformations.euler_from_quaternion([orientation_q.x,
-                                                                    orientation_q.y,
-                                                                    orientation_q.z,
-                                                                    orientation_q.w])
-
-        # === Orientations ===
-        # Roll
-        roll_msg = Float32()
-        roll_msg.data = orientation_rpy[0]
-        self.ctrl_roll_pub.publish(roll_msg)
-
-        # Pitch
-        pitch_msg = Float32()
-        pitch_msg.data = orientation_rpy[1]
-        self.ctrl_pitch_pub.publish(pitch_msg)
-
-        # Yaw
-        yaw_msg = Float32()
-        yaw_msg.data = orientation_rpy[2]
-        self.ctrl_yaw_pub.publish(yaw_msg)
-
         # === Rates ===
         # Roll
-        roll_msg.data = self.current_imu.angular_velocity.x
-        self.ctrl_roll_rate_pub.publish(roll_msg)
+        roll_rate_msg = Float32()
+        roll_rate_msg.data = self.current_imu.angular_velocity.x
+        self.ctrl_roll_rate_pub.publish(roll_rate_msg)
 
         # pitch
-        pitch_msg.data = self.current_imu.angular_velocity.y
-        self.ctrl_pitch_rate_pub.publish(pitch_msg)
+        pitch_rate_msg = Float32()
+        pitch_rate_msg.data = self.current_imu.angular_velocity.y
+        self.ctrl_pitch_rate_pub.publish(pitch_rate_msg)
 
         # yaw
-        yaw_msg.data = self.current_imu.angular_velocity.z
-        self.ctrl_yaw_rate_pub.publish(yaw_msg)
+        yaw_rate_msg = Float32()
+        yaw_rate_msg.data = self.current_imu.angular_velocity.z
+        self.ctrl_yaw_rate_pub.publish(yaw_rate_msg)
 
         # surge
         surge_msg = Float32()
         surge_msg.data = self.current_imu.linear_acceleration.x
         self.ctrl_surge_rate_pub.publish(surge_msg)
 
+    def publisher_callback(self):
+        if not self.verbose:
+            return
+
+        now_time = self.get_clock().now().nanoseconds / 1e9
+
+        ins_last_time = self.current_ins_time.nanoseconds / 1e9
+        imu_last_time = self.current_imu_time.nanoseconds / 1e9
+
+        if (now_time - imu_last_time) > self.timeout:
+            self._log(f"IMU timeout!")
+
+        if (now_time - ins_last_time) > self.timeout:
+            self._log(f"INS timeout")
+
 
 def main(args=None, namespace=None):
     rclpy.init(args=args)
-    ins_2_control_node = Ins2Control(namespace=namespace)
+    node = Ins2Control(namespace=namespace)
     try:
-        rclpy.spin(ins_2_control_node)
+        rclpy.spin(node)
     except KeyboardInterrupt:
-        pass
+        node.get_logger().info("Shutting down")
+    finally:
+        node.destroy_node()
+        # rclpy.shutdown()
 
 
 if __name__ == "__main__":

@@ -61,7 +61,6 @@ class Ins2Odom(Node):
         # ===== Get parameters =====
         # Note: All parameters must be declared first! see self.declare_parameters
         # Example: self.map_frame = self.get_parameter("map_frame").value
-        self.automatic_zone = self.get_parameter("automatic_zone").value
         self.input_ins_topic = self.get_parameter("input_ins_topic").value
         self.output_odom_topic = self.get_parameter("output_odom_topic").value
 
@@ -84,14 +83,13 @@ class Ins2Odom(Node):
         # Status
         # are any of these not redundent?!
         self.utm_zone_status = False  # status if we know what UTM zone and band we are working in
-        self.utm_frame_status = False  # Status if umte frame has been set
+        self.utm_frame_status = False  # Status if utm frame has been set
         self.transform_status = False  # Status if we have a valid transform from 'utm' to 'map'
-        self.projection_status = False  # Status if we have a valid set up for out pyproj object
+        self.projection_status = False  # Status if we have a valid set-up for out pyproj object
 
         # Parameters for controlling behavior
-        self.perform_conversion = True  # If False, callback will not perform conversion
-        self.perform_test_conversion = True  # Only use for testing
-        self.publish_tf = True  # TODO - Make this a parameter
+        self.correct_meridian_convergence = self.get_parameter("correct_meridian_convergence").value
+        self.publish_tf = self.get_parameter("publish_tf").value
 
         self.publisher_period = 0.5  # Rate at which to publish converted
         self.conversion_timeout = 2.5  # Timeout for tf related transforms
@@ -112,16 +110,14 @@ class Ins2Odom(Node):
         self.ins_sub = self.create_subscription(msg_type=Ins, topic=self.input_ins_topic,
                                                 callback=self.ins_callback, qos_profile=10)
 
-        # self.frame_sub = self.create_subscription(msg_type=TFMessage, topic="/tf",
-        #                                           callback=self.frame_callback, qos_profile=10)
-
         # Publishers
-        # Odom message in the map frame
+        # Odom message in the map framed
 
         self.odom_pub = self.create_publisher(msg_type=Odometry, topic=self.output_odom_topic,
                                               qos_profile=10)
         if self.publish_tf:
             self.tf_broadcaster = TransformBroadcaster(self)
+
         # Timers
         # Odom publisher timer (publisher_timer):
         # Publishing is handled in a timer (publish_timer) and its callback (publisher_callback)
@@ -130,8 +126,6 @@ class Ins2Odom(Node):
         self.publisher_timer = self.create_timer(timer_period_sec=self.publisher_period,
                                                  callback=self.publisher_callback)
 
-        self.tf_name_getter = self.create_timer(timer_period_sec=0.5, callback=self.tf_name_callback)
-
     def _log(self, message):
         self.get_logger().info(message)
 
@@ -139,15 +133,16 @@ class Ins2Odom(Node):
     def declare_node_parameters(self):
         # Declare all the default values for parameters
 
-        # Controls if UTM zone and band is extracted from lat/lon. Useful for testing.
-        self.declare_parameter("automatic_zone", False)
-
         # Topic names
         self.declare_parameter("input_ins_topic", LoloTopics.INS_RAW_TOPIC)
         self.declare_parameter("output_odom_topic", LoloTopics.INS_ODOM_TOPIC)
 
         # Frames
         self.declare_parameter("output_odom_frame", "odom")
+
+        # Behavior
+        self.declare_parameter("correct_meridian_convergence", True)
+        self.declare_parameter("publish_tf", True)
 
         # Verbose output
         self.declare_parameter("verbose_setup", False)
@@ -190,6 +185,8 @@ class Ins2Odom(Node):
         self.utm_zone_status = True
         self.utm_frame_status = True
 
+        self.set_up_projection()
+
         self._log(f'UTM Zone: {self.utm_zone}')
 
     def utm_to_frame_status(self, frame_name):
@@ -226,36 +223,6 @@ class Ins2Odom(Node):
         # Record message
         self.current_ins = ins_msg
 
-    def frame_callback(self, frame_msg):
-        # IF the UTM info has been set ignore
-        if self.utm_zone_status:
-            return
-
-        # Ignore frame names for determining the
-        if self.automatic_zone:
-            return
-
-        for transform in frame_msg.transforms:
-            parent = transform.header.frame_id
-            child = transform.child_frame_id
-
-            frames = [parent, child]
-
-            for frame in frames:
-                if "utm_" not in frame:
-                    continue
-
-                frame_split = frame.split("_")
-
-                if len(frame_split) != 3:
-                    continue
-
-                self.utm_zone = int(frame_split[1])
-                self.utm_zone_status = True
-
-                self._log("utm_zone: " + self.utm_zone)
-                return
-
     def publisher_callback(self):
         # Check for 'valid' current ins message
         # - Valid self.current_ins: is defined and timely
@@ -266,56 +233,40 @@ class Ins2Odom(Node):
             return
 
         # TODO - Add check for stale data
+        self.determine_utm_zone_tf_names()
 
         if self.utm_frame is None:
+            return
+
+        if self.projection_transformer is None:
             return
 
         # Extract information
         lat = self.current_ins.latitude
         lon = self.current_ins.longitude
+        altitude = self.current_ins.altitude
 
-        # TODO - behaviour/checks on utm zone mismatch
-        # Note: the proper way is most likely to wait for a utm zone to be fined by the TF tree, check if the current
-        # transformer zone matches and then to transform.
+        roll = self.current_ins.roll
+        pitch = self.current_ins.pitch
+        heading = self.current_ins.heading
 
-        # to that coordinate system,
-        # There are some things to consider here.
-        # How do we want zones to be handled and what if there is a mismatch between the lat/lon derived zone and the
-        # zone derived from the TF tree?
-        # 1) option 1) detect a mismatch and dont publish?
-        # 2) Use pyproj to transform to the utm zone specified in the tf tree
-        # NOTE: For now I will us the utm lib and just check for mismatches
+        # Use utm lib to determine UTM coord and info
+        # easting, northing, zone, band = utm.from_latlon(lat, lon)
 
-        # ===== Work towards method 2 =====
-        # # Need to wait for the zone to be defined
-        # if self.automatic_zone and not self.utm_zone_status:
-        #     self.set_utm_zone_automatic(lat, lon)
-        #
-        # if not self.utm_zone_status:
-        #     return
-        #
-        # # Attempt once to set up the projection
-        # if not self.projection_status:
-        #     self.projection_status = self.set_up_projection()
-        #
-        # easting, northing = None, None
-        #
-        # if self.projection_status:
-        #     easting, northing = self.projection_transformer(lon, lat)
-        #
-        # if easting is not None and northing is not None:
-        #     self._log(f'lat: {lat} ({northing}), lon: {lon} ({easting})')
-        # else:
-        #     self._log(f'lat: {lat}, lon: {lon}')
+        easting, northing = self.projection_transformer(lon, lat)
+        factors = self.projection_transformer.get_factors(lon, lat)
 
-        easting, northing, zone, band = utm.from_latlon(lat, lon)
+        if self.correct_meridian_convergence:
+            meridian_convergence = factors.maridian_convergence
+            heading = (heading - meridian_convergence) % 360
 
+        # No longer checking for utm zon matches, the initial zone will be use for the duration of the mission
         # Check if the utm zone from utm lib matches the utm zone from tf frame names
-        if zone != self.utm_zone:
-            self._log(f"utm zone mismatch between lat/lon zone ({zone}) and tf root zone ({self.utm_zone})")
-            return
+        # if zone != self.utm_zone:
+        #     self._log(f"utm zone mismatch between lat/lon zone ({zone}) and tf root zone ({self.utm_zone})")
+        #     return
 
-        # At this point we have 'valid' utm coords, utm frame name but we still need to check for a valid transform
+        # At this point we have 'valid' utm coords, utm frame name, but we still need to check for a valid transform
         # Between the utm frame (map) and the desired frame(odom)
 
         pose_utm = PoseStamped()
@@ -324,22 +275,19 @@ class Ins2Odom(Node):
 
         pose_utm.pose.position.x = easting
         pose_utm.pose.position.y = northing
-        pose_utm.pose.orientation.z = self.current_ins.altitude
+        pose_utm.pose.orientation.z = altitude
 
         # Convert thr INS roll, pitch, yaw to a quaternion
         # TODO - Check that this isn't getting messed up especially heading
-        roll_rad = math.radians(self.current_ins.roll)
-        pitch_rad = math.radians(self.current_ins.pitch)
-        yaw_rad = heading_to_yaw(self.current_ins.heading)
+        roll_rad = math.radians(roll)
+        pitch_rad = math.radians(pitch)
+        yaw_rad = heading_to_yaw(heading)
 
         pose_quaternion_values = tf_transformations.quaternion_from_euler(roll_rad, pitch_rad, yaw_rad)
-        pose_quaternion = Quaternion()
-        pose_quaternion.x = pose_quaternion_values[0]
-        pose_quaternion.y = pose_quaternion_values[1]
-        pose_quaternion.z = pose_quaternion_values[2]
-        pose_quaternion.w = pose_quaternion_values[3]
-        # TODO - check that the output of the above is x,y,z,w
-        pose_utm.pose.orientation = pose_quaternion
+        pose_utm.pose.orientation.x = pose_quaternion_values[0]
+        pose_utm.pose.orientation.y = pose_quaternion_values[1]
+        pose_utm.pose.orientation.z = pose_quaternion_values[2]
+        pose_utm.pose.orientation.w = pose_quaternion_values[3]
 
         # Perform transformation to the correct frame
         try:
@@ -383,9 +331,6 @@ class Ins2Odom(Node):
 
             self.tf_broadcaster.sendTransform(tf_msg)
 
-    def tf_name_callback(self):
-        self.determine_utm_zone_tf_names()
-
     # Currently not used!!
     def check_status_valid(self, current_time: float):
         """
@@ -414,6 +359,9 @@ class Ins2Odom(Node):
         if not self.utm_zone_status:
             return False
 
+        if self.projection_transformer is not None:
+            return True
+
         if self.verbose_setup:
             self._log(f'Setting up projection for zone {self.utm_zone}')
 
@@ -427,11 +375,14 @@ class Ins2Odom(Node):
 
 def main(args=None, namespace=None):
     rclpy.init(args=args)
-    ins_2_odom_node = Ins2Odom(namespace=namespace)
+    node = Ins2Odom(namespace=namespace)
     try:
-        rclpy.spin(ins_2_odom_node)
+        rclpy.spin(node)
     except KeyboardInterrupt:
-        pass
+        node.get_logger().info(f"Shutting down")
+    finally:
+        node.destroy_node()
+        # rclpy.shutdown()
 
 
 if __name__ == "__main__":
