@@ -23,6 +23,8 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
+            'menu_input = lolo_drivers.menu_input:main',
+            'menu_output = lolo_drivers.menu_output:main'
         ],
     },
 )
