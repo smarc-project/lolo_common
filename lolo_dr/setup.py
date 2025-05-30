@@ -16,7 +16,7 @@ setup(
         (os.path.join('share', package_name, 'rviz'), glob('rviz/*.rviz')),
         (os.path.join('share', package_name, 'config'), glob('config/*.yaml')),
     ],
-    install_requires=['setuptools'],
+    install_requires=['setuptools', 'utm'],
     zip_safe=True,
     maintainer='Julian Valdez',
     maintainer_email='jvaldez@gkth.com',
@@ -26,8 +26,8 @@ setup(
     entry_points={
         'console_scripts': [
             'ins_2_odom_node = lolo_dr.ins_2_odom:main',
-            'map_odom_initializer_node = lolo_dr.map_odom_initializer:main',
-            'ins_2_control_node = lolo_dr.ins_2_control_topics_publisher:main'
+            'ins_map_odom_initializer_node = lolo_dr.ins_map_odom_initializer:main',
+            'ins_2_control_node = lolo_dr.ins_2_control:main'
         ],
     },
 )

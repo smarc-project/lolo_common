@@ -1,7 +1,12 @@
 Lolo Dead reckoning for smarc-project/smarc2
 
 # Scripts
-- lolo_ins_2_odom.py
+- ins_2_odom.py
+- ins_2_control.py
+- ins_map_odom_initializer.py
+
+# Entry points
+- 
 
 # Other things to do
 - setup.py
@@ -21,5 +26,5 @@ To install manually: apt install ros-humble-geodesy
 ...
 
 ## Launch file
-- The launch file is now xml, and sim time is enabled
+- 
 
