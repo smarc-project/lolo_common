@@ -12,6 +12,7 @@
   <depend>rclcpp</depend>
   <depend>std_msgs</depend>
   <depend>lolo_msgs</depend>
+  <depend>smarc_msgs</depend>
   <depend>diagnostic_msgs</depend>
 
 
