@@ -67,6 +67,17 @@ def generate_launch_description():
         }]
     )
 
+    chlorophyll_parser_node = Node(
+        package='hyperion_chlorophyll_a_driver',
+        namespace=robot_ns,
+        executable='chlorophyll_decoder',
+        name='chlorophyll_parser',
+        parameters=[{
+            "input_topic": Topics.FLUORESCENCE_RAW_TOPIC,
+            "output_topic": Topics.FLUORESCENCE_TOPIC,
+        }]
+    )
+
 
     return LaunchDescription([
         robot_ns_launch_arg,
@@ -74,5 +85,6 @@ def generate_launch_description():
         ctd_parser_node,
         turbidity_parser_node,
         do_parser_node,
-        svs_parser_node
+        svs_parser_node,
+        chlorophyll_parser_node
     ])
