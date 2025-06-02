@@ -39,8 +39,8 @@ def generate_launch_description():
         executable='turbidity_driver',
         name='turbidity_parser',
         parameters=[{
-            "input_topic": Topics.TURBIDITY_RAW_TOPIC,
-            "output_topic": Topics.TURBIDITY_TOPIC,
+            "input_topic": Topics.TURB_RAW_TOPIC,
+            "output_topic": Topics.TURB_TOPIC,
         }]
     )
 
@@ -52,6 +52,7 @@ def generate_launch_description():
         parameters=[{
             "input_topic": Topics.DO_RAW_TOPIC,
             "output_topic": Topics.DO_TOPIC,
+            "request_topic" : "DO_REQUST_TOPIC_CHANGE_THIS"
         }]
     )
     
