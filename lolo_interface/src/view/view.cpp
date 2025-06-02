@@ -41,8 +41,8 @@ void View::setup()
     vertical_thruster_4_pub = rcl_node->create_publisher<lolo_msgs::msg::VescFeedback>(lolo_msgs::msg::Topics::EXTENDED_VERTICAL_THRUSTER_BACK_STRB_FB_TOPIC, 1);
     
     //Batteries
-    battery1_pub = rcl_node->create_publisher<sensor_msgs::msg::BatteryState>(lolo_msgs::msg::Topics::BATTERY_1_TOPIC, 1);
-    battery2_pub = rcl_node->create_publisher<sensor_msgs::msg::BatteryState>(lolo_msgs::msg::Topics::BATTERY_2_TOPIC, 1);
+    battery1_pub = rcl_node->create_publisher<sensor_msgs::msg::BatteryState>(lolo_msgs::msg::Topics::EXTENDED_BATTERY_1_TOPIC, 1);
+    battery2_pub = rcl_node->create_publisher<sensor_msgs::msg::BatteryState>(lolo_msgs::msg::Topics::EXTENDED_BATTERY_2_TOPIC, 1);
 
     //USBL
     usbl_pub = rcl_node->create_publisher<std_msgs::msg::Char>(lolo_msgs::msg::Topics::USBL_RECEIVED_CHR_TOPIC, 1);
