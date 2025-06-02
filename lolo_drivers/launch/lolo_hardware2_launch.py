@@ -26,16 +26,52 @@ def generate_launch_description():
         package='rbr_ctd_driver',
         namespace=robot_ns,
         executable='rbr_ctd_driver',
-        name='extended_translator',
+        name='ctd_parser',
         parameters=[{
                 "input_topic": Topics.CTD_RAW_TOPIC,
                 "output_topic": Topics.CTD_TOPIC,
             }]
     )
+
+    turbidity_parser_node = Node(
+        package='turbidity_driver',
+        namespace=robot_ns,
+        executable='turbidity_driver',
+        name='turbidity_parser',
+        parameters=[{
+            "input_topic": Topics.TURBIDITY_RAW_TOPIC,
+            "output_topic": Topics.TURBIDITY_TOPIC,
+        }]
+    )
+
+    do_parser_node = Node(
+        package='do_driver',
+        namespace=robot_ns,
+        executable='do_driver',
+        name='do_parser',
+        parameters=[{
+            "input_topic": Topics.DO_RAW_TOPIC,
+            "output_topic": Topics.DO_TOPIC,
+        }]
+    )
     
+    svs_parser_node = Node(
+        package='svs_driver',
+        namespace=robot_ns,
+        executable='svs_driver',
+        name='svs_parser',
+        parameters=[{
+            "input_topic": Topics.SVS_RAW_TOPIC,
+            "output_topic": Topics.SVS_TOPIC,
+        }]
+    )
+
 
     return LaunchDescription([
         robot_ns_launch_arg,
         extended_translator_node,
-        ctd_parser_node
+        ctd_parser_node,
+        turbidity_parser_node,
+        do_parser_node,
+        svs_parser_node
     ])
