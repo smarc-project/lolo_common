@@ -17,7 +17,7 @@ void Controller::setup() {
     discovery_timer_ = rcl_node->create_wall_timer(500ms, std::bind(&Controller::send_discovery, this));
 
     //Create subscriptions
-    heartbeat_sub = rcl_node->create_subscription<std_msgs::msg::Empty>(lolo_msgs::msg::Topics::HEARTBEAT_TOPIC, 1, std::bind(&Controller::heartbeat_callback, this, std::placeholders::_1));
+    //heartbeat_sub = rcl_node->create_subscription<std_msgs::msg::Empty>(lolo_msgs::msg::Topics::HEARTBEAT_TOPIC, 1, std::bind(&Controller::heartbeat_callback, this, std::placeholders::_1));
     abort_sub = rcl_node->create_subscription<std_msgs::msg::Empty>(smarc_msgs::msg::Topics::ABORT_TOPIC, 1, std::bind(&Controller::abort_callback, this, std::placeholders::_1));
     
     rudder_cmd_sub = rcl_node->create_subscription<std_msgs::msg::Float32>(lolo_msgs::msg::Topics::RUDDER_CMD, 1, std::bind(&Controller::rudder_callback, this, std::placeholders::_1));
