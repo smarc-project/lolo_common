@@ -7,18 +7,11 @@
     <param name="verbose" value="true" />
   </node>
 
-  <node pkg="lolo_dr" exec="ins_2_odom_node" name="ins_2_odom_node" output="screen" namespace="$(var robot_name)">
+  <node pkg="lolo_dr" exec="ins_2_odom_complete_node" name="ins_2_odom_node" output="screen" namespace="$(var robot_name)">
     <param name="correct_meridian_convergence" value="true" />
     <param name="publish_tf" value="true" />
     <param name="verbose_setup" value="true" />
     <param name="verbose_conversion" value="true" />
-  </node>
-
-  <node pkg="lolo_dr" exec="ins_2_control_node" name="ins_2_control_node" output="screen" namespace="$(var robot_name)">
-    <param name="convert_to_yaw" value="true" />
-    <param name="output_degrees" value="true" />
-    <param name="output_rate" value="10.0" />
-    <param name="verbose" value="true" />
   </node>
 
 </launch>

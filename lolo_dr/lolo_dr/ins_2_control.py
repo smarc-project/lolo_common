@@ -127,7 +127,7 @@ class Ins2Control(Node):
 
         # Topic names
         self.declare_parameter("input_ins_topic", LoloTopics.INS_RAW_TOPIC)
-        self.declare_parameter("input_imu_topic", "/standard/imu")
+        self.declare_parameter("input_imu_topic", LoloTopics.INS_IMU_TOPIC)
 
         # Conversion parameters
         self.declare_parameter("convert_to_yaw", True)
