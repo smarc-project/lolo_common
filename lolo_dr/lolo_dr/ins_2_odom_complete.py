@@ -8,6 +8,7 @@ import math
 import rclpy
 from rclpy.node import Node
 from rclpy import time
+from message_filters import Subscriber, ApproximateTimeSynchronizer
 
 # Transforms
 from tf2_ros.buffer import Buffer
@@ -24,6 +25,7 @@ from nav_msgs.msg import Odometry
 from geometry_msgs.msg import TransformStamped, PoseStamped, Quaternion, PointStamped
 from geometry_msgs.msg import Pose
 from geographic_msgs.msg import GeoPoint
+from sensor_msgs.msg import Imu
 from ixblue_ins_msgs.msg import Ins
 
 # SMaRC Topics
@@ -34,7 +36,8 @@ from smarc_mission_msgs.msg import Topics as MissionTopics
 # Switching from Ozers service to pyproj or utm lib
 # from geodesy.utm import UTMPoint
 # Note: pyproj is a little fuller featured but requires setting up the transformer
-from pyproj import Proj, Transformer, CRS
+# from pyproj import Proj, Transformer, CRS
+import pyproj
 import utm
 
 try:
@@ -52,7 +55,7 @@ class Ins2Odom(Node):
 
     def __init__(self, namespace=None):
         super().__init__("ins_2_odom", namespace=namespace)
-        self._log("Starting node defined in ins_2_odom.py")
+        self._log("Starting node defined in ins_2_odom_complete.py")
 
         # ===== Declare parameters =====
         # Default values set in declare_parameters()
@@ -62,10 +65,13 @@ class Ins2Odom(Node):
         # Note: All parameters must be declared first! see self.declare_parameters
         # Example: self.map_frame = self.get_parameter("map_frame").value
         self.input_ins_topic = self.get_parameter("input_ins_topic").value
+        self.input_imu_topic = self.get_parameter("input_imu_topic").value
+
         self.output_odom_topic = self.get_parameter("output_odom_topic").value
 
         # Data
         self.current_ins = None
+        self.current_imu = None
 
         # Coordinate transform related attributes
         self.utm_zone = None
@@ -107,8 +113,24 @@ class Ins2Odom(Node):
         # This sub is used to determine the utm zone that we are working in.
         # Once determined we will remove this sub
 
+        # Original un synced
         self.ins_sub = self.create_subscription(msg_type=Ins, topic=self.input_ins_topic,
-                                                callback=self.ins_callback, qos_profile=10)
+                                                callback=self.ins_callback,
+                                                qos_profile=10)
+
+        self.imu_sub = self.create_subscription(msg_type=Imu, topic=self.input_imu_topic,
+                                                callback=self.imu_callback,
+                                                qos_profile=10)
+
+        self.ins_sub = Subscriber(self, Ins, self.input_ins_topic)  # msg_type and topic name
+        self.imu_sub = Subscriber(self, Imu, self.input_imu_topic)
+
+        # synchronizer
+        queue_size = 10
+        max_delay = 1
+        self.time_sync = ApproximateTimeSynchronizer([self.ins_sub, self.imu_sub],
+                                                     queue_size, max_delay)
+        self.time_sync.registerCallback(self.sync_callback)
 
         # Publishers
         # Odom message in the map framed
@@ -134,7 +156,11 @@ class Ins2Odom(Node):
         # Declare all the default values for parameters
 
         # Topic names
+        # Subscriptions
         self.declare_parameter("input_ins_topic", LoloTopics.INS_RAW_TOPIC)
+        self.declare_parameter("input_imu_topic", "/standard/imu")
+
+        # Publishers
         self.declare_parameter("output_odom_topic", LoloTopics.INS_ODOM_TOPIC)
 
         # Frames
@@ -223,13 +249,28 @@ class Ins2Odom(Node):
         # Record message
         self.current_ins = ins_msg
 
+    def imu_callback(self, imu_msg):
+        # Record message
+        self.current_imu = imu_msg
+
+    def sync_callback(self, ins_msg, imu_msg):
+        self.current_ins = ins_msg
+        self.current_imu = imu_msg
+
+        self.current_2_odom()
+
+
     def publisher_callback(self):
+        pass
+
+
+    def current_2_odom(self):
         # Check for 'valid' current ins message
         # - Valid self.current_ins: is defined and timely
         #
 
         # Check that ins data has been recieved
-        if self.current_ins is None:
+        if self.current_ins is None and self.current_imu is None:
             return
 
         # TODO - Add check for stale data
@@ -257,7 +298,7 @@ class Ins2Odom(Node):
         factors = self.projection_transformer.get_factors(lon, lat)
 
         if self.correct_meridian_convergence:
-            meridian_convergence = factors.maridian_convergence
+            meridian_convergence = factors.meridian_convergence
             heading = (heading - meridian_convergence) % 360
 
         # No longer checking for utm zon matches, the initial zone will be use for the duration of the mission
@@ -305,23 +346,26 @@ class Ins2Odom(Node):
 
         # Publish odometry
         # TODO - Should this use the current time or the stamp of the ins message
-        now = self.get_clock().now().to_msg()
+        current_stamp = self.current_ins.header.stamp
 
         xyz_vehicle_frame_velocities = self.current_ins.speed_vessel_frame
 
         odom = Odometry()
-        odom.header.stamp = now
+        odom.header.stamp = current_stamp
         odom.header.frame_id = self.output_odom_frame
         odom.child_frame_id = self.odom_child_frame_id
         odom.pose.pose = pose_odom.pose
-        odom.twist.twist.linear = xyz_vehicle_frame_velocities
+
+        # Rates
+        odom.twist.twist.linear = self.current_ins.speed_vessel_frame
+        odom.twist.twist.angular = self.current_imu.angular_velocity
 
         self.odom_pub.publish(odom)
 
         if self.publish_tf:
             # Publish TF
             tf_msg = TransformStamped()
-            tf_msg.header.stamp = now
+            tf_msg.header.stamp = current_stamp
             tf_msg.header.frame_id = self.output_odom_frame
             tf_msg.child_frame_id = self.odom_child_frame_id
             tf_msg.transform.translation.x = pose_odom.pose.position.x
@@ -331,7 +375,6 @@ class Ins2Odom(Node):
 
             self.tf_broadcaster.sendTransform(tf_msg)
 
-    # Currently not used!!
     def check_status_valid(self, current_time: float):
         """
         check if it is time to provide a status update
@@ -365,13 +408,8 @@ class Ins2Odom(Node):
         if self.verbose_setup:
             self._log(f'Setting up projection for zone {self.utm_zone}')
 
-        # Define the CRS
-        utm_crs = CRS(proj='utm', zone=self.utm_zone, ellps='WGS84')
-        wgs84_crs = CRS("EPSG:4326")  # WGS84 lat/lon
-
         # Create a transformer
-        self.projection_transformer = Transformer.from_crs(wgs84_crs, utm_crs, always_xy=True)
-
+        self.projection_transformer = pyproj.Proj(proj='utm', zone=self.utm_zone, ellps='WGS84')
 
 def main(args=None, namespace=None):
     rclpy.init(args=args)

@@ -2,7 +2,7 @@ from setuptools import find_packages, setup
 from glob import glob
 import os
 
-package_name = 'lolo_dr'
+package_name = 'lolo_sensor_interface_translator'
 
 setup(
     name=package_name,
@@ -16,7 +16,7 @@ setup(
         (os.path.join('share', package_name, 'rviz'), glob('rviz/*.rviz')),
         (os.path.join('share', package_name, 'config'), glob('config/*.yaml')),
     ],
-    install_requires=['setuptools', 'utm'],
+    install_requires=['setuptools'],
     zip_safe=True,
     maintainer='Julian Valdez',
     maintainer_email='jvaldez@gkth.com',
@@ -25,10 +25,7 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'ins_2_odom_node = lolo_dr.ins_2_odom:main',
-            'ins_map_odom_initializer_node = lolo_dr.ins_map_odom_initializer:main',
-            'ins_2_control_node = lolo_dr.ins_2_control:main',
-            f'ins_2_odom_complete_node = {package_name}.ins_2_odom_complete:main'
+            'ins_2_odom_node = lolo_dr.ins_2_odom:main'
         ],
     },
 )
