@@ -52,7 +52,7 @@ def generate_launch_description():
         parameters=[{
             "input_topic": Topics.DO_RAW_TOPIC,
             "output_topic": Topics.DO_TOPIC,
-            "request_topic" : "DO_REQUST_TOPIC_CHANGE_THIS"
+            "request_topic" : Topics.DO_RAW_REQUEST_TOPIC,
         }]
     )
     
@@ -73,7 +73,7 @@ def generate_launch_description():
         executable='chlorophyll_decoder',
         name='chlorophyll_parser',
         parameters=[{
-            "input_topic": Topics.FLUORESCENCE_RAW_TOPIC,
+            "input_topic": Topics.FLUORESCENCE_RAW_TOPIC,lolo_common/lolo_drivers/launch/lolo_hardware2_launch.py
             "output_topic": Topics.FLUORESCENCE_TOPIC,
         }]
     )
