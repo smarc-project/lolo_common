@@ -141,7 +141,7 @@ class Ins2Odom(Node):
             self.tf_broadcaster = TransformBroadcaster(self)
 
         self.lat_lon_pub = self.create_publisher(msg_type=GeoPoint,
-                                                 topic=SmarcTopics.SMARC_LAT_LON_TOPIC,
+                                                 topic=SmarcTopics.POS_LAT_LON_TOPIC,
                                                  qos_profile=10)
 
         # Timers
