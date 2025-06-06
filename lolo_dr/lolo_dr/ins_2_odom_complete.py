@@ -66,7 +66,7 @@ class Ins2Odom(Node):
         # Example: self.map_frame = self.get_parameter("map_frame").value
         self.input_ins_topic = self.get_parameter("input_ins_topic").value
         self.input_imu_topic = self.get_parameter("input_imu_topic").value
-
+    
         self.output_odom_topic = self.get_parameter("output_odom_topic").value
 
         # Data
@@ -81,7 +81,7 @@ class Ins2Odom(Node):
         # tf transform related attributes
         self.utm_frame = None
         self.output_odom_frame = self.get_parameter("output_odom_frame").value
-        self.odom_child_frame_id= "base_link"  # Should this be hard coded?
+        self.odom_child_frame_id= self.get_parameter("base_link_frame").value  # Should this be hard coded? NO!
 
         self.tf_buffer = Buffer()
         self.tf_listener = TransformListener(self.tf_buffer, self)
@@ -158,13 +158,14 @@ class Ins2Odom(Node):
         # Topic names
         # Subscriptions
         self.declare_parameter("input_ins_topic", LoloTopics.INS_RAW_TOPIC)
-        self.declare_parameter("input_imu_topic", "/standard/imu")
+        self.declare_parameter("input_imu_topic", LoloTopics.INS_IMU_TOPIC)
 
         # Publishers
         self.declare_parameter("output_odom_topic", LoloTopics.INS_ODOM_TOPIC)
 
         # Frames
         self.declare_parameter("output_odom_frame", "odom")
+        self.declare_parameter("base_link_frame", "base_link")
 
         # Behavior
         self.declare_parameter("correct_meridian_convergence", True)
