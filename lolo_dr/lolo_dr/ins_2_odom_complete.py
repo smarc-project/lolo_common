@@ -67,7 +67,7 @@ class Ins2Odom(Node):
         # Example: self.map_frame = self.get_parameter("map_frame").value
         self.input_ins_topic = self.get_parameter("input_ins_topic").value
         self.input_imu_topic = self.get_parameter("input_imu_topic").value
-    
+
         self.output_odom_topic = self.get_parameter("output_odom_topic").value
 
         # Data
@@ -135,11 +135,14 @@ class Ins2Odom(Node):
 
         # Publishers
         # Odom message in the map framed
-
         self.odom_pub = self.create_publisher(msg_type=Odometry, topic=self.output_odom_topic,
                                               qos_profile=10)
         if self.publish_tf:
             self.tf_broadcaster = TransformBroadcaster(self)
+
+        self.lat_lon_pub = self.create_publisher(msg_type=GeoPoint,
+                                                 topic=SmarcTopics.SMARC_LAT_LON_TOPIC,
+                                                 qos_profile=10)
 
         # Timers
         # Odom publisher timer (publisher_timer):
@@ -293,6 +296,12 @@ class Ins2Odom(Node):
         pitch = self.current_ins.pitch
         heading = self.current_ins.heading
 
+        # GeoPoint for LatLon topic.
+        geopoint = GeoPoint()
+        geopoint.latitude = lat
+        geopoint.longitude = lon
+        geopoint.altitude = altitude
+
         # Use utm lib to determine UTM coord and info
         # easting, northing, zone, band = utm.from_latlon(lat, lon)
 
@@ -362,6 +371,8 @@ class Ins2Odom(Node):
         odom.twist.twist.linear = self.current_ins.speed_vessel_frame
         odom.twist.twist.angular = self.current_imu.angular_velocity
 
+        # Publish messages.
+        self.lat_lon_pub.publish(geopoint)
         self.odom_pub.publish(odom)
 
         if self.publish_tf:
