@@ -78,7 +78,7 @@ def generate_launch_description():
         name='do_reader',
         parameters=[{
                 "port" : "/dev/ttyUSB5",
-                "baudrate" : 9600,
+                "baudrate" : 38400,
                 "listen_to_topic" : Topics.DO_RAW_REQUEST_TOPIC,
                 "publish_to_topic" : Topics.DO_RAW_TOPIC,
                 "poll_rate" : 10,

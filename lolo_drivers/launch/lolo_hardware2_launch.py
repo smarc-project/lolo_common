@@ -73,7 +73,7 @@ def generate_launch_description():
         executable='chlorophyll_decoder',
         name='chlorophyll_parser',
         parameters=[{
-            "input_topic": Topics.FLUORESCENCE_RAW_TOPIC,lolo_common/lolo_drivers/launch/lolo_hardware2_launch.py
+            "input_topic": Topics.FLUORESCENCE_RAW_TOPIC,
             "output_topic": Topics.FLUORESCENCE_TOPIC,
         }]
     )
