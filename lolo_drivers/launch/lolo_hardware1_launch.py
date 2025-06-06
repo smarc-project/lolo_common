@@ -92,8 +92,8 @@ def generate_launch_description():
                 "publish_tf": True,
                 "verbose_setup": True,
                 "verbose_conversion": True,
-                "base_link_frame" : "/lolo/base_link",
-                "output_odom_frame" : "/lolo/odom", #TODO make this better
+                "base_link_frame" : "lolo/base_link",
+                "output_odom_frame" : "lolo/odom", #TODO make this better
             }]
     )
 

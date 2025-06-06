@@ -30,6 +30,7 @@ from ixblue_ins_msgs.msg import Ins
 
 # SMaRC Topics
 from lolo_msgs.msg import Topics as LoloTopics
+from smarc_msgs.msg import Topics as SmarcTopics
 from smarc_mission_msgs.msg import Topics as MissionTopics
 
 # Geo transform imports
@@ -161,7 +162,7 @@ class Ins2Odom(Node):
         self.declare_parameter("input_imu_topic", LoloTopics.INS_IMU_TOPIC)
 
         # Publishers
-        self.declare_parameter("output_odom_topic", LoloTopics.INS_ODOM_TOPIC)
+        self.declare_parameter("output_odom_topic", SmarcTopics.ODOM_TOPIC)
 
         # Frames
         self.declare_parameter("output_odom_frame", "odom")
