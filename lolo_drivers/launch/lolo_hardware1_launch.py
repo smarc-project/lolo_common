@@ -71,6 +71,31 @@ def generate_launch_description():
             }]
     )
 
+    ins_map_odom_init_node = Node(
+        package='lolo_dr',
+        namespace=robot_ns,
+        executable='ins_map_odom_initializer_node',
+        name="ins_map_odom_initializer_node",
+        parameters=[{
+                "update_rate": 0.1,
+                "verbose": True,
+            }]
+    )
+
+    ins_to_odom_complete_node = Node(
+        package='lolo_dr',
+        namespace=robot_ns,
+        executable='ins_2_odom_complete_node',
+        name="ins_to_odom_node",
+        parameters=[{
+                "correct_meridian_convergence": True,
+                "publish_tf": True,
+                "verbose_setup": True,
+                "verbose_conversion": True,
+            }]
+    )
+
+
 
     return LaunchDescription([
         robot_ns_launch_arg,
@@ -78,4 +103,6 @@ def generate_launch_description():
         nmea_navsat_driver_node,
         ixblue_ins_driver_node,
         nortek_dvl_driver_node,
+        ins_map_odom_init_node,
+        ins_to_odom_complete_node
     ])
