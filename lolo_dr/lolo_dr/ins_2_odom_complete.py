@@ -330,16 +330,16 @@ class Ins2Odom(Node):
 
         # Heading and course for topics.
         course = Float32()
-        course.data = self.compute_course(vel_x=xyz_vehicle_frame_velocities[0],
-                                         vel_y=xyz_vehicle_frame_velocities[1],
+        course.data = self.compute_course(vel_x=xyz_vehicle_frame_velocities.x,
+                                         vel_y=xyz_vehicle_frame_velocities.y,
                                          yaw_enu=yaw_rad)
         heading_ned = Float32()
         heading_ned.data = normalize_angle_deg(heading + 90)
 
         # Velocity in the plane.
         speed = Float32()
-        speed.data = math.sqrt(xyz_vehicle_frame_velocities[0]**2 +
-                               xyz_vehicle_frame_velocities[1]**2)
+        speed.data = math.sqrt(xyz_vehicle_frame_velocities.x**2 +
+                               xyz_vehicle_frame_velocities.y**2)
 
         # Depth.
         depth = Float32()
