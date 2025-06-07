@@ -282,6 +282,8 @@ class Ins2Odom(Node):
         """
         Compute the course of Lolo using her current heading
         and the velocity vector in the plane.
+
+        Returns course angle in NED.
         """
         cross_track_yaw = math.atan2(vel_y, vel_x)
         course_yaw = normalize_angle_rad(yaw_enu + cross_track_yaw)
@@ -318,7 +320,7 @@ class Ins2Odom(Node):
         # TODO - Check that this isn't getting messed up especially heading
         roll_rad = math.radians(roll)
         pitch_rad = math.radians(pitch)
-        yaw_rad = heading_to_yaw(heading)
+        yaw_enu = heading_to_yaw(heading)
 
         xyz_vehicle_frame_velocities = self.current_ins.speed_vessel_frame
 
@@ -332,9 +334,9 @@ class Ins2Odom(Node):
         course = Float32()
         course.data = self.compute_course(vel_x=xyz_vehicle_frame_velocities.x,
                                          vel_y=xyz_vehicle_frame_velocities.y,
-                                         yaw_enu=yaw_rad)
+                                         yaw_enu=yaw_enu)
         heading_ned = Float32()
-        heading_ned.data = normalize_angle_deg(heading + 90)
+        heading_ned.data = heading
 
         # Velocity in the plane.
         speed = Float32()
@@ -374,7 +376,7 @@ class Ins2Odom(Node):
 
         pose_quaternion_values = tf_transformations.quaternion_from_euler(roll_rad,
                                                                           pitch_rad,
-                                                                          yaw_rad)
+                                                                          yaw_enu)
         pose_utm.pose.orientation.x = pose_quaternion_values[0]
         pose_utm.pose.orientation.y = pose_quaternion_values[1]
         pose_utm.pose.orientation.z = pose_quaternion_values[2]
