@@ -52,7 +52,7 @@ class Altitude_node(Node):
 
     def timer_callback(self):
         if(self.dvl_altitude is not None):
-            self.get_logger().info("DVL data received")
+            #self.get_logger().info("DVL data received")
             msg = Float32()
             msg.data = self.dvl_altitude
             self.publisher.publish(msg)
