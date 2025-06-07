@@ -23,6 +23,7 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
+            'altitude_node = lolo_altitude_estimation.altitude:main',
             'fls_range = lolo_altitude_estimation.fls_range:main',
             'estimator_1 = lolo_altitude_estimation.fls_range_estimator_1:main',
             'estimator_2 = lolo_altitude_estimation.fls_range_estimator_2:main',

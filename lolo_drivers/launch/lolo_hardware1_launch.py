@@ -97,6 +97,13 @@ def generate_launch_description():
             }]
     )
 
+    altitude_node = Node(
+        package='lolo_altitude_estimation',
+        namespace=robot_ns,
+        executable='altitude_node',
+        name="altitude_node"
+    )
+
 
 
     return LaunchDescription([
@@ -106,5 +113,6 @@ def generate_launch_description():
         ixblue_ins_driver_node,
         nortek_dvl_driver_node,
         ins_map_odom_init_node,
-        ins_to_odom_complete_node
+        ins_to_odom_complete_node,
+        altitude_node
     ])
