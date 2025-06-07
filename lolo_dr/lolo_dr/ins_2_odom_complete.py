@@ -7,7 +7,6 @@ import math
 # ROS
 import rclpy
 from rclpy.node import Node
-from rclpy import time
 from message_filters import Subscriber, ApproximateTimeSynchronizer
 
 # Transforms
@@ -20,10 +19,9 @@ import tf_transformations
 from tf2_geometry_msgs import do_transform_pose_stamped
 
 # Messages
-from tf2_msgs.msg import TFMessage
 from nav_msgs.msg import Odometry
-from geometry_msgs.msg import TransformStamped, PoseStamped, Quaternion, PointStamped
-from geometry_msgs.msg import Pose
+from std_msgs.msg import Float32
+from geometry_msgs.msg import TransformStamped, PoseStamped
 from geographic_msgs.msg import GeoPoint
 from sensor_msgs.msg import Imu
 from ixblue_ins_msgs.msg import Ins
@@ -31,7 +29,6 @@ from ixblue_ins_msgs.msg import Ins
 # SMaRC Topics
 from lolo_msgs.msg import Topics as LoloTopics
 from smarc_msgs.msg import Topics as SmarcTopics
-from smarc_mission_msgs.msg import Topics as MissionTopics
 
 # Geo transform imports
 # Switching from Ozers service to pyproj or utm lib
@@ -42,11 +39,15 @@ import pyproj
 import utm
 
 try:
-    from .helpers.ros_helpers import rcl_time_to_secs
     from .helpers.spatial_helpers import heading_to_yaw
+    from .helpers.spatial_helpers import yaw_to_heading
+    from .helpers.spatial_helpers import normalize_angle_rad
+    from .helpers.spatial_helpers import normalize_angle_deg
 except ImportError:
-    from helpers.ros_helpers import rcl_time_to_secs
     from helpers.spatial_helpers import heading_to_yaw
+    from helpers.spatial_helpers import yaw_to_heading
+    from helpers.spatial_helpers import normalize_angle_rad
+    from helpers.spatial_helpers import normalize_angle_deg
 
 
 class Ins2Odom(Node):
@@ -133,16 +134,26 @@ class Ins2Odom(Node):
                                                      queue_size, max_delay)
         self.time_sync.registerCallback(self.sync_callback)
 
-        # Publishers
-        # Odom message in the map framed
+        # SMARC topics publishers.
         self.odom_pub = self.create_publisher(msg_type=Odometry, topic=self.output_odom_topic,
                                               qos_profile=10)
         if self.publish_tf:
             self.tf_broadcaster = TransformBroadcaster(self)
-
         self.lat_lon_pub = self.create_publisher(msg_type=GeoPoint,
                                                  topic=SmarcTopics.POS_LATLON_TOPIC,
                                                  qos_profile=10)
+        self.depth_pub = self.create_publisher(msg_type=Float32,
+                                               topic=SmarcTopics.DEPTH_TOPIC,
+                                               qos_profile=10)
+        self.heading_pub = self.create_publisher(msg_type=Float32,
+                                                 topic=SmarcTopics.HEADING_TOPIC,
+                                                 qos_profile=10)
+        self.course_pub = self.create_publisher(msg_type=Float32,
+                                                topic=SmarcTopics.COURSE_TOPIC,
+                                                qos_profile=10)
+        self.speed_pub = self.create_publisher(msg_type=Float32,
+                                               topic=SmarcTopics.SPEED_TOPIC,
+                                               qos_profile=10)
 
         # Timers
         # Odom publisher timer (publisher_timer):
@@ -192,7 +203,7 @@ class Ins2Odom(Node):
         frames_dict = yaml.safe_load(frames_yaml)
         if len(frames_dict) < 1:
             if self.verbose_setup:
-                self._log(f"TF Buffer has no frames")
+                self._log("TF Buffer has no frames")
             return
         frame_names = frames_dict.keys()
         if self.verbose_setup:
@@ -264,10 +275,17 @@ class Ins2Odom(Node):
 
         self.current_2_odom()
 
-
     def publisher_callback(self):
         pass
 
+    def compute_course(self, yaw_enu, vel_x, vel_y):
+        """
+        Compute the course of Lolo using her current heading
+        and the velocity vector in the plane.
+        """
+        cross_track_yaw = math.atan2(vel_y, vel_x)
+        course_yaw = normalize_angle_rad(yaw_enu + cross_track_yaw)
+        return yaw_to_heading(course_yaw)
 
     def current_2_odom(self):
         # Check for 'valid' current ins message
@@ -296,15 +314,39 @@ class Ins2Odom(Node):
         pitch = self.current_ins.pitch
         heading = self.current_ins.heading
 
+        # Convert thr INS roll, pitch, yaw to a quaternion
+        # TODO - Check that this isn't getting messed up especially heading
+        roll_rad = math.radians(roll)
+        pitch_rad = math.radians(pitch)
+        yaw_rad = heading_to_yaw(heading)
+
+        xyz_vehicle_frame_velocities = self.current_ins.speed_vessel_frame
+
         # GeoPoint for LatLon topic.
         geopoint = GeoPoint()
         geopoint.latitude = lat
         geopoint.longitude = lon
         geopoint.altitude = altitude
 
+        # Heading and course for topics.
+        course = Float32()
+        course.data = self.compute_course(vel_x=xyz_vehicle_frame_velocities[0],
+                                         vel_y=xyz_vehicle_frame_velocities[1],
+                                         yaw_enu=yaw_rad)
+        heading_ned = Float32()
+        heading_ned.data = normalize_angle_deg(heading + 90)
+
+        # Velocity in the plane.
+        speed = Float32()
+        speed.data = math.sqrt(xyz_vehicle_frame_velocities[0]**2 +
+                               xyz_vehicle_frame_velocities[1]**2)
+
+        # Depth.
+        depth = Float32()
+        depth.data = -altitude
+
         # Use utm lib to determine UTM coord and info
         # easting, northing, zone, band = utm.from_latlon(lat, lon)
-
         easting, northing = self.projection_transformer.transform(lon, lat)
         factors = self.projection_transformer.get_factors(lon, lat)
 
@@ -329,13 +371,10 @@ class Ins2Odom(Node):
         pose_utm.pose.position.y = northing
         pose_utm.pose.orientation.z = altitude
 
-        # Convert thr INS roll, pitch, yaw to a quaternion
-        # TODO - Check that this isn't getting messed up especially heading
-        roll_rad = math.radians(roll)
-        pitch_rad = math.radians(pitch)
-        yaw_rad = heading_to_yaw(heading)
 
-        pose_quaternion_values = tf_transformations.quaternion_from_euler(roll_rad, pitch_rad, yaw_rad)
+        pose_quaternion_values = tf_transformations.quaternion_from_euler(roll_rad,
+                                                                          pitch_rad,
+                                                                          yaw_rad)
         pose_utm.pose.orientation.x = pose_quaternion_values[0]
         pose_utm.pose.orientation.y = pose_quaternion_values[1]
         pose_utm.pose.orientation.z = pose_quaternion_values[2]
@@ -359,8 +398,6 @@ class Ins2Odom(Node):
         # TODO - Should this use the current time or the stamp of the ins message
         current_stamp = self.current_ins.header.stamp
 
-        xyz_vehicle_frame_velocities = self.current_ins.speed_vessel_frame
-
         odom = Odometry()
         odom.header.stamp = current_stamp
         odom.header.frame_id = self.output_odom_frame
@@ -373,6 +410,10 @@ class Ins2Odom(Node):
 
         # Publish messages.
         self.lat_lon_pub.publish(geopoint)
+        self.speed_pub.publish(speed)
+        self.heading_pub.publish(heading_ned)
+        self.course_pub.publish(course)
+        self.depth_pub.publish(depth)
         self.odom_pub.publish(odom)
 
         if self.publish_tf:
@@ -430,7 +471,7 @@ def main(args=None, namespace=None):
     try:
         rclpy.spin(node)
     except KeyboardInterrupt:
-        node.get_logger().info(f"Shutting down")
+        node.get_logger().info("Shutting down")
     finally:
         node.destroy_node()
         # rclpy.shutdown()
