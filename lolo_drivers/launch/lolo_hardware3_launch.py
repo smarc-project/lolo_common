@@ -21,7 +21,7 @@ def generate_launch_description():
     mbes_settings_node = Node(
         package="norbit_wbms_driver",
         executable="wbms_driver",
-        name="settings_node",
+        name="mbes_settings_node",
         namespace=namespace,
         output="screen",
         parameters=[
@@ -83,7 +83,7 @@ def generate_launch_description():
     fls_settings_node = Node(
         package="norbit_wbms_driver",
         executable="wbms_driver",
-        name="settings_node",
+        name="fls_settings_node",
         namespace=namespace,
         output="screen",
         parameters=[
