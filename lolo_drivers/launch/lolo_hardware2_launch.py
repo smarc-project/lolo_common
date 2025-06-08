@@ -76,6 +76,18 @@ def generate_launch_description():
             "input_topic": Topics.FLUORESCENCE_RAW_TOPIC,
             "output_topic": Topics.FLUORESCENCE_TOPIC,
         }]
+
+
+    svs_to_ins_node = Node(
+        package='lolo_svs_to_ins',
+        namespace=robot_ns,
+        executable='lolo_svs_to_ins_node',
+        name='lolo_svs_to_ins',
+        parameters=[{
+            "svs_topic": Topics.SVS_TOPIC,
+            "endpoint_ip" : "192.168.1.95"
+            "endpoint_port" : 9008
+        }]
     )
 
 
