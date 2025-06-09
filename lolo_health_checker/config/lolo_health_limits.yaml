@@ -21,6 +21,9 @@ goal_tolerance_depth: 5 # [m]
 # Absolute maximum depth allowed.
 max_depth: 750 # [m]
 
+# Depth threshold for diving
+diving_threshold_depth: 0.5 # [m]
+
 # Absolute minimum altitude from the
 # seafloor allowed.
 min_altitude: 0.5 # [m]

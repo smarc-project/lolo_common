@@ -2,7 +2,7 @@
 import yaml
 import math
 import os
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 # ROS
 import rclpy
@@ -22,8 +22,8 @@ from smarc_msgs.msg import Topics as SmarcTopics
 
 @dataclass
 class StatusReport:
-    ready: bool
-    fault: bool
+    ready: bool = field(default=False)
+    fault: bool = field(default=False)
 
 
 class HealthNode(Node):
@@ -299,8 +299,8 @@ class HealthNode(Node):
         self.current_depth = msg.data
         self.current_depth_time = self.get_clock().now().nanoseconds / 1e9
 
-        if "diving_thrshold_depth" in self.limits.keys():
-            threshold_depth = self.limits["diving_thrshold_depth"]
+        if "diving_threshold_depth" in self.limits.keys():
+            threshold_depth = self.limits["diving_threshold_depth"]
             if self.current_depth > threshold_depth:
                 self.diving = True
             else:
@@ -382,9 +382,11 @@ class HealthNode(Node):
         if self.current_depth is None:
             return status
         status.ready = True
+
         if self.current_depth > self.limits["max_depth"]:
             status.fault = True
             self.get_logger().warning(f"WTF are you doing at {self.current_depth} m deep?!")
+
         return status
 
     def check_altitude(self):
@@ -411,11 +413,17 @@ class HealthNode(Node):
         return StatusReport.
         """
         status = StatusReport(ready=False, fault=False)
+        if self.current_depth is None:
+            return status
+        else:
+            status.ready = True
+
         if self.diving:
             dive_time = self.current_depth_time - self.diving_start_time
             if dive_time > self.limits["max_dive_time"]:
                 status.fault=True
                 self.get_logger().warning(f"Total divetime of {dive_time} reached! Aborting!")
+
         return status
 
     def publisher_callback(self):

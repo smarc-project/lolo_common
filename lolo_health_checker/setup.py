@@ -24,7 +24,7 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'lolo_health_node = lolo_health_checker.lolo_health_node:main'
+            'lolo_health_node = lolo_health_checker.lolo_health_node:main',
         ],
     },
 )
