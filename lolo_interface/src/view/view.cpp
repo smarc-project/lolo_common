@@ -45,7 +45,7 @@ void View::setup()
     battery2_pub = rcl_node->create_publisher<sensor_msgs::msg::BatteryState>(lolo_msgs::msg::Topics::EXTENDED_BATTERY_2_TOPIC, 1);
 
     //USBL
-    usbl_pub = rcl_node->create_publisher<std_msgs::msg::Char>(lolo_msgs::msg::Topics::USBL_RECEIVED_CHR_TOPIC, 1);
+    usbl_pub = rcl_node->create_publisher<std_msgs::msg::Char>(lolo_msgs::msg::Topics::USBL_RECEIVED_CHR_TOPIC, 20);
 
     //Satelite
     satelite_pub = rcl_node->create_publisher<std_msgs::msg::String>(lolo_msgs::msg::Topics::SATELITE_RECEIVED_TOPIC, 1);

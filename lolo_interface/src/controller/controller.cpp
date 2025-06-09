@@ -34,9 +34,9 @@ void Controller::setup() {
     
     menu_sub = rcl_node->create_subscription<std_msgs::msg::String>("debug/menu_in", 1, std::bind(&Controller::menu_callback, this, std::placeholders::_1));
     
-    usbl_sub = rcl_node->create_subscription<std_msgs::msg::String>("usbl", 1, std::bind(&Controller::usbl_callback, this, std::placeholders::_1));
+    usbl_sub = rcl_node->create_subscription<std_msgs::msg::String>(lolo_msgs::msg::Topics::USBL_TRANSMIT_TOPIC, 10, std::bind(&Controller::usbl_callback, this, std::placeholders::_1));
     
-    satelite_sub = rcl_node->create_subscription<std_msgs::msg::String>("satelite", 1, std::bind(&Controller::satelite_callback, this, std::placeholders::_1));
+    satelite_sub = rcl_node->create_subscription<std_msgs::msg::String>(lolo_msgs::msg::Topics::SATELITE_RECEIVED_TOPIC, 1, std::bind(&Controller::satelite_callback, this, std::placeholders::_1));
 
     settings_sub = rcl_node->create_subscription<diagnostic_msgs::msg::KeyValue>(lolo_msgs::msg::Topics::EXTENDED_SETTINGS_TOPIC, 10, std::bind(&Controller::settings_callback, this, std::placeholders::_1));
 }
