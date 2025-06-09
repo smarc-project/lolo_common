@@ -3,6 +3,7 @@
 
   <node pkg="lolo_health_checker" exec="lolo_health_node" name="lolo_health_node" output="screen" namespace="$(var robot_name)">
     <param name="update_rate" value="1" />
+    <param name="debugging" value="True" />
   </node>
 
 </launch>
