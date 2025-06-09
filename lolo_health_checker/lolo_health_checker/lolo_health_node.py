@@ -419,7 +419,7 @@ class HealthNode(Node):
             status.ready = True
 
         if self.diving:
-            dive_time = self.current_depth_time - self.diving_start_time
+            dive_time = self.current_depth_time - self.dive_start_time
             if dive_time > self.limits["max_dive_time"]:
                 status.fault=True
                 self.get_logger().warning(f"Total divetime of {dive_time} reached! Aborting!")
@@ -452,15 +452,25 @@ class HealthNode(Node):
 
         # ready_checks = [pressure_check.ready, status_check.ready,
                         # temperature_check.ready]
-        ready_checks = [emergency_check.ready, depth_check.ready,
-                        altitude_check.ready]
+        # ready_checks = [emergency_check.ready, depth_check.ready,
+        #                 altitude_check.ready]
+
+        ready_checks = [pressure_check.ready, status_check.ready,
+                        temperature_check.ready, emergency_check.ready,
+                        depth_check.ready, altitude_check.ready]
+
 
         # fault_checks = [pressure_check.fault, status_check.fault,
                         # temperature_check.fault, emergency_check.fault,
                         # depth_check.fault, altitude_check.fault,
                         # dive_check.fault]
-        fault_checks = [emergency_check.fault, depth_check.fault,
-                        altitude_check.fault, dive_check.fault]
+        # fault_checks = [emergency_check.fault, depth_check.fault,
+        #                 altitude_check.fault, dive_check.fault]
+
+        fault_checks = [pressure_check.fault, status_check.fault,
+                        temperature_check.fault, emergency_check.fault,
+                        depth_check.fault, altitude_check.fault,
+                        dive_check.fault]
 
         if True in fault_checks:
             msg = Int8()
@@ -474,59 +484,6 @@ class HealthNode(Node):
             msg = Int8()
             msg.data = SmarcTopics.VEHICLE_HEALTH_WAITING
             self.check_pub.publish(msg)
-
-    def publisher_callback_jv(self):
-        """
-        Do all the checking here
-         This needs to be merged with the fine work of aldo
-        """
-
-        # self._log("DEBUG: publisher_callback")
-
-        # Once fault is detected, node will latch in that state and require a reset
-        if self.status == SmarcTopics.VEHICLE_HEALTH_ERROR:
-            # Publish Error status
-            msg = Int8()
-            msg.data = self.status
-            self.status_pub.publish(msg)
-
-            self.abort_pub.publish(Empty())
-            return
-
-        # Perform Checks
-        pressure_check = self.check_pressure()
-        status_check = self.check_status()
-        temperature_check = self.check_temperature()
-
-        if self.debugging:
-            self._log("publisher_callback()")
-            self._log(f"Pressure: {pressure_check}")
-            self._log(f"Status: {status_check}")
-            self._log(f"Temperature: {temperature_check}")
-
-        ready_check = all([pressure_check.ready, status_check.ready, temperature_check.ready])
-        fault_check = True in [pressure_check.fault, status_check.fault, temperature_check.fault]
-
-        # Determine current state
-        # Fault will only trigger once all topics have been detected
-        # TODO - Is this really what we want??!
-        if fault_check and ready_check:
-            # Fault Condition
-            self.status = SmarcTopics.VEHICLE_HEALTH_ERROR
-        elif ready_check:
-            # Ready Condition
-            self.status = SmarcTopics.VEHICLE_HEALTH_READY
-        else:
-            self.status = SmarcTopics.VEHICLE_HEALTH_WAITING
-
-        # Publish status
-        msg = Int8()
-        msg.data = self.status
-        self.status_pub.publish(msg)
-
-        # Publish abort if error is detected
-        if self.status == SmarcTopics.VEHICLE_HEALTH_ERROR:
-            self.abort_pub.publish(Empty())
 
 def main(args=None, namespace=None):
     rclpy.init(args=args)
