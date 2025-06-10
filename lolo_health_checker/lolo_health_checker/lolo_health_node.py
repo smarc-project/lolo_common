@@ -303,9 +303,9 @@ class HealthNode(Node):
             threshold_depth = self.limits["diving_threshold_depth"]
             if self.current_depth > threshold_depth:
                 self.diving = True
+                self.dive_start_time = self.current_depth_time
             else:
                 self.diving = False
-                self.dive_start_time = self.current_depth_time
 
 
     def checker(self, current_msg, current_msg_valid):
@@ -468,7 +468,7 @@ class HealthNode(Node):
         #                 altitude_check.fault, dive_check.fault]
 
         fault_checks = [pressure_check.fault, status_check.fault,
-                        temperature_check.fault, emergency_check.fault,
+                        temperature_check.fault, #emergency_check.fault,
                         depth_check.fault, altitude_check.fault,
                         dive_check.fault]
 
