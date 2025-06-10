@@ -303,9 +303,9 @@ class HealthNode(Node):
             threshold_depth = self.limits["diving_threshold_depth"]
             if self.current_depth > threshold_depth:
                 self.diving = True
-                self.dive_start_time = self.current_depth_time
             else:
                 self.diving = False
+                self.dive_start_time = self.current_depth_time
 
 
     def checker(self, current_msg, current_msg_valid):
@@ -420,6 +420,8 @@ class HealthNode(Node):
 
         if self.diving:
             dive_time = self.current_depth_time - self.dive_start_time
+            time_until_timeout = self.limits["max_dive_time"] - dive_time
+            self.get_logger().info(f"Diving! Timeout in: {time_until_timeout}")
             if dive_time > self.limits["max_dive_time"]:
                 status.fault=True
                 self.get_logger().warning(f"Total divetime of {dive_time} reached! Aborting!")
