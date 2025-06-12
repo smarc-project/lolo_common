@@ -28,10 +28,10 @@ class MapOdomInitializer(Node):
 
     """
 
-    def __init__(self):
-        super().__init__('map_odom_initializer')
+    def __init__(self, namespace=None):
+        super().__init__('map_odom_initializer', namespace=namespace)
         self._log(f'map -> odom initialization')
-        self._log(f'Waiting for initial Lat/Lon coordinates')
+        self._log(f'Waiting for initial Lat/Lon coordinates: {loloTopics.INS_RAW_TOPIC}')
 
         self.declare_parameter('update_rate', 1.0)
         self.update_rate = self.get_parameter('update_rate').value
@@ -86,7 +86,9 @@ class MapOdomInitializer(Node):
         self.odom_transform = TransformStamped()
         self.odom_transform.header.stamp = now
         self.odom_transform.header.frame_id = f'utm'
-        self.odom_transform.child_frame_id = 'lolo/odom'
+        # TODO Check - What should the child frame be?
+        # self.odom_transform.child_frame_id = 'lolo/odom'
+        self.odom_transform.child_frame_id = 'odom'
         self.odom_transform.transform.translation.x = easting
         self.odom_transform.transform.translation.y = northing
         self.odom_transform.transform.translation.z = altitude
@@ -116,9 +118,9 @@ class MapOdomInitializer(Node):
         self.get_logger().info(message)
 
 
-def main(args=None):
+def main(args=None, namespace=None):
     rclpy.init(args=args)
-    node = MapOdomInitializer()
+    node = MapOdomInitializer(namespace=namespace)
 
     try:
         rclpy.spin(node)

@@ -7,7 +7,7 @@ import math
 # ROS
 import rclpy
 from rclpy.node import Node
-from message_filters import Subscriber, ApproximateTimeSynchronizer
+# from message_filters import Subscriber, ApproximateTimeSynchronizer
 
 # Transforms
 from tf2_ros.buffer import Buffer
@@ -21,7 +21,7 @@ from tf2_geometry_msgs import do_transform_pose_stamped
 # Messages
 from nav_msgs.msg import Odometry
 from std_msgs.msg import Float32
-from geometry_msgs.msg import TransformStamped, PoseStamped
+from geometry_msgs.msg import TransformStamped, PoseStamped, Quaternion, PointStamped, Pose
 from geographic_msgs.msg import GeoPoint
 from sensor_msgs.msg import Imu
 from ixblue_ins_msgs.msg import Ins
@@ -29,6 +29,7 @@ from ixblue_ins_msgs.msg import Ins
 # SMaRC Topics
 from lolo_msgs.msg import Topics as LoloTopics
 from smarc_msgs.msg import Topics as SmarcTopics
+from smarc_mission_msgs.msg import Topics as MissionTopics
 
 # Geo transform imports
 # Switching from Ozers service to pyproj or utm lib
@@ -83,7 +84,7 @@ class Ins2Odom(Node):
         # tf transform related attributes
         self.utm_frame = None
         self.output_odom_frame = self.get_parameter("output_odom_frame").value
-        self.odom_child_frame_id= self.get_parameter("base_link_frame").value  # Should this be hard coded? NO!
+        self.odom_child_frame_id = self.get_parameter("base_link_frame").value  # Should this be hard coded? NO!
 
         self.tf_buffer = Buffer()
         self.tf_listener = TransformListener(self.tf_buffer, self)
@@ -100,6 +101,7 @@ class Ins2Odom(Node):
         self.publish_tf = self.get_parameter("publish_tf").value
 
         self.publisher_period = 0.5  # Rate at which to publish converted
+        self.output_rate = self.get_parameter("output_rate").value
         self.conversion_timeout = 2.5  # Timeout for tf related transforms
 
         self.status_last_time = None
@@ -107,6 +109,8 @@ class Ins2Odom(Node):
 
         self.verbose_setup = self.get_parameter("verbose_setup").value
         self.verbose_conversion = self.get_parameter("verbose_conversion").value
+
+        self.log_log = None
 
         # Subscribers
         # IND data subscription (ins_sub):
@@ -116,29 +120,29 @@ class Ins2Odom(Node):
         # Once determined we will remove this sub
 
         # Original un synced
+        self._log(f"Subscribing to INS topic :{self.input_ins_topic}")
         self.ins_sub = self.create_subscription(msg_type=Ins, topic=self.input_ins_topic,
                                                 callback=self.ins_callback,
                                                 qos_profile=10)
 
+        self._log(f"Subscribing to INS topic :{self.input_imu_topic}")
         self.imu_sub = self.create_subscription(msg_type=Imu, topic=self.input_imu_topic,
                                                 callback=self.imu_callback,
                                                 qos_profile=10)
 
-        self.ins_sub = Subscriber(self, Ins, self.input_ins_topic)  # msg_type and topic name
-        self.imu_sub = Subscriber(self, Imu, self.input_imu_topic)
-
-        # synchronizer
-        queue_size = 10
-        max_delay = 1
-        self.time_sync = ApproximateTimeSynchronizer([self.ins_sub, self.imu_sub],
-                                                     queue_size, max_delay)
-        self.time_sync.registerCallback(self.sync_callback)
+        # self.ins_sub = Subscriber(self, Ins, self.input_ins_topic)  # msg_type and topic name
+        # self.imu_sub = Subscriber(self, Imu, self.input_imu_topic)
+        #
+        # # synchronizer
+        # queue_size = 10
+        # max_delay = 1
+        # self.time_sync = ApproximateTimeSynchronizer([self.ins_sub, self.imu_sub],
+        #                                              queue_size, max_delay)
+        # self.time_sync.registerCallback(self.sync_callback)
 
         # SMARC topics publishers.
         self.odom_pub = self.create_publisher(msg_type=Odometry, topic=self.output_odom_topic,
                                               qos_profile=10)
-        if self.publish_tf:
-            self.tf_broadcaster = TransformBroadcaster(self)
         self.lat_lon_pub = self.create_publisher(msg_type=GeoPoint,
                                                  topic=SmarcTopics.POS_LATLON_TOPIC,
                                                  qos_profile=10)
@@ -154,16 +158,26 @@ class Ins2Odom(Node):
         self.speed_pub = self.create_publisher(msg_type=Float32,
                                                topic=SmarcTopics.SPEED_TOPIC,
                                                qos_profile=10)
+        if self.publish_tf:
+            self.tf_broadcaster = TransformBroadcaster(self)
 
         # Timers
         # Odom publisher timer (publisher_timer):
         # Publishing is handled in a timer (publish_timer) and its callback (publisher_callback)
         # The rate is set by self.publish_period.
 
-        self.publisher_timer = self.create_timer(timer_period_sec=self.publisher_period,
+        self._log(f"Output rate: {self.output_rate}")
+        self.publisher_timer = self.create_timer(timer_period_sec=(1.0/self.output_rate),
                                                  callback=self.publisher_callback)
 
     def _log(self, message):
+        self.get_logger().info(message)
+
+    def _log_meter(self, message):
+        if message == self.log_log:
+            return
+
+        self.log_log = message
         self.get_logger().info(message)
 
     # Basic node set up
@@ -185,6 +199,8 @@ class Ins2Odom(Node):
         # Behavior
         self.declare_parameter("correct_meridian_convergence", True)
         self.declare_parameter("publish_tf", True)
+
+        self.declare_parameter("output_rate", 20.0)
 
         # Verbose output
         self.declare_parameter("verbose_setup", False)
@@ -276,7 +292,8 @@ class Ins2Odom(Node):
         self.current_2_odom()
 
     def publisher_callback(self):
-        pass
+
+        self.current_2_odom()
 
     def compute_course(self, yaw_enu, vel_x, vel_y):
         """
@@ -290,21 +307,23 @@ class Ins2Odom(Node):
         return yaw_to_heading(course_yaw)
 
     def current_2_odom(self):
-        # Check for 'valid' current ins message
-        # - Valid self.current_ins: is defined and timely
-        #
 
-        # Check that ins data has been recieved
-        if self.current_ins is None and self.current_imu is None:
+        # Check that ins and imu data has been recieved
+        if self.current_ins is None or self.current_imu is None:
+            if self.verbose_setup:
+                self._log("INS or IMU not initialized")
             return
 
-        # TODO - Add check for stale data
         self.determine_utm_zone_tf_names()
 
         if self.utm_frame is None:
+            if self.verbose_setup:
+                self._log("UTM frame not initialized")
             return
 
         if self.projection_transformer is None:
+            if self.verbose_setup:
+                self._log("Projection not initialized")
             return
 
         # Extract information
@@ -316,8 +335,15 @@ class Ins2Odom(Node):
         pitch = self.current_ins.pitch
         heading = self.current_ins.heading
 
+        # Convert Lat and Lon to UTM
+        easting, northing = self.projection_transformer.transform(lon, lat)
+        factors = self.projection_transformer.get_factors(lon, lat)
+
+        if self.correct_meridian_convergence:
+            meridian_convergence = factors.meridian_convergence
+            heading = (heading - meridian_convergence) % 360
+
         # Convert thr INS roll, pitch, yaw to a quaternion
-        # TODO - Check that this isn't getting messed up especially heading
         roll_rad = math.radians(roll)
         pitch_rad = math.radians(pitch)
         yaw_enu = heading_to_yaw(heading)
@@ -333,28 +359,19 @@ class Ins2Odom(Node):
         # Heading and course for topics.
         course = Float32()
         course.data = self.compute_course(vel_x=xyz_vehicle_frame_velocities.x,
-                                         vel_y=xyz_vehicle_frame_velocities.y,
-                                         yaw_enu=yaw_enu)
+                                          vel_y=xyz_vehicle_frame_velocities.y,
+                                          yaw_enu=yaw_enu)
         heading_ned = Float32()
         heading_ned.data = heading
 
         # Velocity in the plane.
         speed = Float32()
-        speed.data = math.sqrt(xyz_vehicle_frame_velocities.x**2 +
-                               xyz_vehicle_frame_velocities.y**2)
+        speed.data = math.sqrt(xyz_vehicle_frame_velocities.x ** 2 +
+                               xyz_vehicle_frame_velocities.y ** 2)
 
         # Depth.
         depth = Float32()
         depth.data = -altitude
-
-        # Use utm lib to determine UTM coord and info
-        # easting, northing, zone, band = utm.from_latlon(lat, lon)
-        easting, northing = self.projection_transformer.transform(lon, lat)
-        factors = self.projection_transformer.get_factors(lon, lat)
-
-        if self.correct_meridian_convergence:
-            meridian_convergence = factors.meridian_convergence
-            heading = (heading - meridian_convergence) % 360
 
         # No longer checking for utm zon matches, the initial zone will be use for the duration of the mission
         # Check if the utm zone from utm lib matches the utm zone from tf frame names
@@ -371,8 +388,7 @@ class Ins2Odom(Node):
 
         pose_utm.pose.position.x = easting
         pose_utm.pose.position.y = northing
-        pose_utm.pose.orientation.z = altitude
-
+        pose_utm.pose.position.z = altitude
 
         pose_quaternion_values = tf_transformations.quaternion_from_euler(roll_rad,
                                                                           pitch_rad,
@@ -387,17 +403,18 @@ class Ins2Odom(Node):
             transform = self.tf_buffer.lookup_transform(target_frame=self.output_odom_frame,
                                                         source_frame=self.utm_frame,
                                                         time=rclpy.time.Time(),
-                                                        timeout=rclpy.time.Duration(seconds=self.publisher_period/2))
+                                                        timeout=rclpy.time.Duration(seconds=self.conversion_timeout))
 
             pose_odom = do_transform_pose_stamped(pose=pose_utm,
                                                   transform=transform)
+
         except (LookupException, ConnectivityException, ExtrapolationException) as e:
             if self.verbose_conversion:
-                self.get_logger().warn(f"TF transform from {self.utm_frame} to {self.output_odom_frame} not available: {e}")
+                self.get_logger().warn(
+                    f"TF transform from {self.utm_frame} to {self.output_odom_frame} not available: {e}")
             return
 
         # Publish odometry
-        # TODO - Should this use the current time or the stamp of the ins message
         current_stamp = self.current_ins.header.stamp
 
         odom = Odometry()
@@ -411,6 +428,7 @@ class Ins2Odom(Node):
         odom.twist.twist.angular = self.current_imu.angular_velocity
 
         # Publish messages.
+
         self.lat_lon_pub.publish(geopoint)
         self.speed_pub.publish(speed)
         self.heading_pub.publish(heading_ned)
@@ -430,6 +448,25 @@ class Ins2Odom(Node):
             tf_msg.transform.rotation = pose_odom.pose.orientation
 
             self.tf_broadcaster.sendTransform(tf_msg)
+
+    def valid_output_time(self):
+
+        if not self.limit_output_rate:
+            # self._log("Time_check: no limit")
+            return True
+
+        if self.last_odom_publish is None:
+            # self._log("Time_check: First time")
+            return True
+
+        now = self.get_clock().now().nanoseconds * 1e-9
+
+        if (now - self.last_odom_publish) < (1.0 / self.output_rate):
+            # self._log("Time_check: Invalid time")
+            return False
+
+        # self._log(f"Time_check: Valid time {now - self.last_odom_publish} / {1.0/self.output_rate} ")
+        return True
 
     def check_status_valid(self, current_time: float):
         """
@@ -466,6 +503,7 @@ class Ins2Odom(Node):
 
         # Create a transformer
         self.projection_transformer = pyproj.Proj(proj='utm', zone=self.utm_zone, ellps='WGS84')
+
 
 def main(args=None, namespace=None):
     rclpy.init(args=args)
