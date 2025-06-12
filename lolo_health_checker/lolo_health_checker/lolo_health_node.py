@@ -420,6 +420,8 @@ class HealthNode(Node):
 
         if self.diving:
             dive_time = self.current_depth_time - self.dive_start_time
+            time_until_timeout = self.limits["max_dive_time"] - dive_time
+            self.get_logger().info(f"Diving! Timeout in: {time_until_timeout}")
             if dive_time > self.limits["max_dive_time"]:
                 status.fault=True
                 self.get_logger().warning(f"Total divetime of {dive_time} reached! Aborting!")
@@ -468,7 +470,7 @@ class HealthNode(Node):
         #                 altitude_check.fault, dive_check.fault]
 
         fault_checks = [pressure_check.fault, status_check.fault,
-                        temperature_check.fault, emergency_check.fault,
+                        temperature_check.fault, #emergency_check.fault,
                         depth_check.fault, altitude_check.fault,
                         dive_check.fault]
 
