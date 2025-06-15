@@ -303,7 +303,7 @@ class UsblInterface:
         stamp_msg = Time()
         stamp = float(stamp)
         stamp_msg.sec = int(stamp)
-        stamp_msg.nsec = int((stamp % 1) * 1e9)
+        stamp_msg.nanosec = int((stamp % 1) * 1e9)
         pos_msg = PoseStamped()
         # TODO: will the fact that the stamp is in the past affect ros in a way?
         pos_msg.header.stamp = stamp_msg
@@ -324,7 +324,7 @@ class UsblInterface:
             return
 
         # Append a carriage return at the end of the msg.
-        msg += "\r"
+        msg += "\r\n"
         string_msg = String()
         string_msg.data = msg
         self.transmit_pub.publish(string_msg)

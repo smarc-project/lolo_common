@@ -458,7 +458,7 @@ class HealthNode(Node):
         #                 altitude_check.ready]
 
         ready_checks = [pressure_check.ready, status_check.ready,
-                        temperature_check.ready, emergency_check.ready,
+                        temperature_check.ready, #emergency_check.ready,
                         depth_check.ready, altitude_check.ready]
 
 

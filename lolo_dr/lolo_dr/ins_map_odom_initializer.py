@@ -87,8 +87,8 @@ class MapOdomInitializer(Node):
         self.odom_transform.header.stamp = now
         self.odom_transform.header.frame_id = f'utm'
         # TODO Check - What should the child frame be?
-        # self.odom_transform.child_frame_id = 'lolo/odom'
-        self.odom_transform.child_frame_id = 'odom'
+        self.odom_transform.child_frame_id = 'lolo/odom'
+        #self.odom_transform.child_frame_id = 'odom'
         self.odom_transform.transform.translation.x = easting
         self.odom_transform.transform.translation.y = northing
         self.odom_transform.transform.translation.z = altitude
