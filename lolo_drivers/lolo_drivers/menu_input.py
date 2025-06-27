@@ -14,7 +14,7 @@ class Menu_in(Node):
     def timer_callback(self):
         cmd = input("Write command: ")
         msg = String()
-        msg.data = cmd
+        msg.data = cmd + "\n"
         self.publisher_.publish(msg)
 
 

@@ -291,6 +291,19 @@ class HealthNode(Node):
         self.current_temperature = msg
         self.current_temperature_time = self.get_clock().now().nanoseconds / 1e9
 
+        # Hack:
+        # Sometimes the Servos can send temp=205deg to indicate that something is wrong with the temperature sensor.
+        # When it has happended so far it has gone back to normal in the next sample, so we don't want
+        # to abort because of that
+        if(self.current_temperature.rudder_motor == 205): self.current_temperature.rudder_motor = 20.0
+        if(self.current_temperature.rudder_pcb == 205): self.current_temperature.rudder_pcb = 20.0
+        if(self.current_temperature.elevator_motor == 205): self.current_temperature.elevator_motor = 20.0
+        if(self.current_temperature.elevator_pcb == 205): self.current_temperature.elevator_pcb = 20.0
+        if(self.current_temperature.elevon_port_motor == 205): self.current_temperature.elevon_port_motor = 20.0
+        if(self.current_temperature.elevon_port_pcb == 205): self.current_temperature.elevon_port_pcb = 20.0
+        if(self.current_temperature.elevon_strb_motor == 205): self.current_temperature.elevon_strb_motor = 20.0
+        if(self.current_temperature.elevon_strb_pcb == 205): self.current_temperature.elevon_strb_pcb = 20.0
+
     def altitude_callback(self, msg):
         self.current_altitude = msg.data
         self.current_altitude_time = self.get_clock().now().nanoseconds / 1e9
@@ -442,6 +455,26 @@ class HealthNode(Node):
 
         emergency_check = self.check_emergency()
 
+
+        ready_checks = [pressure_check.ready, status_check.ready,
+                        temperature_check.ready, #emergency_check.ready,
+                        depth_check.ready, altitude_check.ready]
+
+
+        fault_checks = [pressure_check.fault, status_check.fault,
+                        temperature_check.fault, #emergency_check.fault,
+                        depth_check.fault, altitude_check.fault,
+                        dive_check.fault]
+
+        msg = Int8()
+        if True in fault_checks:
+            msg.data = SmarcTopics.VEHICLE_HEALTH_ERROR
+        elif all(ready_checks):
+            msg.data = SmarcTopics.VEHICLE_HEALTH_READY
+        else:
+            msg.data = SmarcTopics.VEHICLE_HEALTH_WAITING
+        self.check_pub.publish(msg)
+
         if self.debugging:
             self._log("publisher_callback()")
             self._log(f"Pressure: {pressure_check}")
@@ -451,41 +484,7 @@ class HealthNode(Node):
             self._log(f"Altitude: {altitude_check}")
             self._log(f"Dive: {dive_check}")
             self._log(f"Emergency: {emergency_check}")
-
-        # ready_checks = [pressure_check.ready, status_check.ready,
-                        # temperature_check.ready]
-        # ready_checks = [emergency_check.ready, depth_check.ready,
-        #                 altitude_check.ready]
-
-        ready_checks = [pressure_check.ready, status_check.ready,
-                        temperature_check.ready, #emergency_check.ready,
-                        depth_check.ready, altitude_check.ready]
-
-
-        # fault_checks = [pressure_check.fault, status_check.fault,
-                        # temperature_check.fault, emergency_check.fault,
-                        # depth_check.fault, altitude_check.fault,
-                        # dive_check.fault]
-        # fault_checks = [emergency_check.fault, depth_check.fault,
-        #                 altitude_check.fault, dive_check.fault]
-
-        fault_checks = [pressure_check.fault, status_check.fault,
-                        temperature_check.fault, #emergency_check.fault,
-                        depth_check.fault, altitude_check.fault,
-                        dive_check.fault]
-
-        if True in fault_checks:
-            msg = Int8()
-            msg.data = SmarcTopics.VEHICLE_HEALTH_ERROR
-            self.check_pub.publish(msg)
-        elif all(ready_checks):
-            msg = Int8()
-            msg.data = SmarcTopics.VEHICLE_HEALTH_READY
-            self.check_pub.publish(msg)
-        else:
-            msg = Int8()
-            msg.data = SmarcTopics.VEHICLE_HEALTH_WAITING
-            self.check_pub.publish(msg)
+            self._log(f"Output: {msg.data}")
 
 def main(args=None, namespace=None):
     rclpy.init(args=args)
