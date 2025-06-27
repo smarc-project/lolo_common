@@ -18,7 +18,7 @@ void Controller::setup() {
 
     //Create subscriptions
     //heartbeat_sub = rcl_node->create_subscription<std_msgs::msg::Empty>(lolo_msgs::msg::Topics::HEARTBEAT_TOPIC, 1, std::bind(&Controller::heartbeat_callback, this, std::placeholders::_1));
-    abort_sub = rcl_node->create_subscription<std_msgs::msg::Empty>(smarc_msgs::msg::Topics::ABORT_TOPIC, 1, std::bind(&Controller::abort_callback, this, std::placeholders::_1));
+    abort_sub = rcl_node->create_subscription<std_msgs::msg::Empty>(lolo_msgs::msg::Topics::LOLO_ABORT, 1, std::bind(&Controller::abort_callback, this, std::placeholders::_1));
     
     rudder_cmd_sub = rcl_node->create_subscription<std_msgs::msg::Float32>(lolo_msgs::msg::Topics::RUDDER_CMD, 1, std::bind(&Controller::rudder_callback, this, std::placeholders::_1));
     elevator_cmd_sub = rcl_node->create_subscription<std_msgs::msg::Float32>(lolo_msgs::msg::Topics::ELEVATOR_CMD, 1, std::bind(&Controller::elevator_callback, this, std::placeholders::_1));
@@ -34,9 +34,9 @@ void Controller::setup() {
     
     menu_sub = rcl_node->create_subscription<std_msgs::msg::String>("debug/menu_in", 1, std::bind(&Controller::menu_callback, this, std::placeholders::_1));
     
-    usbl_sub = rcl_node->create_subscription<std_msgs::msg::String>("usbl", 1, std::bind(&Controller::usbl_callback, this, std::placeholders::_1));
+    usbl_sub = rcl_node->create_subscription<std_msgs::msg::String>(lolo_msgs::msg::Topics::USBL_TRANSMIT_TOPIC, 10, std::bind(&Controller::usbl_callback, this, std::placeholders::_1));
     
-    satelite_sub = rcl_node->create_subscription<std_msgs::msg::String>("satelite", 1, std::bind(&Controller::satelite_callback, this, std::placeholders::_1));
+    satelite_sub = rcl_node->create_subscription<std_msgs::msg::String>(lolo_msgs::msg::Topics::SATELITE_RECEIVED_TOPIC, 1, std::bind(&Controller::satelite_callback, this, std::placeholders::_1));
 
     settings_sub = rcl_node->create_subscription<diagnostic_msgs::msg::KeyValue>(lolo_msgs::msg::Topics::EXTENDED_SETTINGS_TOPIC, 10, std::bind(&Controller::settings_callback, this, std::placeholders::_1));
 }

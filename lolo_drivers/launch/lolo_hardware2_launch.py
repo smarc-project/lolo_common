@@ -52,10 +52,10 @@ def generate_launch_description():
         parameters=[{
             "input_topic": Topics.DO_RAW_TOPIC,
             "output_topic": Topics.DO_TOPIC,
-            "request_topic" : "DO_REQUST_TOPIC_CHANGE_THIS"
+            "request_topic" : Topics.DO_RAW_REQUEST_TOPIC,
         }]
     )
-    
+
     svs_parser_node = Node(
         package='svs_driver',
         namespace=robot_ns,
@@ -79,6 +79,19 @@ def generate_launch_description():
     )
 
 
+    svs_to_ins_node = Node(
+        package='lolo_svs_to_ins',
+        namespace=robot_ns,
+        executable='lolo_svs_to_ins_node',
+        name='lolo_svs_to_ins',
+        parameters=[{
+            "svs_topic": Topics.SVS_TOPIC,
+            "endpoint_ip" : "192.168.1.95",
+            "endpoint_port" : 9008,
+        }]
+    )
+
+
     return LaunchDescription([
         robot_ns_launch_arg,
         extended_translator_node,
@@ -86,5 +99,6 @@ def generate_launch_description():
         turbidity_parser_node,
         do_parser_node,
         svs_parser_node,
-        chlorophyll_parser_node
+        chlorophyll_parser_node,
+        svs_to_ins_node
     ])

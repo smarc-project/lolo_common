@@ -1,15 +1,11 @@
 <?xml version="1.0"?>
 <?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
-  <name>health_checker</name>
+  <name>lolo_svs_to_ins</name>
   <version>0.0.0</version>
-  <description>Package contains nodes for determining the health status of vehicles</description>
-  <maintainer email="jvaldez@kth.se">julian</maintainer>
-  <license>MIT</license>
-
-  <build_depend>std_msgs</build_depend>
-  <build_depend>lolo_msgs</build_depend>
-  <build_depend>ixblue_ins_msgs</build_depend>
+  <description>TODO: Package description</description>
+  <maintainer email="nrol@kth.se">niklas</maintainer>
+  <license>TODO: License declaration</license>
 
   <test_depend>ament_copyright</test_depend>
   <test_depend>ament_flake8</test_depend>

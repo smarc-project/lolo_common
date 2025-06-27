@@ -1,7 +1,6 @@
 from setuptools import find_packages, setup
-import glob, os
 
-package_name = 'lolo_drivers'
+package_name = 'lolo_svs_to_ins'
 
 setup(
     name=package_name,
@@ -11,8 +10,6 @@ setup(
         ('share/ament_index/resource_index/packages',
             ['resource/' + package_name]),
         ('share/' + package_name, ['package.xml']),
-        (os.path.join('share', package_name, 'config'), glob.glob('config/*')),
-        (os.path.join('share', package_name, 'launch'), glob.glob('launch/*')),
     ],
     install_requires=['setuptools'],
     zip_safe=True,
@@ -23,9 +20,7 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'menu_input = lolo_drivers.menu_input:main',
-            'menu_output = lolo_drivers.menu_output:main',
-            'usbl_interface = lolo_drivers.usbl_interface:main',
+            'lolo_svs_to_ins_node = lolo_svs_to_ins.lolo_svs_to_ins_node:main'
         ],
     },
 )

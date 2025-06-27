@@ -1,9 +1,12 @@
 <launch>
   <arg name="robot_name" default="lolo" />
 
-
-  <node pkg="lolo_dr" exec="ins_2_odom_node" name="ins_2_odom_node" output="screen" namespace="$(var robot_name)">
-    <param name="automatic_zone" value="true" />
+  <node pkg="lolo_dr" exec="ins_2_odom_complete_node" name="ins_2_odom_node" output="screen" namespace="$(var robot_name)">
+    <param name="correct_meridian_convergence" value="true" />
+    <param name="publish_tf" value="true" />
+    <param name="output_rate" value="50.0" />
+    <param name="verbose_setup" value="False" />
+    <param name="verbose_conversion" value="False" />
   </node>
 
 </launch>
