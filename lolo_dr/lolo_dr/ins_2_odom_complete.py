@@ -69,8 +69,8 @@ class Ins2Odom(Node):
         # Example: self.map_frame = self.get_parameter("map_frame").value
         self.input_ins_topic = self.get_parameter("input_ins_topic").value
         self.input_imu_topic = self.get_parameter("input_imu_topic").value
-
         self.output_odom_topic = self.get_parameter("output_odom_topic").value
+        self.robot_name = self.get_namespace().strip("/")
 
         # Data
         self.current_ins = None
@@ -83,8 +83,8 @@ class Ins2Odom(Node):
 
         # tf transform related attributes
         self.utm_frame = None
-        self.output_odom_frame = self.get_parameter("output_odom_frame").value
-        self.odom_child_frame_id = self.get_parameter("base_link_frame").value  # Should this be hard coded? NO!
+        self.output_odom_frame = self.robot_name + "/odom"
+        self.odom_child_frame_id = self.robot_name + "/base_link"
 
         self.tf_buffer = Buffer()
         self.tf_listener = TransformListener(self.tf_buffer, self)
